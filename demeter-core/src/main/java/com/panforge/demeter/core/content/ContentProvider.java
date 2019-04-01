@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.panforge.demeter.service;
+package com.panforge.demeter.core.content;
 
-import com.panforge.demeter.service.Cursor;
 import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
 import com.panforge.demeter.core.api.exception.CannotDisseminateFormatException;
@@ -30,9 +29,9 @@ import com.panforge.demeter.core.model.response.elements.Set;
 import java.net.URI;
 
 /**
- * Repository.
+ * Content provider.
  */
-public interface Repository {
+public interface ContentProvider {
   /**
    * Gets configuration.
    * @return configuration

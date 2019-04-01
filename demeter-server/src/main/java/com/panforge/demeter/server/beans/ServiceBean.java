@@ -15,11 +15,11 @@
  */
 package com.panforge.demeter.server.beans;
 
-import com.panforge.demeter.service.Repository;
 import com.panforge.demeter.service.TokenManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import com.panforge.demeter.core.content.ContentProvider;
 
 /**
  * Service bean.
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 public class ServiceBean extends com.panforge.demeter.service.Service {
   
   @Autowired 
-  public ServiceBean(Repository repo, TokenManager tokenManager, @Value("${batchSize}") long batchSize) {
+  public ServiceBean(ContentProvider repo, TokenManager tokenManager, @Value("${batchSize}") long batchSize) {
     super(repo, tokenManager, batchSize);
   }
   

@@ -28,12 +28,11 @@ import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.elements.Set;
 import com.panforge.demeter.core.utils.XmlUtils;
-import com.panforge.demeter.service.Repository;
 import java.net.URI;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.springframework.stereotype.Service;
-import com.panforge.demeter.service.Cursor;
+import com.panforge.demeter.core.content.Cursor;
 import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessorService;
 import java.util.logging.Logger;
@@ -48,12 +47,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import com.panforge.demeter.core.content.ContentProvider;
 
 /**
  * Repository bean.
  */
 @Service
-public class RepositoryBean implements Repository {
+public class RepositoryBean implements ContentProvider {
   
   private static final Logger LOG = Logger.getLogger(RepositoryBean.class.getCanonicalName());
   

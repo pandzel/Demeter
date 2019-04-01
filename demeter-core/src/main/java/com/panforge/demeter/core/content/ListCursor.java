@@ -13,38 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.panforge.demeter.service;
+package com.panforge.demeter.core.content;
 
-import com.panforge.demeter.service.Cursor;
-import java.util.Iterator;
-import java.util.stream.Stream;
+import java.util.AbstractList;
+import java.util.List;
 
 /**
- * Stream cursor.
- * @param <T> type of the data
+ * List cursor.
+ * @param <T> type of the data accessible by the cursor
  */
-class StreamCursor<T> implements Cursor<T> {
-  private final Stream<T> stream;
-  private final long total;
+class ListCursor<T> extends AbstractList<T> implements Cursor<T> {
 
-  public StreamCursor(Stream<T> stream, long total) {
-    this.stream = stream;
-    this.total = total;
+  private final List<T> data;
+
+  public ListCursor(List<T> data) {
+    this.data = data;
   }
 
   @Override
-  public Iterator<T> iterator() {
-    return stream.iterator();
+  public T get(int index) {
+    return data.get(index);
+  }
+
+  @Override
+  public int size() {
+    return data.size();
   }
 
   @Override
   public long total() {
-    return total;
+    return data.size();
   }
 
   @Override
   public void close() {
-    stream.close();
   }
   
 }

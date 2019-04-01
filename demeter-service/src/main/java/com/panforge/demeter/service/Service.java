@@ -15,7 +15,8 @@
  */
 package com.panforge.demeter.service;
 
-import com.panforge.demeter.service.Cursor;
+import com.panforge.demeter.core.content.ContentProvider;
+import com.panforge.demeter.core.content.Cursor;
 import com.panforge.demeter.core.api.Context;
 import com.panforge.demeter.core.api.RequestParser;
 import com.panforge.demeter.core.api.ResponseFactory;
@@ -58,7 +59,7 @@ import java.util.stream.StreamSupport;
  * Service.
  */
 public class Service {
-  protected final Repository repo;
+  protected final ContentProvider repo;
   protected final TokenManager tokenManager;
   
   protected final Context ctx;
@@ -72,7 +73,7 @@ public class Service {
    * @param tokenManager token manager
    * @param batchSize batch size
    */
-  public Service(Repository repo, TokenManager tokenManager, long batchSize) {
+  public Service(ContentProvider repo, TokenManager tokenManager, long batchSize) {
     this.repo = repo;
     this.tokenManager = tokenManager;
     this.batchSize = batchSize;
