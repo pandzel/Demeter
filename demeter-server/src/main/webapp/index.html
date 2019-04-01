@@ -1,10 +1,33 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Start Page</title>
+        <title>Demeter Generic Server</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style>
+          .stage {
+            width: 600px;
+            margin-left: auto;
+            margin-right: auto;          
+          }
+          .stage > div {
+            margin-bottom: 20px;
+          }
+        </style>
     </head>
     <body>
-        <h1>Hello World!</h1>
+      <div class="stage">
+        <div>
+          <h1>Welcome to Demeter</h1>
+        </div>
+        <div>
+          This is a generic version of the OAI-PMH server. Please, customize content of this page.
+        </div>
+        <div>
+          Identify repository: <a href="oai?verb=Identify" target="_blank">oai?verb=Identify</a><br>
+          List metadata formats: <a href="oai?verb=ListMetadataFormats" target="_blank">oai?verb=ListMetadataFormats</a><br>
+          List identifiers: <a href="oai?verb=ListIdentifiers&metadataPrefix=oai_dc" target="_blank">oai?verb=ListIdentifiers&metadataPrefix=oai_dc</a><br>
+          List records: <a href="oai?verb=ListIdentifiers&metadataPrefix=oai_dc" target="_blank">oai?verb=ListRecords&metadataPrefix=oai_dc</a><br>
+        </div>
+      </div>
     </body>
 </html>
