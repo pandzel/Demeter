@@ -34,30 +34,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.4</version>
-        <configuration>
-          <aggregate>true</aggregate>
-          <doctitle>OAI-PMH Client ver. ${project.version}</doctitle>
-          <windowtitle>OAI-PMH HTTP Client ver. ${project.version}</windowtitle>
-          <links>
-            <link>https://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/</link>
-            <link>https://hc.apache.org/httpcomponents-core-ga/httpcore/apidocs/</link>
-          </links>
-        </configuration>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>    
-    </plugins>
-  </build>
 </project>
