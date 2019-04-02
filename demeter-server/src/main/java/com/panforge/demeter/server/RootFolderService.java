@@ -22,6 +22,10 @@ import java.io.File;
  */
 public interface RootFolderService {
 
+  /**
+   * Gets root folder.
+   * @return root folder
+   */
   File getRootFolder();
   
 }

@@ -19,13 +19,25 @@
        http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd"
 >
   
-    <!-- Bootstrap -->
-	<context:component-scan base-package="com.panforge.demeter.server.rest,com.panforge.demeter.server.beans" />
-	<mvc:annotation-driven />
+  <!-- Bootstrap -->
+  <context:component-scan base-package="com.panforge.demeter.server.rest,com.panforge.demeter.server.beans" />
+  <mvc:annotation-driven />
   <mvc:default-servlet-handler />
     
-    <bean id="config"
-          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-          p:location="classpath:config/config.properties"/>
+  <bean id="config"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+        p:location="classpath:config/config.properties"/>
 
+  <bean name="/" class="com.panforge.demeter.server.ViewController" />
+  
+  <bean id="viewResolver"
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver" >
+    <property name="prefix">
+      <value>/WEB-INF/pages/</value>
+    </property>
+    <property name="suffix">
+      <value>.jsp</value>
+    </property>
+  </bean>    
+  
 </beans>

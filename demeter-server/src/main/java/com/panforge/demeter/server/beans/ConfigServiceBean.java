@@ -54,11 +54,12 @@ public class ConfigServiceBean implements ConfigService {
   @Autowired
   private RootFolderService rootFolder;
   
+  private File configFile;
   private Config config = new Config();
   
   @PostConstruct
   public void construct() {
-    File configFile = new File(rootFolder.getRootFolder(),"identify.json");
+    configFile = new File(rootFolder.getRootFolder(),"identify.json");
     if (configFile.exists()) {
       // read configuration if exists
       try ( InputStream configStream = new FileInputStream(configFile);
@@ -86,6 +87,10 @@ public class ConfigServiceBean implements ConfigService {
   @Override
   public Config getConfig() {
     return config;
+  }
+
+  public File getConfigFile() {
+    return configFile;
   }
   
 }
