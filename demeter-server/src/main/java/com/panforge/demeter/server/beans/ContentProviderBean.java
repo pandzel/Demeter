@@ -53,9 +53,9 @@ import com.panforge.demeter.core.content.ContentProvider;
  * Repository bean.
  */
 @Service
-public class RepositoryBean implements ContentProvider {
+public class ContentProviderBean implements ContentProvider {
   
-  private static final Logger LOG = Logger.getLogger(RepositoryBean.class.getCanonicalName());
+  private static final Logger LOG = Logger.getLogger(ContentProviderBean.class.getCanonicalName());
   
   @Autowired
   private RootFolderService rootFolderServise;
