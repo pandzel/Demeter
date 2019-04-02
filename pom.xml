@@ -37,7 +37,6 @@
             <goals>
               <goal>aggregate</goal>
             </goals>
-            <phase>site</phase>
             <configuration>
             </configuration>
           </execution>
