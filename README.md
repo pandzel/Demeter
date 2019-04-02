@@ -11,10 +11,10 @@ Demeter's aims to provide solution for building and consuming OAI-PMH repositori
 
 ## Requirements
 
-- Java JDK 8
+- Java JDK 12
 - Git Bash
 - Apache Maven
-- Apache Tomcat
+- Apache Tomcat 9.x.x
 
 ## Quick start
 ```
