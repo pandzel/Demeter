@@ -17,8 +17,10 @@ Demeter's aims to provide solution for building and consuming OAI-PMH repositori
 - Apache Tomcat
 
 ## Quick start
-
-git clone https://github.com/pandzel/Demeter.git<br>
-cd Demeter<br>
-mvn clean install<br>
+```
+git clone https://github.com/pandzel/Demeter.git
+cd Demeter
+mvn clean install
+```
+then deploy created demeter-server/target/demeter-server-\<version\>.war onto the Apache Tomcat (or any web server of your choice).
 
