@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/pandzel/Demeter.png?branch=master)](https://travis-ci.org/pandzel/Demeter)
 # Demeter
 Demeter OAI-PMH toolkit.
 
