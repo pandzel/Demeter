@@ -25,3 +25,4 @@ hs_err_pid*
 /demeter-http-client/target/
 /demeter-service/target/
 /demeter-server/target/
+/target/

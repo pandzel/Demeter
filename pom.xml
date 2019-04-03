@@ -30,6 +30,24 @@
             <link>https://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/</link>
             <link>https://hc.apache.org/httpcomponents-core-ga/httpcore/apidocs/</link>
           </links>
+          <groups>
+            <group>
+              <title>OAI-PMH core</title>
+              <packages>com.panforge.demeter.core*</packages>
+            </group>
+            <group>
+              <title>OAI-PMH HTTP client</title>
+              <packages>com.panforge.demeter.http.client*</packages>
+            </group>
+            <group>
+              <title>OAI-PMH service</title>
+              <packages>com.panforge.demeter.service*</packages>
+            </group>
+            <group>
+              <title>OAI-PMH generic server</title>
+              <packages>com.panforge.demeter.server*</packages>
+            </group>
+          </groups>
         </configuration>
         <executions>
           <execution>
