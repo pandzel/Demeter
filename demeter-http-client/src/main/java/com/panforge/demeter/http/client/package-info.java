@@ -13,30 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.panforge.demeter.demeter.http.client;
-
-import java.time.OffsetDateTime;
-
 /**
- * Crawl context.
+ * OAI-PMH client.
  */
-public class CrawlContext {
-  /** 'from' time */
-  public final OffsetDateTime from;
-  /** 'until' time */
-  public final OffsetDateTime until;
-  /** set spec */
-  public final String set;
-
-  /**
-   * Creates instance of the crawl context.
-   * @param from 'from' time
-   * @param until 'until' time
-   * @param set set spec
-   */
-  public CrawlContext(OffsetDateTime from, OffsetDateTime until, String set) {
-    this.from = from;
-    this.until = until;
-    this.set = set;
-  }
-}
+package com.panforge.demeter.http.client;

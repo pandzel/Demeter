@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.panforge.demeter.demeter.http.client;
+package com.panforge.demeter.http.client;
 
 import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.api.exception.ProtocolException;
