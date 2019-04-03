@@ -10,7 +10,7 @@ Demeter's aim is to provide solution for building and consuming OAI-PMH reposito
 - **server** - generic implementation of the OAI-PMH server with limited functionality,
 - **enterprise server** - OAI-PMH server with complete functionality.
 
-[more..](https://github.com/pandzel/Demeter/wiki/Introduction)
+[more..](https://github.com/pandzel/Demeter/wiki/Home)
 
 ## Requirements
 
