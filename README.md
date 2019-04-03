@@ -5,8 +5,8 @@ Demeter OAI-PMH toolkit.
 Demeter's aim is to provide solution for building and consuming OAI-PMH repositories. It consist of the following sub-projects:
 
 - **core** - fundametal classes shared amongst all other sub-projects,
-- **http-client** - fully implemented HTTP client,
-- **service** - request processing service,
+- **http-client** - fully featured HTTP client,
+- **service** - fron-end request processing service,
 - **server** - generic implementation of the OAI-PMH server with limited functionality,
 - **enterprise server** - OAI-PMH server with complete functionality.
 
