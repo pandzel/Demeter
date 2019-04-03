@@ -25,3 +25,5 @@ mvn clean install
 ```
 Deploy created demeter-server/target/demeter-server-\<version\>.war onto the Apache Tomcat (or any web server of your choice).
 
+[more...](https://github.com/pandzel/Demeter/wiki/Building-and-installation)
+
