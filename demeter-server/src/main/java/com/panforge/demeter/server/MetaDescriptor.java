@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.server;
 
+import com.panforge.demeter.core.content.Filter;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import java.io.File;
@@ -52,6 +53,19 @@ public class MetaDescriptor {
     this.uri = uri;
     this.format = format;
     this.datestamp = datestamp;
+  }
+  
+  /**
+   * Checks if descriptor matches filter
+   * @param filter filter
+   * @return <code>true</code> if descriptor matches filter
+   */
+  public boolean matches(Filter filter) {
+    if (filter==null) return true;
+    if (filter.from!=null && datestamp.isBefore(filter.from)) return false;
+    if (filter.until!=null && datestamp.isAfter(filter.until)) return false;
+    if (filter.metadataPrefix!=null && !format.metadataPrefix.equals(filter.metadataPrefix)) return false;
+    return true;
   }
   
   /**

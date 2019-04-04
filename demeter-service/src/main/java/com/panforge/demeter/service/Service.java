@@ -178,9 +178,9 @@ public class Service {
   
   private String createListIdentifiersResponse(ListIdentifiersRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     // TODO: use request criteria
-    try (Cursor<Header> listSets = repo.listHeaders();) {
-      Spliterator<Header> spliterator = listSets.spliterator();
-      return createListIdentifiersSupplier(request, spliterator, listSets.total(), 0).get();
+    try (Cursor<Header> headers = repo.listHeaders(request.getFilter());) {
+      Spliterator<Header> spliterator = headers.spliterator();
+      return createListIdentifiersSupplier(request, spliterator, headers.total(), 0).get();
     }
   }
   
@@ -205,8 +205,8 @@ public class Service {
     } catch (NoMetadataFormatsException|IdDoesNotExistException ex) {
         throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", request.getMetadataPrefix()), ex);
     }
-    try (Cursor<Header> listSets = repo.listHeaders();) {
-      Spliterator<Record> spliterator = StreamSupport.stream(listSets.spliterator(), false)
+    try (Cursor<Header> headers = repo.listHeaders(request.getFilter());) {
+      Spliterator<Record> spliterator = StreamSupport.stream(headers.spliterator(), false)
               .map(h->{ 
                 if (!h.deleted) {
                   try {
@@ -221,7 +221,7 @@ public class Service {
               })
               .filter(r->r!=null)
               .spliterator();
-      return createListRecordsSupplier(request, spliterator, listSets.total(), 0).get();
+      return createListRecordsSupplier(request, spliterator, headers.total(), 0).get();
     }
   }
   

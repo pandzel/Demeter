@@ -18,6 +18,7 @@ package com.panforge.demeter.core.model.request;
 import com.panforge.demeter.core.utils.ParamProcessor;
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.api.exception.BadArgumentException;
+import com.panforge.demeter.core.content.Filter;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -72,6 +73,14 @@ public final class ListIdentifiersRequest extends RequestWithToken {
     super(Verb.ListIdentifiers);
   }
 
+  /**
+   * Gets filter.
+   * @return filter
+   */
+  public Filter getFilter() {
+    return new Filter(from, until, metadataPrefix, set);
+  }
+  
   /**
    * Gets 'from' date.
    * @return 'from' date

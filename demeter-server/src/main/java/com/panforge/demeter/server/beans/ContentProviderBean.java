@@ -17,7 +17,6 @@ package com.panforge.demeter.server.beans;
 
 import com.panforge.demeter.server.ConfigService;
 import com.panforge.demeter.core.api.Config;
-import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
 import com.panforge.demeter.core.api.exception.CannotDisseminateFormatException;
 import com.panforge.demeter.core.api.exception.IdDoesNotExistException;
 import com.panforge.demeter.core.api.exception.NoMetadataFormatsException;
@@ -48,6 +47,7 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import com.panforge.demeter.core.content.ContentProvider;
+import com.panforge.demeter.core.content.Filter;
 import java.util.List;
 
 /**
@@ -103,10 +103,14 @@ public class ContentProviderBean implements ContentProvider {
   }
 
   @Override
-  public Cursor<Header> listHeaders() throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+  public Cursor<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+    if (filter.set!=null) {
+      throw new NoSetHierarchyException("This repository does not support set hierarchy.");
+    }
     List<Header> headers = descriptors.values().stream()
                     .map(l -> {
                       MetaDescriptor md = l.values().stream()
+                              .filter(desc->!desc.matches(filter))
                               .sorted((a, b) -> a.datestamp.compareTo(b.datestamp))
                               .findFirst()
                               .orElse(null);

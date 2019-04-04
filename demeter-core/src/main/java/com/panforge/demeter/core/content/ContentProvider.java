@@ -56,13 +56,13 @@ public interface ContentProvider {
   
   /**
    * Lists headers.
+   * @param filter filter
    * @return iterable of headers
-   * @throws BadResumptionTokenException if invalid resumption token
    * @throws CannotDisseminateFormatException if invalid metadata format
    * @throws NoRecordsMatchException if no records
    * @throws NoSetHierarchyException if set hierarchy not supported
    */
-  Cursor<Header> listHeaders() throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException;
+  Cursor<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException;
   
   /**
    * Reads record.
