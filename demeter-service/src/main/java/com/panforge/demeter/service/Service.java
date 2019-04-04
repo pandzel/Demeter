@@ -177,6 +177,7 @@ public class Service {
   }
   
   private String createListIdentifiersResponse(ListIdentifiersRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+    // TODO: use request criteria
     try (Cursor<Header> listSets = repo.listHeaders();) {
       Spliterator<Header> spliterator = listSets.spliterator();
       return createListIdentifiersSupplier(request, spliterator, listSets.total(), 0).get();

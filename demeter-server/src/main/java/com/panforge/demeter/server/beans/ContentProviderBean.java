@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import com.panforge.demeter.core.content.ContentProvider;
+import java.util.List;
 
 /**
  * Repository bean.
@@ -89,7 +90,11 @@ public class ContentProviderBean implements ContentProvider {
 
   @Override
   public Cursor<MetadataFormat> listMetadataFormats(URI uri) throws  IdDoesNotExistException, NoMetadataFormatsException {
-    return Cursor.of(metadataProcessorService.listMetadataFormats().stream().collect(Collectors.toList()));
+    List<MetadataFormat> formats = metadataProcessorService.listMetadataFormats().stream().collect(Collectors.toList());
+    if (formats.isEmpty()) {
+      throw new NoMetadataFormatsException(uri==null? String.format("No metadata formats"): String.format("No metadata formats for: %s", uri));
+    }
+    return Cursor.of(formats);
   }
 
   @Override
@@ -99,8 +104,7 @@ public class ContentProviderBean implements ContentProvider {
 
   @Override
   public Cursor<Header> listHeaders() throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    return Cursor.of(
-            descriptors.values().stream()
+    List<Header> headers = descriptors.values().stream()
                     .map(l -> {
                       MetaDescriptor md = l.values().stream()
                               .sorted((a, b) -> a.datestamp.compareTo(b.datestamp))
@@ -108,9 +112,13 @@ public class ContentProviderBean implements ContentProvider {
                               .orElse(null);
                       return md != null ? md.toHeader() : null;
                     })
-                    .filter(h -> h != null),
-             descriptors.size()
-    );
+                    .filter(h -> h != null)
+                    .collect(Collectors.toList());    
+    
+    if (headers.isEmpty()) {
+      throw new NoRecordsMatchException(String.format("No matching records."));
+    }
+    return Cursor.of(headers);
   }
 
   @Override
