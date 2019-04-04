@@ -49,6 +49,7 @@ import org.xml.sax.SAXException;
 import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.content.Filter;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 /**
  * Repository bean.
@@ -106,6 +107,13 @@ public class ContentProviderBean implements ContentProvider {
   public Cursor<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     if (filter.set!=null) {
       throw new NoSetHierarchyException("This repository does not support set hierarchy.");
+    }
+    try {
+      if (!StreamSupport.stream(listMetadataFormats(null).spliterator(), false).map(f->f.metadataPrefix).anyMatch(p->p.equals(filter.metadataPrefix))) {
+        throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", filter.metadataPrefix));
+      }
+    } catch (NoMetadataFormatsException|IdDoesNotExistException ex) {
+        throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", filter.metadataPrefix), ex);
     }
     List<Header> headers = descriptors.values().stream()
                     .map(l -> {

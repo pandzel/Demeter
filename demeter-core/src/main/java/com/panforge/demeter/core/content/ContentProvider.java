@@ -16,7 +16,6 @@
 package com.panforge.demeter.core.content;
 
 import com.panforge.demeter.core.api.Config;
-import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
 import com.panforge.demeter.core.api.exception.CannotDisseminateFormatException;
 import com.panforge.demeter.core.api.exception.IdDoesNotExistException;
 import com.panforge.demeter.core.api.exception.NoMetadataFormatsException;

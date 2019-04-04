@@ -149,9 +149,6 @@ public class Service {
   
   private String createGetRecordResponse(GetRecordRequest request) throws IdDoesNotExistException, CannotDisseminateFormatException {
     Record record = repo.readRecord(request.getIdentifier(), request.getMetadataPrefix());
-    if (record==null) {
-      throw new IdDoesNotExistException(String.format("Unknown record id: '%s'", request.getIdentifier()));
-    }
     GetRecordResponse getRecordResponse = new GetRecordResponse(record, OffsetDateTime.now(), request);
     return factory.createGetRecordResponse(getRecordResponse);
   }
@@ -177,7 +174,6 @@ public class Service {
   }
   
   private String createListIdentifiersResponse(ListIdentifiersRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    // TODO: use request criteria
     try (Cursor<Header> headers = repo.listHeaders(request.getFilter());) {
       Spliterator<Header> spliterator = headers.spliterator();
       return createListIdentifiersSupplier(request, spliterator, headers.total(), 0).get();
@@ -198,13 +194,6 @@ public class Service {
   }
   
   private String createListRecordsResponse(ListRecordsRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    try {
-      if (!StreamSupport.stream(repo.listMetadataFormats(null).spliterator(), false).map(f->f.metadataPrefix).anyMatch(p->p.equals(request.getMetadataPrefix()))) {
-        throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", request.getMetadataPrefix()));
-      }
-    } catch (NoMetadataFormatsException|IdDoesNotExistException ex) {
-        throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", request.getMetadataPrefix()), ex);
-    }
     try (Cursor<Header> headers = repo.listHeaders(request.getFilter());) {
       Spliterator<Record> spliterator = StreamSupport.stream(headers.spliterator(), false)
               .map(h->{ 
