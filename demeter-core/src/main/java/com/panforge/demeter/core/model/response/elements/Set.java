@@ -16,6 +16,7 @@
 package com.panforge.demeter.core.model.response.elements;
 
 import java.util.Objects;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Set.
@@ -33,7 +34,8 @@ public final class Set {
    * @param setName set name
    */
   public Set(String setSpec, String setName) {
-    // TODO: validate arguments
+    Validate.notBlank(setSpec, "Missing set specification");
+    Validate.notBlank(setName, "Missing set name");
     this.setSpec = setSpec;
     this.setName = setName;
   }

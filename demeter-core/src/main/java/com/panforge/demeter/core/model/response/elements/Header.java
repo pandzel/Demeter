@@ -19,6 +19,7 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Objects;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Header.
@@ -42,10 +43,11 @@ public final class Header {
    * @param deteted deleted status
    */
   public Header(URI identifier, OffsetDateTime datestamp, String[] set, boolean deteted) {
-    // TODO: validate arguments
+    Validate.notNull(identifier, "Missing identifier");
+    Validate.notNull(datestamp, "Missing date stamp");
     this.identifier = identifier;
     this.datestamp = datestamp;
-    this.set = set;
+    this.set = set!=null? set: new String[0];
     this.deleted = deteted;
   }
 

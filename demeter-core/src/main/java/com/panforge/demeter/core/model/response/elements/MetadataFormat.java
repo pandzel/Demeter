@@ -16,6 +16,7 @@
 package com.panforge.demeter.core.model.response.elements;
 
 import java.util.Objects;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Metadata format.
@@ -36,7 +37,9 @@ public final class MetadataFormat {
    * @param metadataNamespace namespace
    */
   public MetadataFormat(String metadataPrefix, String schema, String metadataNamespace) {
-    // TODO: validate arguments
+    Validate.notBlank(metadataPrefix, "Missing metadata prefix");
+    Validate.notBlank(schema, "Missing schema");
+    Validate.notBlank(metadataNamespace, "Missing metadata namespace");
     this.metadataPrefix = metadataPrefix;
     this.schema = schema;
     this.metadataNamespace = metadataNamespace;

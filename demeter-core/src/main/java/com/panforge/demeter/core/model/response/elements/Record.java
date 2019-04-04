@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.core.model.response.elements;
 
+import org.apache.commons.lang3.Validate;
 import org.w3c.dom.Document;
 
 /**
@@ -36,7 +37,7 @@ public final class Record {
    * @param about about information
    */
   public Record(Header header, Document metadata, Document about) {
-    // TODO: validate arguments
+    Validate.notNull(header, "Missing header");
     this.header = header;
     this.metadata = metadata;
     this.about = about;
