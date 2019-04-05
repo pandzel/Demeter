@@ -59,13 +59,14 @@ import java.util.stream.StreamSupport;
  * Service.
  */
 public class Service {
+  public static final int DEFAULT_BATCH_SIZE = 10;
   protected final ContentProvider repo;
   protected final TokenManager tokenManager;
   
   protected final Context ctx;
   protected final RequestParser parser;
   protected final ResponseFactory factory;
-  protected final long batchSize;
+  protected final int batchSize;
 
   /**
    * Creates instance of the service.
@@ -73,7 +74,7 @@ public class Service {
    * @param tokenManager token manager
    * @param batchSize batch size
    */
-  public Service(ContentProvider repo, TokenManager tokenManager, long batchSize) {
+  public Service(ContentProvider repo, TokenManager tokenManager, int batchSize) {
     this.repo = repo;
     this.tokenManager = tokenManager;
     this.batchSize = batchSize;
@@ -81,6 +82,23 @@ public class Service {
     this.ctx = new Context(repo.getConfig());
     this.parser = new RequestParser(ctx);
     this.factory = new ResponseFactory(ctx);
+  }
+
+  /**
+   * Creates instance of the service.
+   * @param repo repository
+   * @param tokenManager token manager
+   */
+  public Service(ContentProvider repo, TokenManager tokenManager) {
+    this(repo, tokenManager, DEFAULT_BATCH_SIZE);
+  }
+
+  /**
+   * Creates instance of the service.
+   * @param repo repository
+   */
+  public Service(ContentProvider repo) {
+    this(repo, new DefaultTokenManager());
   }
   
   /**

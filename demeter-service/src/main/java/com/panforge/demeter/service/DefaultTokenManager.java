@@ -28,12 +28,24 @@ import org.apache.commons.lang3.StringUtils;
  * Default token manager.
  */
 public class DefaultTokenManager implements TokenManager {
+  public static final long DEFAULT_EXPIRATION = 60000;
   private final PassiveExpiringMap<String, TokenEntry> tokens;
   private final long expiration;
 
+  /**
+   * Creates instance of the default token manager.
+   * @param expiration expiration time (in milliseconds) of the token
+   */
   public DefaultTokenManager(long expiration) {
     this.expiration = expiration;
     this.tokens = new PassiveExpiringMap<>(expiration);
+  }
+
+  /**
+   * Creates instance of the default token manager.
+   */
+  public DefaultTokenManager() {
+    this(DEFAULT_EXPIRATION);
   }
 
   @Override

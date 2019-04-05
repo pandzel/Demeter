@@ -23,8 +23,21 @@ import java.util.function.Supplier;
  * Token manager.
  */
 public interface TokenManager {
-  
-  ResumptionToken register(Supplier<String> supplier, long completeListSize, long cursor);
-  
+
+  /**
+   * Invoke action for a token.
+   * @param token resumption token
+   * @return response
+   * @throws ProtocolException if invoking action fails
+   */
   String invoke(String token) throws ProtocolException;
+  
+  /**
+   * Registers a supplier for a new token.
+   * @param supplier action to be invoked with the next call with a token
+   * @param completeListSize complete list size
+   * @param cursor cursor position
+   * @return resumption token.
+   */
+  ResumptionToken register(Supplier<String> supplier, long completeListSize, long cursor);
 }

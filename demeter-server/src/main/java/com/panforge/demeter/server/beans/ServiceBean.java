@@ -28,7 +28,7 @@ import com.panforge.demeter.core.content.ContentProvider;
 public class ServiceBean extends com.panforge.demeter.service.Service {
   
   @Autowired 
-  public ServiceBean(ContentProvider repo, TokenManager tokenManager, @Value("${batchSize}") long batchSize) {
+  public ServiceBean(ContentProvider repo, TokenManager tokenManager, @Value("${batchSize}") int batchSize) {
     super(repo, tokenManager, batchSize);
   }
   
