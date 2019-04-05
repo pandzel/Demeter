@@ -20,16 +20,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.panforge.demeter.core.content.ContentProvider;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 /**
  * Service bean.
  */
 @Service
 public class ServiceBean extends com.panforge.demeter.service.Service {
-  
+
   @Autowired 
   public ServiceBean(ContentProvider repo, TokenManager tokenManager, @Value("${batchSize}") int batchSize) {
     super(repo, tokenManager, batchSize);
+  }
+  
+  @PostConstruct
+  @Override
+  public void construct() {
+    super.construct();
+  }
+  
+  @PreDestroy
+  @Override
+  public void destroy() {
+    super.destroy();
   }
   
 }
