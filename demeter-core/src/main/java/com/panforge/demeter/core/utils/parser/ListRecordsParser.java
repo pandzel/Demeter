@@ -23,9 +23,7 @@ import com.panforge.demeter.core.model.response.ListRecordsResponse;
 import com.panforge.demeter.core.model.response.elements.Record;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.nodes;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.xml.xpath.XPathConstants;
 import org.w3c.dom.Document;
@@ -60,11 +58,11 @@ class ListRecordsParser extends DocParser {
   }
   
   private ListRecordsRequest extractRequest() throws BadVerbException, BadArgumentException {
-    Map<String,List<String>> values = new HashMap<>();
-    values.put("metadataPrefix", Arrays.asList(new String[]{ readMetadataPrefix(doc) }));
-    values.put("from", Arrays.asList(new String[]{ readFromAsString(doc) }));
-    values.put("until", Arrays.asList(new String[]{ readUntilAsString(doc) }));
-    values.put("set", Arrays.asList(new String[]{ readSet(doc) }));
+    Map<String,String[]> values = new HashMap<>();
+    values.put("metadataPrefix", new String[]{ readMetadataPrefix(doc) });
+    values.put("from", new String[]{ readFromAsString(doc) });
+    values.put("until", new String[]{ readUntilAsString(doc) });
+    values.put("set", new String[]{ readSet(doc) });
     return ListRecordsRequest.create(values);
   }
 

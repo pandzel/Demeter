@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import static com.panforge.demeter.core.utils.QueryUtils.queryToParams;
 import static com.panforge.demeter.core.utils.QueryUtils.rejectKeys;
+import java.util.Arrays;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -69,7 +70,7 @@ public class RequestParser {
    * @throws BadVerbException if parsing fails
    * @throws BadArgumentException if parsing fails
    */
-  public Request parse(Map<String,List<String>> params) throws BadVerbException, BadArgumentException {
+  public Request parse(Map<String,String[]> params) throws BadVerbException, BadArgumentException {
     Validate.notNull(params, "Missing parameters");
     switch (getVerb(params)) {
       case GetRecord:
@@ -88,21 +89,21 @@ public class RequestParser {
     throw new BadVerbException(String.format("Missing verb."));
   }
   
-  private Map<String,List<String>> reduceParams(Map<String,List<String>> params) {
+  private Map<String,String[]> reduceParams(Map<String,String[]> params) {
     return rejectKeys(params, "verb");
   }
   
-  private Verb getVerb(Map<String,List<String>> params) throws BadVerbException {
-    List<String> values = params.get("verb");
-    if (values==null || values.isEmpty()) {
+  private Verb getVerb(Map<String,String[]> params) throws BadVerbException {
+    String[] values = params.get("verb");
+    if (values==null || values.length==0) {
       throw new BadVerbException(String.format("Missing verb."));
     }
-    if (values.size()>1) {
-      throw new BadVerbException(String.format("To many verbs: %s.", values.stream().collect(Collectors.joining(", "))));
+    if (values.length>1) {
+      throw new BadVerbException(String.format("To many verbs: %s.", Arrays.stream(values).collect(Collectors.joining(", "))));
     }
-    Verb verb = Verb.parse(values.get(0));
+    Verb verb = Verb.parse(values[0]);
     if (verb==null) {
-      throw new BadVerbException(String.format("Unrecognized verb: %s.", values.get(0)));
+      throw new BadVerbException(String.format("Unrecognized verb: %s.", values[0]));
     }
     return verb;
   }

@@ -22,7 +22,6 @@ import static com.panforge.demeter.core.utils.QueryUtils.trimParams;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -64,19 +63,19 @@ public final class ListMetadataFormatsRequest extends Request {
    * @return request
    * @throws BadArgumentException if creation fails
    */
-  public static ListMetadataFormatsRequest create(Map<String, List<String>> params) throws BadArgumentException {
+  public static ListMetadataFormatsRequest create(Map<String, String[]> params) throws BadArgumentException {
     params = trimParams(params);
     ListMetadataFormatsRequest request = new ListMetadataFormatsRequest();
     ParamProcessor
             .with("identifier", v -> {
               if (v!=null) {
-                if (v.size() > 1) {
-                  throw new BadArgumentException(String.format("Illegal number of identifiers: %s", v.stream().collect(Collectors.joining(", "))));
+                if (v.length > 1) {
+                  throw new BadArgumentException(String.format("Illegal number of identifiers: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
                 }
                 try {
-                  request.identifier = URI.create(v.get(0));
+                  request.identifier = URI.create(v[0]);
                 } catch (IllegalArgumentException|NullPointerException ex) {
-                  throw new BadArgumentException(String.format("Invalid identifier format: %s", v.get(0)));
+                  throw new BadArgumentException(String.format("Invalid identifier format: %s", v[0]));
                 }
               }
             })
@@ -85,11 +84,11 @@ public final class ListMetadataFormatsRequest extends Request {
   }
   
   @Override
-  public Map<String, List<String>> getParameters() {
-    Map<String,List<String>> parameters = new HashMap<>();
-    parameters.put("verb", Arrays.asList(new String[]{ verb.name() }));
+  public Map<String, String[]> getParameters() {
+    Map<String,String[]> parameters = new HashMap<>();
+    parameters.put("verb", new String[]{ verb.name() });
     if (identifier!=null) {
-      parameters.put("identifier", Arrays.asList(new String[]{ identifier.toASCIIString() }));
+      parameters.put("identifier", new String[]{ identifier.toASCIIString() });
     }
     return parameters;
   }

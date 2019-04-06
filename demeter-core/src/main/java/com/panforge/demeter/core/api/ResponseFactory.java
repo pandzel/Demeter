@@ -36,7 +36,6 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.w3c.dom.Document;
@@ -66,8 +65,8 @@ public class ResponseFactory {
    * @param errors errors
    * @return response response
    */
-  public String createErrorResponse(OffsetDateTime responseDate, Map<String, List<String>> reqParams, ErrorInfo [] errors) {
-    Verb verb = reqParams.get("verb").stream().map(s->Verb.parse(s)).filter(v->v!=null).findFirst().orElse(null);
+  public String createErrorResponse(OffsetDateTime responseDate, Map<String, String[]> reqParams, ErrorInfo [] errors) {
+    Verb verb = Arrays.stream(reqParams.get("verb")).map(s->Verb.parse(s)).filter(v->v!=null).findFirst().orElse(null);
     reqParams = QueryUtils.rejectKeys(reqParams, "verb");
     return new DocBuilder().begin()
             .child("responseDate").value(responseDate.format(DateTimeFormatter.ISO_DATE_TIME)).done()

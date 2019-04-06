@@ -36,25 +36,26 @@ public class QueryUtils {
    * @param query query string
    * @return map of parameters
    */
-  public static Map<String,List<String>> queryToParams(String query) {
+  public static Map<String,String[]> queryToParams(String query) {
     Validate.notNull(query, "Missing query");
     return Arrays.stream(query.split("&"))
             .map(param -> parseParam(param))
             .filter(kvp -> kvp!=null && kvp.length==2)
             .collect(()->new TreeMap<>(String.CASE_INSENSITIVE_ORDER), (m, kvp) -> {
-              List<String> values = m.get(kvp[0]);
-              if (values==null) {
-                values = new ArrayList<>();
-                m.put(kvp[0], values);
+              ArrayList<String> combined = new ArrayList<>();
+              String[] values = m.get(kvp[0]);
+              if (values!=null) {
+                combined.addAll(Arrays.asList(values));
               }
-              values.add(kvp[1]);
+              combined.add(kvp[1]);
+              m.put(kvp[0], combined.toArray(String[]::new));
             }, Map::putAll);
   }
   
-  public static Map<String,List<String>> trimParams(Map<String,List<String>> params) {
-    Map<String, List<String>> result = params.entrySet().stream()
-            .collect(Collectors.toMap(e->e.getKey(), e->e.getValue().stream().filter(v->!StringUtils.isBlank(v)).collect(Collectors.toList())))
-            .entrySet().stream().filter(e->!e.getValue().isEmpty()).collect(Collectors.toMap(e->e.getKey(), e->e.getValue()));
+  public static Map<String,String[]> trimParams(Map<String,String[]> params) {
+    Map<String, String[]> result = params.entrySet().stream()
+            .collect(Collectors.toMap(e->e.getKey(), e->Arrays.stream(e.getValue()).filter(v->!StringUtils.isBlank(v)).toArray(String[]::new)))
+            .entrySet().stream().filter(e->e.getValue()!=null && e.getValue().length>0).collect(Collectors.toMap(e->e.getKey(), e->e.getValue()));
     return result;
   }
   
@@ -63,7 +64,7 @@ public class QueryUtils {
    * @param params map of parameters
    * @return query string
    */
-  public static String paramsToQuery(Map<String, List<String>> params) {
+  public static String paramsToQuery(Map<String, String[]> params) {
     return paramsToQuery(params, Collectors.joining("&"));
   }
   
@@ -73,7 +74,7 @@ public class QueryUtils {
    * @param keysToReject keys to reject
    * @return modified map
    */
-  public static Map<String,List<String>> rejectKeys(Map<String,List<String>> params, String...keysToReject) {
+  public static Map<String,String[]> rejectKeys(Map<String,String[]> params, String...keysToReject) {
     return params.entrySet().stream()
             .filter(e -> !Arrays.stream(keysToReject).anyMatch(k -> k.equalsIgnoreCase(e.getKey())))
             .collect(()->new TreeMap<>(String.CASE_INSENSITIVE_ORDER), (m, e) ->m.put(e.getKey(), e.getValue()), Map::putAll);
@@ -86,13 +87,13 @@ public class QueryUtils {
    * @param params parameters
    * @return parameters list
    */
-  public static List<String[]> paramsToList(Map<String, List<String>> params) {
+  public static List<String[]> paramsToList(Map<String, String[]> params) {
     return params.entrySet().stream()
-            .flatMap(e -> e.getValue().stream().map(v -> new String[]{e.getKey(), v}))
+            .flatMap(e -> Arrays.stream(e.getValue()).map(v -> new String[]{e.getKey(), v}))
             .collect(Collectors.toList());
   }
   
-  private static String paramsToQuery(Map<String, List<String>> params, Collector<CharSequence,?,String> collector) {
+  private static String paramsToQuery(Map<String, String[]> params, Collector<CharSequence,?,String> collector) {
     Validate.notNull(params, "Missing parameters");
     return paramsToList(params).stream()
             .map(kvp -> String.format("%s=%s", kvp[0], kvp[1]))

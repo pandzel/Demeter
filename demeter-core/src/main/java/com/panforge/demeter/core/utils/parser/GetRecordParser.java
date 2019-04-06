@@ -17,13 +17,10 @@ package com.panforge.demeter.core.utils.parser;
 
 import com.panforge.demeter.core.api.exception.BadArgumentException;
 import com.panforge.demeter.core.api.exception.BadVerbException;
-import com.panforge.demeter.core.api.exception.ProtocolException;
 import com.panforge.demeter.core.model.request.GetRecordRequest;
 import com.panforge.demeter.core.model.response.GetRecordResponse;
 import com.panforge.demeter.core.model.response.elements.Record;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.xml.xpath.XPathConstants;
 import org.w3c.dom.Document;
@@ -54,9 +51,9 @@ class GetRecordParser extends DocParser {
   }
   
   private GetRecordRequest extractRequest() throws BadVerbException, BadArgumentException {
-    Map<String,List<String>> values = new HashMap<>();
-    values.put("identifier", Arrays.asList(new String[] { readIdentifierAsString(doc) }));
-    values.put("metadataPrefix", Arrays.asList(new String[] { readMetadataPrefix(doc) }));
+    Map<String,String[]> values = new HashMap<>();
+    values.put("identifier", new String[] { readIdentifierAsString(doc) });
+    values.put("metadataPrefix", new String[] { readMetadataPrefix(doc) });
     return GetRecordRequest.create(values);
   }
   

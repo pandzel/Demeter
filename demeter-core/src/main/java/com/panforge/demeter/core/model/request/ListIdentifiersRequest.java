@@ -21,7 +21,6 @@ import com.panforge.demeter.core.api.exception.BadArgumentException;
 import com.panforge.demeter.core.content.Filter;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import static com.panforge.demeter.core.utils.DateTimeUtils.parseRequestTimestamp;
@@ -119,17 +118,17 @@ public final class ListIdentifiersRequest extends RequestWithToken {
    * @return request
    * @throws BadArgumentException if creation fails
    */
-  public static ListIdentifiersRequest create(Map<String, List<String>> params) throws BadArgumentException {
+  public static ListIdentifiersRequest create(Map<String, String[]> params) throws BadArgumentException {
     params = trimParams(params);
     ListIdentifiersRequest request = new ListIdentifiersRequest();
     if (params.containsKey("resumptionToken")) {
       ParamProcessor
               .with("resumptionToken", v -> {
                 if (v != null) {
-                  if (v.size() > 1) {
-                    throw new BadArgumentException(String.format("Illegal number of resumption tokens: %s", v.stream().collect(Collectors.joining(", "))));
+                  if (v.length > 1) {
+                    throw new BadArgumentException(String.format("Illegal number of resumption tokens: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
                   }
-                  request.resumptionToken = v.get(0);
+                  request.resumptionToken = v[0];
                 }
               })
               .build().execute(params);
@@ -137,35 +136,35 @@ public final class ListIdentifiersRequest extends RequestWithToken {
       ParamProcessor
               .with("from", v -> {
                 if (v != null) {
-                  if (v.size() > 1) {
-                    throw new BadArgumentException(String.format("Illegal number of identifiers: %s", v.stream().collect(Collectors.joining(", "))));
+                  if (v.length > 1) {
+                    throw new BadArgumentException(String.format("Illegal number of identifiers: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
                   }
-                  request.from = parseRequestTimestamp(v.get(0));
+                  request.from = parseRequestTimestamp(v[0]);
                 }
               })
               .with("until", v -> {
                 if (v != null) {
-                  if (v.size() > 1) {
-                    throw new BadArgumentException(String.format("Illegal number of identifiers: %s", v.stream().collect(Collectors.joining(", "))));
+                  if (v.length > 1) {
+                    throw new BadArgumentException(String.format("Illegal number of identifiers: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
                   }
-                  request.until = parseRequestTimestamp(v.get(0));
+                  request.until = parseRequestTimestamp(v[0]);
                 }
               })
               .with("metadataPrefix", v -> {
                 if (v == null) {
                   throw new BadArgumentException(String.format("Missing metadataPrefix"));
                 }
-                if (v.size() > 1) {
-                  throw new BadArgumentException(String.format("Illegal number of identifiers: %s", v.stream().collect(Collectors.joining(", "))));
+                if (v.length > 1) {
+                  throw new BadArgumentException(String.format("Illegal number of identifiers: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
                 }
-                request.metadataPrefix = v.get(0);
+                request.metadataPrefix = v[0];
               })
               .with("set", v -> {
                 if (v != null) {
-                  if (v.size() > 1) {
-                    throw new BadArgumentException(String.format("Illegal number of identifiers: %s", v.stream().collect(Collectors.joining(", "))));
+                  if (v.length > 1) {
+                    throw new BadArgumentException(String.format("Illegal number of identifiers: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
                   }
-                  request.set = v.get(0);
+                  request.set = v[0];
                 }
               })
               .build().execute(params);
@@ -174,23 +173,23 @@ public final class ListIdentifiersRequest extends RequestWithToken {
   }
 
   @Override
-  public Map<String, List<String>> getParameters() {
-    Map<String,List<String>> parameters = new HashMap<>();
-    parameters.put("verb", Arrays.asList(new String[]{ verb.name() }));
+  public Map<String, String[]> getParameters() {
+    Map<String,String[]> parameters = new HashMap<>();
+    parameters.put("verb", new String[]{ verb.name() });
     if (resumptionToken!=null) {
-      parameters.put("resumptionToken", Arrays.asList(new String[]{ resumptionToken }));
+      parameters.put("resumptionToken", new String[]{ resumptionToken });
     }
     if (from!=null) {
-      parameters.put("from", Arrays.asList(new String[]{ from.format(DateTimeFormatter.ISO_DATE_TIME) }));
+      parameters.put("from", new String[]{ from.format(DateTimeFormatter.ISO_DATE_TIME) });
     }
     if (until!=null) {
-      parameters.put("from", Arrays.asList(new String[]{ until.format(DateTimeFormatter.ISO_DATE_TIME) }));
+      parameters.put("from", new String[]{ until.format(DateTimeFormatter.ISO_DATE_TIME) });
     }
     if (metadataPrefix!=null) {
-      parameters.put("from", Arrays.asList(new String[]{ metadataPrefix }));
+      parameters.put("from", new String[]{ metadataPrefix });
     }
     if (set!=null) {
-      parameters.put("from", Arrays.asList(new String[]{ set }));
+      parameters.put("from", new String[]{ set });
     }
     return parameters;
   }

@@ -15,7 +15,6 @@
  */
 package com.panforge.demeter.core.utils;
 
-import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -32,7 +31,7 @@ public class QueryUtilsTest {
   @Test
   public void testParamsToQuery() {
     String inputQuery = "A=1&B=2&A=3";
-    Map<String, List<String>> params = QueryUtils.queryToParams(inputQuery);
+    Map<String, String[]> params = QueryUtils.queryToParams(inputQuery);
     String query = QueryUtils.paramsToQuery(params);
     
     assertEquals("Invalid length of query", inputQuery.length(), query.length());
@@ -40,18 +39,18 @@ public class QueryUtilsTest {
 
   @Test
   public void testQueryToParams() {
-    Map<String, List<String>> params = QueryUtils.queryToParams("A=1&B=2&A=3");
+    Map<String, String[]> params = QueryUtils.queryToParams("A=1&B=2&A=3");
     
     assertEquals("Invalid number of parameters", 2, params.size());
     assertTrue("Missing A", params.get("A")!=null);
     assertTrue("Missing B", params.get("B")!=null);
-    assertEquals("Invalid number of valueas for A", 2, params.get("A").size());
-    assertEquals("Invalid number of valueas for B", 1, params.get("B").size());
+    assertEquals("Invalid number of valueas for A", 2, params.get("A").length);
+    assertEquals("Invalid number of valueas for B", 1, params.get("B").length);
   }
   
   @Test
   public void testRejectKeys() {
-    Map<String, List<String>> params = QueryUtils.queryToParams("A=1&B=2&A=3");
+    Map<String, String[]> params = QueryUtils.queryToParams("A=1&B=2&A=3");
     params = QueryUtils.rejectKeys(params, "A");
     
     assertEquals("Invalid number of parameters", 1, params.size());

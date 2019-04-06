@@ -121,7 +121,7 @@ public class Service {
    * @return response
    */
   public String execute(String query) {
-    Map<String, List<String>> params = QueryUtils.queryToParams(query);
+    Map<String, String[]> params = QueryUtils.queryToParams(query);
     try {
       Request request = parser.parse(params);
       switch (request.verb) {

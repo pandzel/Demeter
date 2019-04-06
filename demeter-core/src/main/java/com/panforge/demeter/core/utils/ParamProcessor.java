@@ -65,15 +65,15 @@ public class ParamProcessor {
    * @param params input parameters
    * @throws BadArgumentException if error processing request
    */
-  public void execute(Map<String, List<String>> params) throws BadArgumentException {
+  public void execute(Map<String, String[]> params) throws BadArgumentException {
     Validate.notNull(params, "Missing parameters");
     List<ErrorInfo> errorInfos = new ArrayList<>();
     
-    for (Map.Entry<String, List<String>> param: params.entrySet()) {
+    for (Map.Entry<String, String[]> param: params.entrySet()) {
       Setter op = actors.remove(param.getKey());
       if (op==null) {
         errorInfos.add(new ErrorInfo(ErrorCode.badArgument, 
-                String.format("Unrecognized argument: %s", param.getValue().stream().map(v -> String.format("%s=%s", param.getKey(), v)).collect(Collectors.joining(", ")))));
+                String.format("Unrecognized argument: %s", Arrays.stream(param.getValue()).map(v -> String.format("%s=%s", param.getKey(), v)).collect(Collectors.joining(", ")))));
       } else {
         try {
           op.set(param.getValue());
@@ -84,7 +84,7 @@ public class ParamProcessor {
     }
     
     for (Map.Entry<String, Setter> actor: actors.entrySet()) {
-      List<String> values = params.get(actor.getKey());
+      String[] values = params.get(actor.getKey());
       try {
         actor.getValue().set(values);
       } catch (ProtocolException ex) {
@@ -147,6 +147,6 @@ public class ParamProcessor {
      * @param parameters input parameters
      * @throws ProtocolException if error setting parameter
      */
-    void set(List<String> parameters) throws ProtocolException;
+    void set(String[] parameters) throws ProtocolException;
   }
 }

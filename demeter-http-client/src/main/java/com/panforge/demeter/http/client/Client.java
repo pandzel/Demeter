@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -96,9 +97,9 @@ public class Client implements Closeable {
   public Response execute(Request request) throws ProtocolException, URISyntaxException, IOException {
     Validate.notNull(request, "Missing request");
 
-    Map<String, List<String>> params = request.getParameters();
+    Map<String, String[]> params = request.getParameters();
     List<NameValuePair> parmPairs = params.entrySet().stream()
-            .flatMap(e -> e.getValue().stream().map(v -> new BasicNameValuePair(e.getKey(), v)))
+            .flatMap(e -> Arrays.stream(e.getValue()).map(v -> new BasicNameValuePair(e.getKey(), v)))
             .collect(Collectors.toList());
 
     URIBuilder builder = new URIBuilder()

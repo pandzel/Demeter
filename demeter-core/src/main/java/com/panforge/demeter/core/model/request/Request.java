@@ -17,7 +17,6 @@ package com.panforge.demeter.core.model.request;
 
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.utils.QueryUtils;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,7 +38,7 @@ public abstract class Request {
    * Gets parameters.
    * @return map of parameters
    */
-  public abstract Map<String,List<String>> getParameters();
+  public abstract Map<String,String[]> getParameters();
   
   @Override
   public String toString() {

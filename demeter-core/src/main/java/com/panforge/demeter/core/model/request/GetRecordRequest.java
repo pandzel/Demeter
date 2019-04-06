@@ -22,7 +22,6 @@ import static com.panforge.demeter.core.utils.QueryUtils.trimParams;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.Validate;
@@ -78,7 +77,7 @@ public final class GetRecordRequest extends Request {
    * @return request
    * @throws BadArgumentException if invalid parameters
    */
-  public static GetRecordRequest create(Map<String,List<String>> params) throws BadArgumentException {
+  public static GetRecordRequest create(Map<String,String[]> params) throws BadArgumentException {
     params = trimParams(params);
     GetRecordRequest request = new GetRecordRequest();
     ParamProcessor
@@ -86,36 +85,36 @@ public final class GetRecordRequest extends Request {
               if (v==null) {
                 throw new BadArgumentException(String.format("Missing identifier"));
               }
-              if (v.size()>1) {
-                 throw new BadArgumentException(String.format("Illegal number of identifiers: %s", v.stream().collect(Collectors.joining(", "))));
+              if (v.length>1) {
+                 throw new BadArgumentException(String.format("Illegal number of identifiers: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
               }
               try {
-                request.identifier = URI.create(v.get(0));
+                request.identifier = URI.create(v[0]);
               } catch (IllegalArgumentException|NullPointerException ex) {
-                throw new BadArgumentException(String.format("Invalid identifier format: %s", v.get(0)));
+                throw new BadArgumentException(String.format("Invalid identifier format: %s", v[0]));
               }
             })
             .with("metadataPrefix", v -> {
               if (v==null) {
                 throw new BadArgumentException(String.format("Missing metadataPrefix"));
               }
-              if (v.size()>1) {
-                 throw new BadArgumentException(String.format("Illegal number of metadata formats: %s", v.stream().collect(Collectors.joining(", "))));
+              if (v.length>1) {
+                 throw new BadArgumentException(String.format("Illegal number of metadata formats: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
               }
-              request.metadataPrefix = v.get(0);
+              request.metadataPrefix = v[0];
             })
             .build().execute(params);
     return request;
   }
   @Override
-  public Map<String, List<String>> getParameters() {
-    Map<String,List<String>> parameters = new HashMap<>();
-    parameters.put("verb", Arrays.asList(new String[]{ verb.name() }));
+  public Map<String, String[]> getParameters() {
+    Map<String,String[]> parameters = new HashMap<>();
+    parameters.put("verb", new String[]{ verb.name() });
     if (metadataPrefix!=null) {
-      parameters.put("metadataPrefix", Arrays.asList(new String[]{ metadataPrefix }));
+      parameters.put("metadataPrefix", new String[]{ metadataPrefix });
     }
     if (identifier!=null) {
-      parameters.put("identifier", Arrays.asList(new String[]{ identifier.toASCIIString() }));
+      parameters.put("identifier", new String[]{ identifier.toASCIIString() });
     }
     return parameters;
   }

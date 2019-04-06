@@ -19,9 +19,7 @@ import com.panforge.demeter.core.utils.ParamProcessor;
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.api.exception.BadArgumentException;
 import static com.panforge.demeter.core.utils.QueryUtils.trimParams;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,16 +40,16 @@ public final class IdentifyRequest extends Request {
    * @return request
    * @throws BadArgumentException if creation fails
    */
-  public static IdentifyRequest create(Map<String,List<String>> params) throws BadArgumentException {
+  public static IdentifyRequest create(Map<String,String[]> params) throws BadArgumentException {
     params = trimParams(params);
     ParamProcessor.build().execute(params);
     return new IdentifyRequest();
   }
   
   @Override
-  public Map<String, List<String>> getParameters() {
-    Map<String,List<String>> parameters = new HashMap<>();
-    parameters.put("verb", Arrays.asList(new String[]{ verb.name() }));
+  public Map<String, String[]> getParameters() {
+    Map<String,String[]> parameters = new HashMap<>();
+    parameters.put("verb", new String[]{ verb.name() });
     return parameters;
   }
 }

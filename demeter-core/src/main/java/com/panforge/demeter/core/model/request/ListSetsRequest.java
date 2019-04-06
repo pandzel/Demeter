@@ -21,7 +21,6 @@ import com.panforge.demeter.core.api.exception.BadArgumentException;
 import static com.panforge.demeter.core.utils.QueryUtils.trimParams;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.Validate;
@@ -54,16 +53,16 @@ public final class ListSetsRequest extends RequestWithToken {
    * @return request
    * @throws BadArgumentException if creation fails
    */
-  public static ListSetsRequest create(Map<String, List<String>> params) throws BadArgumentException {
+  public static ListSetsRequest create(Map<String, String[]> params) throws BadArgumentException {
     params = trimParams(params);
     ListSetsRequest request = new ListSetsRequest();
     ParamProcessor
             .with("resumptionToken", v -> {
               if (v!=null) {
-                if (v.size() > 1) {
-                  throw new BadArgumentException(String.format("Illegal number of resumption tokens: %s", v.stream().collect(Collectors.joining(", "))));
+                if (v.length > 1) {
+                  throw new BadArgumentException(String.format("Illegal number of resumption tokens: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
                 }
-                request.resumptionToken = v.get(0);
+                request.resumptionToken = v[0];
               }
             })
             .build().execute(params);
@@ -71,11 +70,11 @@ public final class ListSetsRequest extends RequestWithToken {
   }
 
   @Override
-  public Map<String, List<String>> getParameters() {
-    Map<String,List<String>> parameters = new HashMap<>();
-    parameters.put("verb", Arrays.asList(new String[]{ verb.name() }));
+  public Map<String, String[]> getParameters() {
+    Map<String,String[]> parameters = new HashMap<>();
+    parameters.put("verb", new String[]{ verb.name() });
     if (resumptionToken!=null) {
-      parameters.put("resumptionToken", Arrays.asList(new String[]{ resumptionToken }));
+      parameters.put("resumptionToken", new String[]{ resumptionToken });
     }
     return parameters;
   }
