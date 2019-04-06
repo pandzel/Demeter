@@ -83,20 +83,6 @@ public class Service {
     this.parser = new RequestParser(ctx);
     this.factory = new ResponseFactory(ctx);
   }
-  
-  /**
-   * Initializes repository.
-   */
-  public void construct() {
-    repo.construct(ctx);
-  }
-  
-  /**
-   * Destroys repository.
-   */
-  public void destroy() {
-    repo.destroy();
-  }
 
   /**
    * Creates instance of the service.

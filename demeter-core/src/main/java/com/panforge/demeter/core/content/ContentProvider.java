@@ -16,7 +16,6 @@
 package com.panforge.demeter.core.content;
 
 import com.panforge.demeter.core.api.Config;
-import com.panforge.demeter.core.api.Context;
 import com.panforge.demeter.core.api.exception.CannotDisseminateFormatException;
 import com.panforge.demeter.core.api.exception.IdDoesNotExistException;
 import com.panforge.demeter.core.api.exception.NoMetadataFormatsException;
@@ -32,16 +31,6 @@ import java.net.URI;
  * Content provider.
  */
 public interface ContentProvider {
-  /**
-   * Initializes provider.
-   * @param ctx application context
-   */
-  default void construct(Context ctx) {}
-  
-  /**
-   * Destroys provider
-   */
-  default void destroy() {}
   
   /**
    * Gets configuration.
