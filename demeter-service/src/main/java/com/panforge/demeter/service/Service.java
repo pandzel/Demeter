@@ -100,16 +100,25 @@ public class Service {
   public Service(ContentProvider repo) {
     this(repo, new DefaultTokenManager());
   }
-  
+
   /**
-   * Executes query.
-   * @param query query
+   * Executes OAI-PMH request.
+   * @param query HTTP query
    * @return response
    */
   public String execute(String query) {
-    Map<String, String[]> params = QueryUtils.queryToParams(query);
+    Map<String, String[]> parameters = QueryUtils.queryToParams(query);
+    return execute(parameters);
+  }
+  
+  /**   
+   * Executes OAI-PMH request.
+   * @param parameters HTTP parameters
+   * @return response
+   */
+  public String execute(Map<String, String[]> parameters) {
     try {
-      Request request = parser.parse(params);
+      Request request = parser.parse(parameters);
       switch (request.verb) {
         case Identify:
           return createIdentifyResponse((IdentifyRequest) request);
@@ -145,10 +154,10 @@ public class Service {
           }
           
         default:
-          return factory.createErrorResponse(OffsetDateTime.now(), params, new ErrorInfo[]{new ErrorInfo(ErrorCode.badArgument, "Error parsing request.")});
+          return factory.createErrorResponse(OffsetDateTime.now(), parameters, new ErrorInfo[]{new ErrorInfo(ErrorCode.badArgument, "Error parsing request.")});
       }
     } catch (ProtocolException pex) {
-      return factory.createErrorResponse(OffsetDateTime.now(), params, pex.infos);
+      return factory.createErrorResponse(OffsetDateTime.now(), parameters, pex.infos);
     }
   }
   

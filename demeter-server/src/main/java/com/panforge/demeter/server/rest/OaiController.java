@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.server.rest;
 
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
@@ -45,8 +46,8 @@ public class OaiController {
   @RequestMapping(value = "/oai", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<String> execute(HttpServletRequest request) {
     try {
-      String query = request.getQueryString();
-      return new ResponseEntity<>(service.execute(query), HttpStatus.OK);
+      Map<String, String[]> parameters = request.getParameterMap();
+      return new ResponseEntity<>(service.execute(parameters), HttpStatus.OK);
     } catch (Exception ex) {
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
