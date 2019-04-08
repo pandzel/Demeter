@@ -18,6 +18,8 @@ package com.panforge.demeter.server.beans;
 import com.panforge.demeter.service.DefaultTokenManager;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class TokenManagerBean extends DefaultTokenManager {
+  private static final Logger LOG = LoggerFactory.getLogger(TokenManagerBean.class);
 
   @Autowired
   public TokenManagerBean( @Value("${tokenExpiration}") long expiration) {
@@ -35,11 +38,11 @@ public class TokenManagerBean extends DefaultTokenManager {
   
   @PostConstruct
   public void construct() {
-    
+    LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
   }
   
   @PreDestroy
   public void destroy() {
-    
+    LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
   }
 }

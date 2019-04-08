@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service;
 import com.panforge.demeter.core.content.Cursor;
 import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessorService;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.panforge.demeter.server.RootFolderService;
 import com.panforge.demeter.server.ScanningService;
@@ -50,14 +49,15 @@ import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.content.Filter;
 import java.util.List;
 import java.util.stream.StreamSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Repository bean.
  */
 @Service
 public class ContentProviderBean implements ContentProvider {
-  
-  private static final Logger LOG = Logger.getLogger(ContentProviderBean.class.getCanonicalName());
+  private static final Logger LOG = LoggerFactory.getLogger(ContentProviderBean.class);
   
   @Autowired
   private RootFolderService rootFolderServise;
@@ -77,11 +77,12 @@ public class ContentProviderBean implements ContentProvider {
   public void construct() {
     new Thread(()->scanningService.scan(rootFolderServise.getRootFolder(), md->storeDescriptor(md)))
             .start();
+    LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
   }
   
   @PreDestroy
   public void destroy() {
-    
+    LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
   }
 
   @Override

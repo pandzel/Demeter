@@ -32,10 +32,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +45,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ConfigServiceBean implements ConfigService {
   
-  private static final Logger LOG = Logger.getLogger(ConfigServiceBean.class.getCanonicalName());
+  private static final Logger LOG = LoggerFactory.getLogger(ConfigServiceBean.class);
   private static final ObjectMapper MAPPER = new ObjectMapper();
   static {
     MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
@@ -65,23 +65,25 @@ public class ConfigServiceBean implements ConfigService {
       try ( InputStream configStream = new FileInputStream(configFile);
             Reader configReader = new BufferedReader(new InputStreamReader(configStream, "UTF-8"))) {
         config = MAPPER.readValue(configReader, Config.class);
+        LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
       } catch (IOException ex) {
-        LOG.log(Level.SEVERE, String.format("Error reading configuration from: '%s'", configFile), ex);
+        LOG.error(String.format("Error reading configuration from: '%s'", configFile), ex);
       }
     } else {
       // write template configuration if doesn't exist
       try ( OutputStream configStream = new FileOutputStream(configFile);
             Writer configWritter = new BufferedWriter(new OutputStreamWriter(configStream, "UTF-8")) ) {
         MAPPER.writeValue(configWritter, config);
+        LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
       } catch (IOException ex) {
-        LOG.log(Level.SEVERE, String.format("Error writing configuration into: '%s'", configFile), ex);
+        LOG.error(String.format("Error writing configuration into: '%s'", configFile), ex);
       }
     }
   }
   
   @PreDestroy
   public void destroy() {
-    
+    LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
   }
 
   @Override

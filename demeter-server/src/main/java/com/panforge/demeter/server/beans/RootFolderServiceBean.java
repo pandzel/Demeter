@@ -21,12 +21,15 @@ import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.panforge.demeter.server.RootFolderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Root folder bean.
  */
 @Service
 public class RootFolderServiceBean implements RootFolderService {
+  private static final Logger LOG = LoggerFactory.getLogger(RootFolderServiceBean.class);
   
   @Value("${dataPath}")
   private String dataPath;
@@ -37,11 +40,12 @@ public class RootFolderServiceBean implements RootFolderService {
     File dataPathFile = new File(dataPath);
     rootFolder = dataPathFile.isAbsolute()? dataPathFile: new File(System.getProperty("user.home"), dataPathFile.getPath());
     rootFolder.mkdirs();
+    LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
   }
   
   @PreDestroy
   public void destroy() {
-    
+    LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
   }
 
   @Override

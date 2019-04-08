@@ -33,6 +33,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -45,6 +47,7 @@ import org.w3c.dom.NodeList;
  */
 @Service
 public class OaiDcProcessorBean implements MetaProcessor {
+  private static final Logger LOG = LoggerFactory.getLogger(OaiDcProcessorBean.class);
 
   private final static XPathFactory xPathFactory = XPathFactory.newInstance();
   private final static XPath xPath = xPathFactory.newXPath();
@@ -70,12 +73,12 @@ public class OaiDcProcessorBean implements MetaProcessor {
 
   @PostConstruct
   public void construct() {
-
+    LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
   }
 
   @PreDestroy
   public void destroy() {
-
+    LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
   }
 
   @Override

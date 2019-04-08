@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -34,18 +36,19 @@ import org.w3c.dom.Document;
  */
 @Service
 public class MetaProcessorServiceBean implements MetaProcessorService {
+  private static final Logger LOG = LoggerFactory.getLogger(MetaProcessorServiceBean.class);
   
   @Autowired(required = false)
   private List<MetaProcessor> metadataProcessors;
   
   @PostConstruct
   public void construct() {
-    
+    LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
   }
   
   @PreDestroy
   public void destroy() {
-    
+    LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
   }
   
   @Override

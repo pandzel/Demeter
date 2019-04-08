@@ -20,16 +20,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.panforge.demeter.core.content.ContentProvider;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Service bean.
  */
 @Service
 public class ServiceBean extends com.panforge.demeter.service.Service {
+  private static final Logger LOG = LoggerFactory.getLogger(ServiceBean.class);
 
   @Autowired 
   public ServiceBean(ContentProvider repo, TokenManager tokenManager, @Value("${batchSize}") int batchSize) {
     super(repo, tokenManager, batchSize);
+  }
+  
+  @PostConstruct
+  public void construct() {
+    LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
+  }
+  
+  @PreDestroy
+  public void destroy() {
+    LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
   }
   
 }

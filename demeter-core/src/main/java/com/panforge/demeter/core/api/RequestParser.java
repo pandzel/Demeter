@@ -25,7 +25,6 @@ import com.panforge.demeter.core.model.request.ListMetadataFormatsRequest;
 import com.panforge.demeter.core.model.request.ListRecordsRequest;
 import com.panforge.demeter.core.model.request.ListSetsRequest;
 import com.panforge.demeter.core.model.request.Request;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import static com.panforge.demeter.core.utils.QueryUtils.queryToParams;
