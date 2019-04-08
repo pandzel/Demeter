@@ -52,9 +52,11 @@ public class OaiController {
   @RequestMapping(value = "/oai", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<String> execute(HttpServletRequest request) {
     try {
+      LOG.debug(String.format("Received request '%s'", request.getQueryString()));
       Map<String, String[]> parameters = request.getParameterMap();
       return new ResponseEntity<>(service.execute(parameters), HttpStatus.OK);
     } catch (Exception ex) {
+      LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
