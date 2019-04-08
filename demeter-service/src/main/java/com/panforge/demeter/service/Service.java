@@ -101,7 +101,7 @@ public class Service {
    * @param repo repository
    */
   public Service(Config config, ContentProvider repo) {
-    this(config, repo, new DefaultTokenManager());
+    this(config, repo, new SimpleTokenManager());
   }
 
   /**

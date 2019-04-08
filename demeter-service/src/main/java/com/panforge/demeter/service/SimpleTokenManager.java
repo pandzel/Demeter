@@ -25,9 +25,9 @@ import org.apache.commons.collections4.map.PassiveExpiringMap;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Default token manager.
+ * Simple token manager.
  */
-public class DefaultTokenManager implements TokenManager {
+public class SimpleTokenManager implements TokenManager {
   public static final long DEFAULT_EXPIRATION = 60000;
   private final PassiveExpiringMap<String, TokenEntry> tokens;
   private final long expiration;
@@ -36,7 +36,7 @@ public class DefaultTokenManager implements TokenManager {
    * Creates instance of the default token manager.
    * @param expiration expiration time (in milliseconds) of the token
    */
-  public DefaultTokenManager(long expiration) {
+  public SimpleTokenManager(long expiration) {
     this.expiration = expiration;
     this.tokens = new PassiveExpiringMap<>(expiration);
   }
@@ -44,7 +44,7 @@ public class DefaultTokenManager implements TokenManager {
   /**
    * Creates instance of the default token manager.
    */
-  public DefaultTokenManager() {
+  public SimpleTokenManager() {
     this(DEFAULT_EXPIRATION);
   }
 

@@ -15,7 +15,7 @@
  */
 package com.panforge.demeter.server.beans;
 
-import com.panforge.demeter.service.DefaultTokenManager;
+import com.panforge.demeter.service.SimpleTokenManager;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
  * Token manager bean.
  */
 @Service
-public class TokenManagerBean extends DefaultTokenManager {
+public class TokenManagerBean extends SimpleTokenManager {
   private static final Logger LOG = LoggerFactory.getLogger(TokenManagerBean.class);
 
   @Autowired
