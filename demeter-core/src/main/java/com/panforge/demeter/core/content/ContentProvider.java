@@ -15,7 +15,6 @@
  */
 package com.panforge.demeter.core.content;
 
-import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.core.api.exception.CannotDisseminateFormatException;
 import com.panforge.demeter.core.api.exception.IdDoesNotExistException;
 import com.panforge.demeter.core.api.exception.NoMetadataFormatsException;
@@ -31,12 +30,6 @@ import java.net.URI;
  * Content provider.
  */
 public interface ContentProvider {
-  
-  /**
-   * Gets configuration.
-   * @return configuration
-   */
-  Config getConfig();
   
   /**
    * Lists metadata formats.

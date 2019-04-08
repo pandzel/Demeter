@@ -15,8 +15,6 @@
  */
 package com.panforge.demeter.server.beans;
 
-import com.panforge.demeter.server.ConfigService;
-import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.core.api.exception.CannotDisseminateFormatException;
 import com.panforge.demeter.core.api.exception.IdDoesNotExistException;
 import com.panforge.demeter.core.api.exception.NoMetadataFormatsException;
@@ -63,9 +61,6 @@ public class ContentProviderBean implements ContentProvider {
   private RootFolderService rootFolderServise;
   
   @Autowired
-  private ConfigService configService;
-  
-  @Autowired
   private ScanningService scanningService;
   
   @Autowired
@@ -83,11 +78,6 @@ public class ContentProviderBean implements ContentProvider {
   @PreDestroy
   public void destroy() {
     LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
-  }
-
-  @Override
-  public Config getConfig() {
-    return configService.getConfig();
   }
 
   @Override

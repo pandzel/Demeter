@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.service;
 
+import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.content.Cursor;
 import com.panforge.demeter.core.api.Context;
@@ -49,7 +50,6 @@ import com.panforge.demeter.core.model.response.elements.Set;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.utils.QueryUtils;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Supplier;
@@ -70,35 +70,38 @@ public class Service {
 
   /**
    * Creates instance of the service.
+   * @param config configuration
    * @param repo repository
    * @param tokenManager token manager
    * @param batchSize batch size
    */
-  public Service(ContentProvider repo, TokenManager tokenManager, int batchSize) {
+  public Service(Config config, ContentProvider repo, TokenManager tokenManager, int batchSize) {
     this.repo = repo;
     this.tokenManager = tokenManager;
     this.batchSize = batchSize;
     
-    this.ctx = new Context(repo.getConfig());
+    this.ctx = new Context(config);
     this.parser = new RequestParser(ctx);
     this.factory = new ResponseFactory(ctx);
   }
 
   /**
    * Creates instance of the service.
+   * @param config configuration
    * @param repo repository
    * @param tokenManager token manager
    */
-  public Service(ContentProvider repo, TokenManager tokenManager) {
-    this(repo, tokenManager, DEFAULT_BATCH_SIZE);
+  public Service(Config config, ContentProvider repo, TokenManager tokenManager) {
+    this(config, repo, tokenManager, DEFAULT_BATCH_SIZE);
   }
 
   /**
    * Creates instance of the service.
+   * @param config configuration
    * @param repo repository
    */
-  public Service(ContentProvider repo) {
-    this(repo, new DefaultTokenManager());
+  public Service(Config config, ContentProvider repo) {
+    this(config, repo, new DefaultTokenManager());
   }
 
   /**
@@ -162,7 +165,7 @@ public class Service {
   }
   
   private String createIdentifyResponse(IdentifyRequest request) {
-    IdentifyResponse idetifyResponse = IdentifyResponse.createFromConfig(repo.getConfig(), null, OffsetDateTime.now(), request);
+    IdentifyResponse idetifyResponse = IdentifyResponse.createFromConfig(ctx.config, null, OffsetDateTime.now(), request);
     return factory.createIdentifyResponse(idetifyResponse);
   }
   
