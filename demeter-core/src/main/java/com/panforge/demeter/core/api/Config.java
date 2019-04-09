@@ -29,7 +29,7 @@ public class Config {
   /** protocol version (default: 2.0) */
   public String protocolVersion = "2.0";
   /** administrators emails */
-  public String[] adminEmail;
+  public String[] adminEmail = new String[]{};
   /** earliest date stamp */
   public OffsetDateTime earliestDatestamp;
   /** determines how information is stored about deleted records (default: no)*/
