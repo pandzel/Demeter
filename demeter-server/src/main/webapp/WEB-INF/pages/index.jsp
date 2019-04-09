@@ -37,8 +37,11 @@
           Your root folder is: <span class="info">${rootFolder}</span>.<br>
           <span class="explanation">Copy any of your metadata to this folder to make it available.</span>
           <p/>
-          Your configuration file is: <span class="info">${configFile}</span><br>
+          Your identify configuration file is: <span class="info">${configFile}</span><br>
           <span class="explanation">Update this file for 'Identify' request.</span>
+          <p/>
+          Your service configuration file is: <span class="info">${propFile}</span><br>
+          <span class="explanation">Make further modifications or leave as is.</span>
           <p/>
           Please, note that any change to the configuration file or to the content of the root folder
           will be updated after next time the server is restarted.

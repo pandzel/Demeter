@@ -39,6 +39,7 @@ public class ViewController extends AbstractController {
 		ModelAndView model = new ModelAndView("index");
     model.addObject("rootFolder", rootFolderService.getRootFolder().getAbsolutePath());
     model.addObject("configFile", configService.getConfigFile().getAbsoluteFile());
+    model.addObject("propFile", Thread.currentThread().getContextClassLoader().getResource("config/config.properties"));
 		
 		return model;
 	}  
