@@ -34,14 +34,22 @@ import java.net.URI;
  */
 public class MockupContentProvider implements ContentProvider {
 
+  private final static MetadataFormat oai_dc = new MetadataFormat(
+          "oai_dc",
+          "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
+          "http://www.openarchives.org/OAI/2.0/oai_dc/"
+  );
+  
+  private final static Set mainSet = new Set("main", "Main set");
+
   @Override
   public Cursor<MetadataFormat> listMetadataFormats(URI identifier) throws IdDoesNotExistException, NoMetadataFormatsException {
-    return Cursor.of(new MetadataFormat[0]);
+    return Cursor.of(new MetadataFormat[]{oai_dc});
   }
 
   @Override
   public Cursor<Set> listSets() throws NoSetHierarchyException {
-    return Cursor.of(new Set[0]);
+    return Cursor.of(new Set[]{mainSet});
   }
 
   @Override

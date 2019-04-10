@@ -19,8 +19,8 @@ import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.core.api.ResponseParser;
 import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.model.Verb;
-import com.panforge.demeter.core.model.request.IdentifyRequest;
-import com.panforge.demeter.core.model.response.Response;
+import com.panforge.demeter.core.model.request.*;
+import com.panforge.demeter.core.model.response.*;
 import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -32,6 +32,7 @@ import org.junit.BeforeClass;
  * @author Piotr Andzel
  */
 public class ServiceTest {
+  private static Config config;
   private static Service service;
   private static ResponseParser respParser;
   private static ContentProvider contentProvider;
@@ -41,7 +42,8 @@ public class ServiceTest {
   
   @BeforeClass
   public static void setUpClass() {
-    Config config = new Config();
+    config = new Config();
+    config.repositoryName = "Mockup repository";
     contentProvider = new MockupContentProvider();
     service = new Service(config, contentProvider);
     respParser = new ResponseParser();
@@ -52,7 +54,7 @@ public class ServiceTest {
   }
   
   @Test
-  public void testConfig() throws Exception {
+  public void testIdentify() throws Exception {
     IdentifyRequest request = new IdentifyRequest();
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = service.execute(parameters);
@@ -61,5 +63,38 @@ public class ServiceTest {
     assertNotNull("Empty response", response);
     assertNotNull("Incomplete response", response.request);
     assertEquals("Invalid response type", Verb.Identify, response.request.verb);
+    
+    IdentifyResponse responseObj = (IdentifyResponse)response;
+    assertEquals("Invalid identify", config.repositoryName, responseObj.repositoryName);
+  }
+  
+  @Test
+  public void testListMetadataFormats() throws Exception {
+    ListMetadataFormatsRequest request = new ListMetadataFormatsRequest(null);
+    Map<String, String[]> parameters = request.getParameters();
+    String responseStr = service.execute(parameters);
+    Response response = respParser.parse(responseStr);
+    
+    assertNotNull("Empty response", response);
+    assertNotNull("Incomplete response", response.request);
+    assertEquals("Invalid response type", Verb.ListMetadataFormats, response.request.verb);
+    
+    ListMetadataFormatsResponse responseObj = (ListMetadataFormatsResponse)response;
+    assertEquals("Invalid number of formats", contentProvider.listMetadataFormats(null).total(), responseObj.metadataFormats.length);
+  }
+  
+  @Test
+  public void testListSets() throws Exception {
+    ListSetsRequest request = new ListSetsRequest();
+    Map<String, String[]> parameters = request.getParameters();
+    String responseStr = service.execute(parameters);
+    Response response = respParser.parse(responseStr);
+    
+    assertNotNull("Empty response", response);
+    assertNotNull("Incomplete response", response.request);
+    assertEquals("Invalid response type", Verb.ListSets, response.request.verb);
+    
+    ListSetsResponse responseObj = (ListSetsResponse)response;
+    assertEquals("Invalid number of formats", contentProvider.listSets().total(), responseObj.listSets.length);
   }
 }

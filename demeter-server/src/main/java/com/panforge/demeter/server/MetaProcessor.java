@@ -17,7 +17,6 @@ package com.panforge.demeter.server;
 
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import java.io.File;
-import java.util.Set;
 import org.w3c.dom.Document;
 
 /**
