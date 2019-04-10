@@ -16,9 +16,8 @@
 package com.panforge.demeter.service;
 
 import com.panforge.demeter.core.api.Config;
-import com.panforge.demeter.core.api.Context;
-import com.panforge.demeter.core.api.RequestParser;
 import com.panforge.demeter.core.api.ResponseParser;
+import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.model.request.IdentifyRequest;
 import com.panforge.demeter.core.model.response.Response;
@@ -33,10 +32,9 @@ import org.junit.BeforeClass;
  * @author Piotr Andzel
  */
 public class ServiceTest {
-  private static Context ctx;
   private static Service service;
-  private static RequestParser reqParser;
   private static ResponseParser respParser;
+  private static ContentProvider contentProvider;
   
   public ServiceTest() {
   }
@@ -44,9 +42,8 @@ public class ServiceTest {
   @BeforeClass
   public static void setUpClass() {
     Config config = new Config();
-    ctx = new Context(config);
-    service = new Service(config, new MockupContentProvider());
-    reqParser = new RequestParser(ctx);
+    contentProvider = new MockupContentProvider();
+    service = new Service(config, contentProvider);
     respParser = new ResponseParser();
   }
   
