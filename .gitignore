@@ -26,3 +26,4 @@ hs_err_pid*
 /demeter-service/target/
 /demeter-server/target/
 /target/
+/demeter-service/nbproject/
