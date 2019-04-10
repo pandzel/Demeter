@@ -38,17 +38,6 @@ import org.apache.commons.lang3.Validate;
  * It is used to parse query strings into the {@link Request}.
  */
 public class RequestParser {
-  private final Context CTX;
-
-  /**
-   * Creates instance of the parser.
-   * @param CTX application context
-   */
-  public RequestParser(Context CTX) {
-    Validate.notNull(CTX, "Missing context");
-    this.CTX = CTX;
-  }
-  
   
   /**
    * Parses query.

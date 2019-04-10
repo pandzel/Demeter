@@ -16,7 +16,6 @@
 package com.panforge.demeter.core;
 
 import com.panforge.demeter.core.api.Config;
-import com.panforge.demeter.core.api.Context;
 import com.panforge.demeter.core.api.RequestParser;
 import com.panforge.demeter.core.api.exception.ProtocolException;
 import com.panforge.demeter.core.model.Verb;
@@ -37,15 +36,13 @@ import org.junit.BeforeClass;
  */
 public class RequestParserTest {
   private static Config config;
-  private static Context ctx;
   private static RequestParser p;
 
   @BeforeClass
   public static void initialize() {
     config = new Config();
     config.baseURL = "http://localhost/oaipmh";
-    ctx = new Context(config);
-    p = new RequestParser(ctx);
+    p = new RequestParser();
   }
   
   @Test(expected = ProtocolException.class)

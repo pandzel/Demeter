@@ -81,7 +81,7 @@ public class Service {
     this.batchSize = batchSize;
     
     this.ctx = new Context(config);
-    this.parser = new RequestParser(ctx);
+    this.parser = new RequestParser();
     this.factory = new ResponseFactory(ctx);
   }
 
