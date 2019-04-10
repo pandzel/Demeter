@@ -48,7 +48,7 @@ public class QueryUtils {
                 combined.addAll(Arrays.asList(values));
               }
               combined.add(kvp[1]);
-              m.put(kvp[0], combined.toArray(String[]::new));
+              m.put(kvp[0], combined.toArray(new String[combined.size()]));
             }, Map::putAll);
   }
   
