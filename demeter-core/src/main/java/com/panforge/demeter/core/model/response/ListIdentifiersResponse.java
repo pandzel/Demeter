@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.core.model.response;
 
+import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.model.request.ListIdentifiersRequest;
@@ -35,10 +36,11 @@ public final class ListIdentifiersResponse extends Response<ListIdentifiersReque
    * @param headers headers
    * @param resumptionToken resumption token
    * @param responseDate response date
+   * @param errors errors
    * @param request request
    */
-  public ListIdentifiersResponse(Header[] headers, ResumptionToken resumptionToken, OffsetDateTime responseDate, ListIdentifiersRequest request) {
-    super(responseDate, request);
+  public ListIdentifiersResponse(Header[] headers, ResumptionToken resumptionToken, OffsetDateTime responseDate, ErrorInfo[] errors, ListIdentifiersRequest request) {
+    super(responseDate, errors, request);
     this.headers = headers;
     this.resumptionToken = resumptionToken;
   }

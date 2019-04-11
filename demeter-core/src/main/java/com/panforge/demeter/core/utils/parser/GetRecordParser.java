@@ -45,7 +45,7 @@ class GetRecordParser extends DocParser {
     Node ndRecord = (Node)evaluate("//oai:OAI-PMH/oai:GetRecord/oai:record", doc, XPathConstants.NODE);
     if (ndRecord!=null) {
       Record record = readRecord(ndRecord);
-      return new GetRecordResponse(record, readResponseDate(doc), request);
+      return new GetRecordResponse(record, readResponseDate(doc), readErrors(doc), request);
     }
     return null;
   }

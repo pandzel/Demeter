@@ -168,21 +168,21 @@ public class Service {
   }
   
   private String createIdentifyResponse(IdentifyRequest request) {
-    IdentifyResponse idetifyResponse = IdentifyResponse.createFromConfig(ctx.config, null, OffsetDateTime.now(), request);
+    IdentifyResponse idetifyResponse = IdentifyResponse.createFromConfig(ctx.config, null, OffsetDateTime.now(), null, request);
     return factory.createIdentifyResponse(idetifyResponse);
   }
   
   private String createListMetadataFormatsResponse(ListMetadataFormatsRequest request) throws IdDoesNotExistException, NoMetadataFormatsException {
     try (Cursor<MetadataFormat> metadataFormats = repo.listMetadataFormats(request.getIdentifier());) {
       MetadataFormat[] metadataFormatsArray = StreamSupport.stream(metadataFormats.spliterator(), false).toArray(MetadataFormat[]::new);
-      ListMetadataFormatsResponse metadataFormatsResponse = new ListMetadataFormatsResponse(metadataFormatsArray, OffsetDateTime.now(), request);
+      ListMetadataFormatsResponse metadataFormatsResponse = new ListMetadataFormatsResponse(metadataFormatsArray, OffsetDateTime.now(), null, request);
       return factory.createListMetadataFormatsResponse(metadataFormatsResponse);
     }
   }
   
   private String createGetRecordResponse(GetRecordRequest request) throws IdDoesNotExistException, CannotDisseminateFormatException {
     Record record = repo.readRecord(request.getIdentifier(), request.getMetadataPrefix());
-    GetRecordResponse getRecordResponse = new GetRecordResponse(record, OffsetDateTime.now(), request);
+    GetRecordResponse getRecordResponse = new GetRecordResponse(record, OffsetDateTime.now(), null, request);
     return factory.createGetRecordResponse(getRecordResponse);
   }
   
@@ -202,7 +202,7 @@ public class Service {
         Supplier<String> supplier = createListSetsSupplier(request, prefetchedSets, spliterator, completeListSize, cursor+setArray.length);
         resumptionToken = tokenManager.register(supplier, completeListSize, cursor+setArray.length);
       }
-      ListSetsResponse response = new ListSetsResponse(setArray, resumptionToken, OffsetDateTime.now(), request);
+      ListSetsResponse response = new ListSetsResponse(setArray, resumptionToken, OffsetDateTime.now(), null, request);
       return factory.createListSetsResponse(response); 
     };
   }
@@ -223,7 +223,7 @@ public class Service {
         Supplier<String> supplier = createListIdentifiersSupplier(request, prefetchedHeaders, spliterator, completeListSize, cursor+headerArray.length);
         resumptionToken = tokenManager.register(supplier, completeListSize, cursor+headerArray.length);
       }
-      ListIdentifiersResponse response = new ListIdentifiersResponse(headerArray, resumptionToken, OffsetDateTime.now(), request);
+      ListIdentifiersResponse response = new ListIdentifiersResponse(headerArray, resumptionToken, OffsetDateTime.now(), null, request);
       return factory.createListIdentifiersResponse(response); 
     };
   }
@@ -258,7 +258,7 @@ public class Service {
         Supplier<String> supplier = createListRecordsSupplier(request, prefetchedRecords, spliterator, completeListSize, cursor+headerArray.length);
         resumptionToken = tokenManager.register(supplier, completeListSize, cursor+headerArray.length);
       }
-      ListRecordsResponse response = new ListRecordsResponse(headerArray, resumptionToken, OffsetDateTime.now(), request);
+      ListRecordsResponse response = new ListRecordsResponse(headerArray, resumptionToken, OffsetDateTime.now(), null, request);
       return factory.createListRecordsResponse(response); 
     };
   }

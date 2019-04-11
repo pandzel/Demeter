@@ -61,7 +61,7 @@ import org.xml.sax.SAXException;
  */
 public class ClientTest {
   
-  private static int MOCK_SERVER_PORT = 1080;
+  private static final int MOCK_SERVER_PORT = 1080;
   private static ClientAndServer mockServer;
   private static ResponseFactory responseFactory;
   private static Config config;
@@ -169,7 +169,7 @@ public class ClientTest {
             "http://www.openarchives.org/OAI/2.0/oai_dc/"
     );
     
-    ListMetadataFormatsResponse response = new ListMetadataFormatsResponse(new MetadataFormat[]{fmt}, OffsetDateTime.now(), request);
+    ListMetadataFormatsResponse response = new ListMetadataFormatsResponse(new MetadataFormat[]{fmt}, OffsetDateTime.now(), null, request);
     
     return responseFactory.createListMetadataFormatsResponse(response);
   }
@@ -181,7 +181,7 @@ public class ClientTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListSetsResponse response = new ListSetsResponse(new Set[]{set}, resumptionToken, OffsetDateTime.now(), request);
+    ListSetsResponse response = new ListSetsResponse(new Set[]{set}, resumptionToken, OffsetDateTime.now(), null, request);
     
     return responseFactory.createListSetsResponse(response);
   }
@@ -198,7 +198,7 @@ public class ClientTest {
                     + "</oai-identifier>"
     )};
     
-    IdentifyResponse response = IdentifyResponse.createFromConfig(config, descriptions, OffsetDateTime.now(), request);
+    IdentifyResponse response = IdentifyResponse.createFromConfig(config, descriptions, OffsetDateTime.now(), null, request);
     
     return responseFactory.createIdentifyResponse(response);
   }
@@ -210,7 +210,7 @@ public class ClientTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListIdentifiersResponse response = new ListIdentifiersResponse(new Header[] { header }, resumptionToken, OffsetDateTime.now(), request);
+    ListIdentifiersResponse response = new ListIdentifiersResponse(new Header[] { header }, resumptionToken, OffsetDateTime.now(), null, request);
     
     return responseFactory.createListIdentifiersResponse(response);
   }
@@ -244,7 +244,7 @@ public class ClientTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListRecordsResponse response = new ListRecordsResponse(new Record[] { record }, resumptionToken, OffsetDateTime.now(), request);
+    ListRecordsResponse response = new ListRecordsResponse(new Record[] { record }, resumptionToken, OffsetDateTime.now(), null, request);
     
     return responseFactory.createListRecordsResponse(response);
   }
@@ -276,7 +276,7 @@ public class ClientTest {
     
     Record record = new Record(header, metadata, about);
     
-    GetRecordResponse response = new GetRecordResponse(record, OffsetDateTime.now(), request);
+    GetRecordResponse response = new GetRecordResponse(record, OffsetDateTime.now(), null, request);
     
     return responseFactory.createGetRecordResponse(response);
   }

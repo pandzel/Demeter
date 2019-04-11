@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.core.model.response;
 
+import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.request.Request;
 import java.time.OffsetDateTime;
 
@@ -26,6 +27,8 @@ public abstract class Response<REQ extends Request> {
   
   /** response date */
   public final OffsetDateTime responseDate;
+  /** errors */
+  public final ErrorInfo[] errors;
   /** request */
   public final REQ request;
 
@@ -34,8 +37,9 @@ public abstract class Response<REQ extends Request> {
    * @param responseDate response date
    * @param request instance of the request
    */
-  public Response(OffsetDateTime responseDate, REQ request) {
+  public Response(OffsetDateTime responseDate, ErrorInfo[] errors, REQ request) {
     this.responseDate = responseDate;
+    this.errors = errors;
     this.request = request;
   }
   

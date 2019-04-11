@@ -25,6 +25,7 @@ import com.panforge.demeter.core.model.response.Response;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.utils.DateTimeUtils;
+import com.panforge.demeter.core.utils.nodeiter.NodeIterable;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.nodes;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.stream;
 import java.net.URI;
@@ -187,24 +188,19 @@ public class DocParser {
    * @param doc the document
    * @return the 'error' information
    */
-  protected ErrorInfo readError(Document doc) {
-    Node ndError = (Node)evaluate("//oai:OAI-PMH/oai:error", doc, XPathConstants.NODE);
-    if (ndError == null) {
+  protected ErrorInfo [] readErrors(Document doc) {
+    NodeList ndErrors = (NodeList)evaluate("//oai:OAI-PMH/oai:error", doc, XPathConstants.NODESET);
+    if (ndErrors == null || ndErrors.getLength()==0) {
       return null;
     }
-    ErrorCode code = ErrorCode.parse((String)evaluate("@code", ndError, XPathConstants.STRING));
-    String message = (String)evaluate(".", ndError, XPathConstants.STRING);
-    return new ErrorInfo(code, message);
-  }
-
-  /**
-   * Reads 'request' property.
-   * @param doc the document
-   * @return the 'request' property
-   */
-  protected String readRequest(Document doc) {
-    String request = (String)evaluate("//oai:OAI-PMH/oai:request", doc, XPathConstants.STRING);
-    return request;
+    ArrayList<ErrorInfo> infos = new ArrayList<>();
+    NodeIterable.stream(ndErrors).forEach(nd->{
+      ErrorCode code = ErrorCode.parse((String)evaluate("@code", nd, XPathConstants.STRING));
+      String message = (String)evaluate(".", nd, XPathConstants.STRING);
+      ErrorInfo info = new ErrorInfo(code, message);
+      infos.add(info);
+    });
+    return infos.toArray(new ErrorInfo[infos.size()]);
   }
   
   /**

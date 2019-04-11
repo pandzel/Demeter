@@ -54,7 +54,7 @@ class ListRecordsParser extends DocParser {
             ? new ListRecordsRequest(requestResumptionToken)
             : extractRequest();
     ResumptionToken resumptionToken = readResponseResumptionToken(doc);
-    return new ListRecordsResponse(records.toArray(new Record[records.size()]), resumptionToken, readResponseDate(doc), request);
+    return new ListRecordsResponse(records.toArray(new Record[records.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), request);
   }
   
   private ListRecordsRequest extractRequest() throws BadVerbException, BadArgumentException {

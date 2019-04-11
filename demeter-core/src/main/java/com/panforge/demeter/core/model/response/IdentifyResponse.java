@@ -16,6 +16,7 @@
 package com.panforge.demeter.core.model.response;
 
 import com.panforge.demeter.core.api.Config;
+import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.request.IdentifyRequest;
 import java.time.OffsetDateTime;
 import org.w3c.dom.Document;
@@ -56,10 +57,11 @@ public final class IdentifyResponse extends Response<IdentifyRequest> {
    * @param compression compression policy
    * @param descriptions descriptions
    * @param responseDate response date
+   * @param errors errors
    * @param request request
    */
-  public IdentifyResponse(String repositoryName, String baseURL, String protocolVersion, String[] adminEmail, OffsetDateTime earliestDatestamp, Config.Deletion deletedRecord, String granularity, Config.Compression [] compression, Document[] descriptions, OffsetDateTime responseDate, IdentifyRequest request) {
-    super(responseDate, request);
+  public IdentifyResponse(String repositoryName, String baseURL, String protocolVersion, String[] adminEmail, OffsetDateTime earliestDatestamp, Config.Deletion deletedRecord, String granularity, Config.Compression [] compression, Document[] descriptions, OffsetDateTime responseDate, ErrorInfo[] errors, IdentifyRequest request) {
+    super(responseDate, errors, request);
     this.repositoryName = repositoryName;
     this.baseURL = baseURL;
     this.protocolVersion = protocolVersion;
@@ -76,10 +78,11 @@ public final class IdentifyResponse extends Response<IdentifyRequest> {
    * @param config the configuration
    * @param descriptions descriptions
    * @param responseDate response date
+   * @param errors errors
    * @param request request
    * @return identify response
    */
-  public static IdentifyResponse createFromConfig(Config config, Document[] descriptions, OffsetDateTime responseDate, IdentifyRequest request) {
+  public static IdentifyResponse createFromConfig(Config config, Document[] descriptions, OffsetDateTime responseDate, ErrorInfo[] errors, IdentifyRequest request) {
     IdentifyResponse response = new IdentifyResponse(
             config.repositoryName,
             config.baseURL,
@@ -91,6 +94,7 @@ public final class IdentifyResponse extends Response<IdentifyRequest> {
             config.compression,
             descriptions,
             responseDate,
+            errors,
             request
     );
     

@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.core.model.response;
 
+import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.request.GetRecordRequest;
 import java.time.OffsetDateTime;
@@ -31,10 +32,11 @@ public final class GetRecordResponse extends Response<GetRecordRequest> {
    * Creates instance of the response.
    * @param record record
    * @param responseDate response date
+   * @param errors errors
    * @param request request
    */
-  public GetRecordResponse(Record record, OffsetDateTime responseDate, GetRecordRequest request) {
-    super(responseDate, request);
+  public GetRecordResponse(Record record, OffsetDateTime responseDate, ErrorInfo[] errors, GetRecordRequest request) {
+    super(responseDate, errors, request);
     this.record = record;
   }
 }

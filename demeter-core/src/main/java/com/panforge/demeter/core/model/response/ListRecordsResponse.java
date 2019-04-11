@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.core.model.response;
 
+import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.model.request.ListRecordsRequest;
@@ -35,10 +36,11 @@ public final class ListRecordsResponse extends Response<ListRecordsRequest> {
    * @param records records
    * @param resumptionToken resumption token
    * @param responseDate response date
+   * @param errors errors
    * @param request request
    */
-  public ListRecordsResponse(Record[] records, ResumptionToken resumptionToken, OffsetDateTime responseDate, ListRecordsRequest request) {
-    super(responseDate, request);
+  public ListRecordsResponse(Record[] records, ResumptionToken resumptionToken, OffsetDateTime responseDate, ErrorInfo[] errors, ListRecordsRequest request) {
+    super(responseDate, errors, request);
     this.records = records;
     this.resumptionToken = resumptionToken;
   }

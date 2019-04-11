@@ -58,7 +58,7 @@ class IdentifyParser extends DocParser {
 
     Document[] descriptions = readDescriptions((NodeList) evaluate("//oai:OAI-PMH/oai:Identify/oai:description", doc, XPathConstants.NODESET));
 
-    return new IdentifyResponse(repositoryName, baseURL, protocolVersion, edminEmails, earliestDatestamp, deletedRecord, granularity, compression, descriptions, readResponseDate(doc), request);
+    return new IdentifyResponse(repositoryName, baseURL, protocolVersion, edminEmails, earliestDatestamp, deletedRecord, granularity, compression, descriptions, readResponseDate(doc), readErrors(doc), request);
   }
 
   private Compression [] readCompression() {

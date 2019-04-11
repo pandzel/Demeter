@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.core.model.response;
 
+import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.model.request.ListMetadataFormatsRequest;
 import java.time.OffsetDateTime;
@@ -31,10 +32,11 @@ public final class ListMetadataFormatsResponse extends Response<ListMetadataForm
    * Creates instance of the response.
    * @param metadataFormats metadata formats
    * @param responseDate response date
+   * @param errors errors
    * @param request request
    */
-  public ListMetadataFormatsResponse(MetadataFormat[] metadataFormats, OffsetDateTime responseDate, ListMetadataFormatsRequest request) {
-    super(responseDate, request);
+  public ListMetadataFormatsResponse(MetadataFormat[] metadataFormats, OffsetDateTime responseDate, ErrorInfo[] errors, ListMetadataFormatsRequest request) {
+    super(responseDate, errors, request);
     this.metadataFormats = metadataFormats;
   }
   
