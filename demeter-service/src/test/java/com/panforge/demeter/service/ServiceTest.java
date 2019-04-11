@@ -21,8 +21,8 @@ import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.model.request.*;
 import com.panforge.demeter.core.model.response.*;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.OffsetDateTime;
 import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -100,7 +100,7 @@ public class ServiceTest {
   }
   
   @Test
-  public void testListHeaders() throws Exception {
+  public void testListIdentifiers() throws Exception {
     ListIdentifiersRequest request = new ListIdentifiersRequest("oai_dc", null, null, null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = service.execute(parameters);
@@ -112,5 +112,35 @@ public class ServiceTest {
     
     ListIdentifiersResponse responseObj = (ListIdentifiersResponse)response;
     assertEquals("Invalid number of formats", contentProvider.listHeaders(null).total(), responseObj.headers.length);
+  }
+  
+  @Test
+  public void testListRecords() throws Exception {
+    ListRecordsRequest request = new ListRecordsRequest("oai_dc", null, null, null);
+    Map<String, String[]> parameters = request.getParameters();
+    String responseStr = service.execute(parameters);
+    Response response = respParser.parse(responseStr);
+    
+    assertNotNull("Empty response", response);
+    assertNotNull("Incomplete response", response.request);
+    assertEquals("Invalid response type", Verb.ListRecords, response.request.verb);
+    
+    ListRecordsResponse responseObj = (ListRecordsResponse)response;
+    assertEquals("Invalid number of formats", contentProvider.listHeaders(null).total(), responseObj.records.length);
+  }
+  
+  @Test
+  public void testGetRecord() throws Exception {
+    GetRecordRequest request = new GetRecordRequest(URI.create("001"), "oai_dc");
+    Map<String, String[]> parameters = request.getParameters();
+    String responseStr = service.execute(parameters);
+    Response response = respParser.parse(responseStr);
+    
+    assertNotNull("Empty response", response);
+    assertNotNull("Incomplete response", response.request);
+    assertEquals("Invalid response type", Verb.GetRecord, response.request.verb);
+    
+    GetRecordResponse responseObj = (GetRecordResponse)response;
+    assertNotNull("Missing record", responseObj.record);
   }
 }

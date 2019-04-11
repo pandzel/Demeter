@@ -183,13 +183,13 @@ public class ListRecordsRequest extends RequestWithToken {
       parameters.put("from", new String[]{ from.format(DateTimeFormatter.ISO_DATE_TIME) });
     }
     if (until!=null) {
-      parameters.put("from", new String[]{ until.format(DateTimeFormatter.ISO_DATE_TIME) });
+      parameters.put("until", new String[]{ until.format(DateTimeFormatter.ISO_DATE_TIME) });
     }
     if (metadataPrefix!=null) {
-      parameters.put("from", new String[]{ metadataPrefix });
+      parameters.put("metadataPrefix", new String[]{ metadataPrefix });
     }
     if (set!=null) {
-      parameters.put("from", new String[]{ set });
+      parameters.put("set", new String[]{ set });
     }
     return parameters;
   }
