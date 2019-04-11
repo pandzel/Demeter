@@ -25,8 +25,8 @@ import org.apache.commons.lang3.Validate;
 public final class ResumptionToken {
   public final String value;
   public final OffsetDateTime expirationDate;
-  public final Long completeListSize;
-  public final Long cursor;
+  public final long completeListSize;
+  public final long cursor;
 
   /**
    * Creates instance of the resumption token.
@@ -35,7 +35,7 @@ public final class ResumptionToken {
    * @param completeListSize complete list size
    * @param cursor cursor position
    */
-  public ResumptionToken(String value, OffsetDateTime expirationDate, Long completeListSize, Long cursor) {
+  public ResumptionToken(String value, OffsetDateTime expirationDate, long completeListSize, long cursor) {
     Validate.notEmpty(value, "Missing token value");
     Validate.notNull(expirationDate, "Missing token expiration date");
     this.value = value;
@@ -70,10 +70,10 @@ public final class ResumptionToken {
     if (!Objects.equals(this.expirationDate, other.expirationDate)) {
       return false;
     }
-    if (!Objects.equals(this.completeListSize, other.completeListSize)) {
+    if (this.completeListSize!=other.completeListSize) {
       return false;
     }
-    if (!Objects.equals(this.cursor, other.cursor)) {
+    if (this.cursor!=other.cursor) {
       return false;
     }
     return true;

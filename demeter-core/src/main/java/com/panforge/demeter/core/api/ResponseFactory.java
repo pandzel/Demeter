@@ -285,8 +285,8 @@ public class ResponseFactory {
   private void appendResumptionDoken(DocNode parent, ResumptionToken resumptionToken, boolean printValue) {
     parent.child("resumptionToken", () -> resumptionToken != null)
             .attr("expirationDate", () -> resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME), () -> resumptionToken.expirationDate != null)
-            .attr("completeListSize", () -> resumptionToken.completeListSize.toString(), () -> resumptionToken.completeListSize != null)
-            .attr("cursor", () -> resumptionToken.cursor.toString(), () -> resumptionToken.cursor != null)
+            .attr("completeListSize", Long.toString(resumptionToken.completeListSize))
+            .attr("cursor", Long.toString(resumptionToken.cursor))
             .value(printValue ? resumptionToken.value : null).done();
   }
 
