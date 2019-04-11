@@ -111,7 +111,37 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListIdentifiers, response.request.verb);
     
     ListIdentifiersResponse responseObj = (ListIdentifiersResponse)response;
-    assertEquals("Invalid number of formats", contentProvider.listHeaders(null).total(), responseObj.headers.length);
+    assertEquals("Invalid number of identifiers", contentProvider.listHeaders(null).total(), responseObj.headers.length);
+  }
+  
+  @Test
+  public void testListIdentifiersWithToken() throws Exception {
+    int auxBatchSize = 3;
+    Service auxService = new Service(config, contentProvider, new SimpleTokenManager(), auxBatchSize);
+    ListIdentifiersRequest request = new ListIdentifiersRequest("oai_dc", null, null, null);
+    Map<String, String[]> parameters = request.getParameters();
+    String responseStr = auxService.execute(parameters);
+    Response response = respParser.parse(responseStr);
+    
+    assertNotNull("Empty response", response);
+    assertNotNull("Incomplete response", response.request);
+    assertEquals("Invalid response type", Verb.ListIdentifiers, response.request.verb);
+    
+    ListIdentifiersResponse responseObj = (ListIdentifiersResponse)response;
+    assertTrue("Invalid number of identifiers", responseObj.headers.length <= auxBatchSize);
+    assertNotNull("Missing resumptionToken", responseObj.resumptionToken);
+    
+    request = new ListIdentifiersRequest(responseObj.resumptionToken.value);
+    parameters = request.getParameters();
+    responseStr = auxService.execute(parameters);
+    response = respParser.parse(responseStr);
+    
+    assertNotNull("Empty response", response);
+    assertNotNull("Incomplete response", response.request);
+    assertEquals("Invalid response type", Verb.ListIdentifiers, response.request.verb);
+    
+    responseObj = (ListIdentifiersResponse)response;
+    assertTrue("Invalid number of identifiers", auxBatchSize + responseObj.headers.length == contentProvider.listHeaders(null).total());
   }
   
   @Test
@@ -127,6 +157,36 @@ public class ServiceTest {
     
     ListRecordsResponse responseObj = (ListRecordsResponse)response;
     assertEquals("Invalid number of formats", contentProvider.listHeaders(null).total(), responseObj.records.length);
+  }
+  
+  @Test
+  public void testListRecordsWithToken() throws Exception {
+    int auxBatchSize = 3;
+    Service auxService = new Service(config, contentProvider, new SimpleTokenManager(), auxBatchSize);
+    ListRecordsRequest request = new ListRecordsRequest("oai_dc", null, null, null);
+    Map<String, String[]> parameters = request.getParameters();
+    String responseStr = auxService.execute(parameters);
+    Response response = respParser.parse(responseStr);
+    
+    assertNotNull("Empty response", response);
+    assertNotNull("Incomplete response", response.request);
+    assertEquals("Invalid response type", Verb.ListRecords, response.request.verb);
+    
+    ListRecordsResponse responseObj = (ListRecordsResponse)response;
+    assertTrue("Invalid number of records", responseObj.records.length <= auxBatchSize);
+    assertNotNull("Missing resumptionToken", responseObj.resumptionToken);
+    
+    request = new ListRecordsRequest(responseObj.resumptionToken.value);
+    parameters = request.getParameters();
+    responseStr = auxService.execute(parameters);
+    response = respParser.parse(responseStr);
+    
+    assertNotNull("Empty response", response);
+    assertNotNull("Incomplete response", response.request);
+    assertEquals("Invalid response type", Verb.ListRecords, response.request.verb);
+    
+    responseObj = (ListRecordsResponse)response;
+    assertTrue("Invalid number of records", auxBatchSize + responseObj.records.length == contentProvider.listHeaders(null).total());
   }
   
   @Test

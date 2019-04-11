@@ -50,9 +50,12 @@ import com.panforge.demeter.core.model.response.elements.Set;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.utils.QueryUtils;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -186,16 +189,17 @@ public class Service {
   private String createListSetsResponse(ListSetsRequest request) throws BadResumptionTokenException, NoSetHierarchyException {
     try (Cursor<Set> listSets = repo.listSets();) {
       Spliterator<Set> spliterator = listSets.spliterator();
-      return createListSetsSupplier(request, spliterator, listSets.total(), 0).get();
+      return createListSetsSupplier(request, new ArrayList<>(), spliterator, listSets.total(), 0).get();
     }
   }
   
-  private Supplier<String> createListSetsSupplier(ListSetsRequest request, Spliterator<Set> spliterator, long completeListSize, long cursor) {
-    Set[] setArray = StreamSupport.stream(spliterator, false).limit(batchSize).toArray(Set[]::new);
+  private Supplier<String> createListSetsSupplier(ListSetsRequest request, List<Set> bufferedSets, Spliterator<Set> spliterator, long completeListSize, long cursor) {
+    Set[] setArray = Stream.concat(bufferedSets.stream(), StreamSupport.stream(spliterator, false)).limit(batchSize).toArray(Set[]::new);
     return () -> { 
       ResumptionToken resumptionToken = null;
-      if (spliterator.tryAdvance(set->{})) {
-        Supplier<String> supplier = createListSetsSupplier(request, spliterator, completeListSize, cursor+setArray.length);
+      ArrayList<Set> prefetchedSets = new ArrayList<>();
+      if (spliterator.tryAdvance(set->{ prefetchedSets.add(set); })) {
+        Supplier<String> supplier = createListSetsSupplier(request, prefetchedSets, spliterator, completeListSize, cursor+setArray.length);
         resumptionToken = tokenManager.register(supplier, completeListSize, cursor+setArray.length);
       }
       ListSetsResponse response = new ListSetsResponse(setArray, resumptionToken, OffsetDateTime.now(), request);
@@ -206,16 +210,17 @@ public class Service {
   private String createListIdentifiersResponse(ListIdentifiersRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     try (Cursor<Header> headers = repo.listHeaders(request.getFilter());) {
       Spliterator<Header> spliterator = headers.spliterator();
-      return createListIdentifiersSupplier(request, spliterator, headers.total(), 0).get();
+      return createListIdentifiersSupplier(request, new ArrayList<>(), spliterator, headers.total(), 0).get();
     }
   }
   
-  private Supplier<String> createListIdentifiersSupplier(ListIdentifiersRequest request, Spliterator<Header> spliterator, long completeListSize, long cursor) {
-    Header[] headerArray = StreamSupport.stream(spliterator, false).limit(batchSize).toArray(Header[]::new);
+  private Supplier<String> createListIdentifiersSupplier(ListIdentifiersRequest request, List<Header> bufferedHeaders, Spliterator<Header> spliterator, long completeListSize, long cursor) {
+    Header[] headerArray = Stream.concat(bufferedHeaders.stream(), StreamSupport.stream(spliterator, false)).limit(batchSize).toArray(Header[]::new);
     return () -> { 
       ResumptionToken resumptionToken = null;
-      if (spliterator.tryAdvance(set->{})) {
-        Supplier<String> supplier = createListIdentifiersSupplier(request, spliterator, completeListSize, cursor+headerArray.length);
+      ArrayList<Header> prefetchedHeaders = new ArrayList<>();
+      if (spliterator.tryAdvance(header->{ prefetchedHeaders.add(header); })) {
+        Supplier<String> supplier = createListIdentifiersSupplier(request, prefetchedHeaders, spliterator, completeListSize, cursor+headerArray.length);
         resumptionToken = tokenManager.register(supplier, completeListSize, cursor+headerArray.length);
       }
       ListIdentifiersResponse response = new ListIdentifiersResponse(headerArray, resumptionToken, OffsetDateTime.now(), request);
@@ -240,16 +245,17 @@ public class Service {
               })
               .filter(r->r!=null)
               .spliterator();
-      return createListRecordsSupplier(request, spliterator, headers.total(), 0).get();
+      return createListRecordsSupplier(request, new ArrayList<>(), spliterator, headers.total(), 0).get();
     }
   }
   
-  private Supplier<String> createListRecordsSupplier(ListRecordsRequest request, Spliterator<Record> spliterator, long completeListSize, long cursor) {
-    Record[] headerArray = StreamSupport.stream(spliterator, false).limit(batchSize).toArray(Record[]::new);
+  private Supplier<String> createListRecordsSupplier(ListRecordsRequest request, List<Record> bufferedRecords, Spliterator<Record> spliterator, long completeListSize, long cursor) {
+    Record[] headerArray = Stream.concat(bufferedRecords.stream(), StreamSupport.stream(spliterator, false)) .limit(batchSize).toArray(Record[]::new);
     return () -> { 
       ResumptionToken resumptionToken = null;
-      if (spliterator.tryAdvance(record->{})) {
-        Supplier<String> supplier = createListRecordsSupplier(request, spliterator, completeListSize, cursor+headerArray.length);
+      ArrayList<Record> prefetchedRecords = new ArrayList<>();
+      if (spliterator.tryAdvance(record->{ prefetchedRecords.add(record); })) {
+        Supplier<String> supplier = createListRecordsSupplier(request, prefetchedRecords, spliterator, completeListSize, cursor+headerArray.length);
         resumptionToken = tokenManager.register(supplier, completeListSize, cursor+headerArray.length);
       }
       ListRecordsResponse response = new ListRecordsResponse(headerArray, resumptionToken, OffsetDateTime.now(), request);
