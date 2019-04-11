@@ -36,11 +36,20 @@ public final class ResumptionToken {
    * @param cursor cursor position
    */
   public ResumptionToken(String value, OffsetDateTime expirationDate, Long completeListSize, Long cursor) {
+    Validate.notEmpty(value, "Missing token value");
+    Validate.notNull(expirationDate, "Missing token expiration date");
     this.value = value;
     this.expirationDate = expirationDate;
     this.completeListSize = completeListSize;
     this.cursor = cursor;
-    Validate.notEmpty(value, "Missing token value");
+  }
+  
+  /**
+   * Checks if token expired.
+   * @return <code>true</code> if token expired.
+   */
+  public boolean expired() {
+    return OffsetDateTime.now().isAfter(expirationDate);
   }
 
   @Override

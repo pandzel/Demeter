@@ -66,6 +66,9 @@ public class SimpleTokenManager implements TokenManager {
     if (tokenEntry==null) {
       throw new BadResumptionTokenException(String.format("Invalid token: '%s'", StringUtils.trimToEmpty(token)));
     }
+    if (tokenEntry.resumptionToken.expired()) {
+      throw new BadResumptionTokenException(String.format("Expired token: '%s'", StringUtils.trimToEmpty(token)));
+    }
     return tokenEntry.supplier.get();
   }
   
