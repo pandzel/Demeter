@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
+import org.xml.sax.SAXException;
 
 /**
  * Record iterator.
@@ -93,7 +94,7 @@ class RecordIterator implements Iterator<Record> {
       GetRecordRequest request = makeRequestObject(identifier);
       GetRecordResponse response = (GetRecordResponse) client.execute(request);
       return response.record;
-    } catch (IOException | URISyntaxException ex) {
+    } catch (IOException | URISyntaxException | SAXException ex) {
       handleError(new BadArgumentException(String.format("Error accessing service"), ex));
       return null;
     } catch (ProtocolException ex) {

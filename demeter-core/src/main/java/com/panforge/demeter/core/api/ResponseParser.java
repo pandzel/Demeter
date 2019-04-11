@@ -37,11 +37,13 @@ public class ResponseParser {
    *
    * @param xml XML response
    * @return response response object.
+   * @throws java.io.IOException if error reading response
+   * @throws org.xml.sax.SAXException if error parsing xml
    * @throws BadVerbException if parsing fails
    * @throws BadArgumentException if parsing fails
    */
-  public Response parse(String xml) throws BadArgumentException, BadVerbException {
-    Document doc = parseToXml(xml);
+  public Response parse(String xml) throws IOException, SAXException, BadArgumentException, BadVerbException {
+    Document doc = XmlUtils.parseToXml(xml);
     DocParser docParser = new DocParser(doc);
     return docParser.parse();
   }
@@ -51,28 +53,14 @@ public class ResponseParser {
    *
    * @param xmlStream content stream
    * @return response response object.
+   * @throws java.io.IOException if error reading response
+   * @throws org.xml.sax.SAXException if error parsing xml
    * @throws BadVerbException if parsing fails
    * @throws BadArgumentException if parsing fails
    */
-  public Response parse(InputStream xmlStream) throws BadArgumentException, BadVerbException {
-    Document doc = parseToXml(xmlStream);
+  public Response parse(InputStream xmlStream) throws IOException, SAXException, BadArgumentException, BadVerbException {
+    Document doc = XmlUtils.parseToXml(xmlStream);
     DocParser docParser = new DocParser(doc);
     return docParser.parse();
-  }
-
-  private Document parseToXml(String xml) throws BadArgumentException {
-    try {
-      return XmlUtils.parseToXml(xml);
-    } catch (IOException | SAXException ex) {
-      throw new BadArgumentException(String.format("Error parsing xml: %s", xml), ex);
-    }
-  }
-
-  private Document parseToXml(InputStream xmlStream) throws BadArgumentException {
-    try {
-      return XmlUtils.parseToXml(xmlStream);
-    } catch (IOException | SAXException ex) {
-      throw new BadArgumentException(String.format("Error parsing xml"), ex);
-    }
   }
 }

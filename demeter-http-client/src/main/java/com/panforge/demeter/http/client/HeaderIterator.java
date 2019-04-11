@@ -30,6 +30,7 @@ import java.util.NoSuchElementException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import org.apache.commons.lang3.StringUtils;
+import org.xml.sax.SAXException;
 
 /**
  * Header iterator.
@@ -104,7 +105,7 @@ class HeaderIterator implements Iterator<Header> {
         lastBatch = true;
       }
       return response.headers;
-    } catch (IOException | URISyntaxException ex) {
+    } catch (IOException | URISyntaxException | SAXException ex) {
       handleError(new BadArgumentException(String.format("Error accessing service"), ex));
       lastBatch = true;
       return null;

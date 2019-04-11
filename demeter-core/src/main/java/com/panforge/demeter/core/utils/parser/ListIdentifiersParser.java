@@ -17,7 +17,6 @@ package com.panforge.demeter.core.utils.parser;
 
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.api.exception.BadArgumentException;
-import com.panforge.demeter.core.api.exception.BadVerbException;
 import com.panforge.demeter.core.model.request.ListIdentifiersRequest;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.ListIdentifiersResponse;
@@ -46,7 +45,7 @@ class ListIdentifiersParser extends DocParser {
   }
 
   @Override
-  public ListIdentifiersResponse parse() throws BadVerbException, BadArgumentException {
+  public ListIdentifiersResponse parse() throws BadArgumentException {
     ArrayList<Header> headers = new ArrayList<>();
     for (Node node : nodes((NodeList) evaluate("//oai:OAI-PMH/oai:ListIdentifiers/oai:header", doc, XPathConstants.NODESET))) {
       headers.add(readHeader(node));
@@ -59,7 +58,7 @@ class ListIdentifiersParser extends DocParser {
     return new ListIdentifiersResponse(headers.toArray(new Header[headers.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), request);
   }
   
-  private ListIdentifiersRequest extractRequest() throws BadVerbException, BadArgumentException {
+  private ListIdentifiersRequest extractRequest() throws BadArgumentException {
     Map<String,String[]> values = new HashMap<>();
     values.put("metadataPrefix", new String[]{ readMetadataPrefix(doc) });
     values.put("from", new String[]{ readFromAsString(doc) });

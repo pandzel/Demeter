@@ -17,7 +17,6 @@ package com.panforge.demeter.core.utils.parser;
 
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.api.exception.BadArgumentException;
-import com.panforge.demeter.core.api.exception.BadVerbException;
 import com.panforge.demeter.core.model.request.ListRecordsRequest;
 import com.panforge.demeter.core.model.response.ListRecordsResponse;
 import com.panforge.demeter.core.model.response.elements.Record;
@@ -44,7 +43,7 @@ class ListRecordsParser extends DocParser {
   }
 
   @Override
-  public ListRecordsResponse parse() throws BadVerbException, BadArgumentException {
+  public ListRecordsResponse parse() throws BadArgumentException {
     ArrayList<Record> records = new ArrayList<>();
     for (Node node : nodes((NodeList) evaluate("//oai:OAI-PMH/oai:ListRecords/oai:record", doc, XPathConstants.NODESET))) {
       records.add(readRecord(node));
@@ -57,7 +56,7 @@ class ListRecordsParser extends DocParser {
     return new ListRecordsResponse(records.toArray(new Record[records.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), request);
   }
   
-  private ListRecordsRequest extractRequest() throws BadVerbException, BadArgumentException {
+  private ListRecordsRequest extractRequest() throws BadArgumentException {
     Map<String,String[]> values = new HashMap<>();
     values.put("metadataPrefix", new String[]{ readMetadataPrefix(doc) });
     values.put("from", new String[]{ readFromAsString(doc) });

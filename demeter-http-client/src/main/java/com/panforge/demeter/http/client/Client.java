@@ -43,6 +43,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.xml.sax.SAXException;
 
 /**
  * OAI-PMH client.
@@ -93,8 +94,9 @@ public class Client implements Closeable {
    * @throws ProtocolException if error executing request
    * @throws java.net.URISyntaxException if invalid URI
    * @throws java.io.IOException if error reading response
+   * @throws org.xml.sax.SAXException if error parsing XML
    */
-  public Response execute(Request request) throws ProtocolException, URISyntaxException, IOException {
+  public Response execute(Request request) throws ProtocolException, URISyntaxException, IOException, SAXException {
     Validate.notNull(request, "Missing request");
 
     Map<String, String[]> params = request.getParameters();

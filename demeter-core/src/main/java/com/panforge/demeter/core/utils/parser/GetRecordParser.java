@@ -40,7 +40,7 @@ class GetRecordParser extends DocParser {
   }
 
   @Override
-  public GetRecordResponse parse() throws BadVerbException, BadArgumentException {
+  public GetRecordResponse parse() throws BadArgumentException {
     GetRecordRequest request = extractRequest();
     Node ndRecord = (Node)evaluate("//oai:OAI-PMH/oai:GetRecord/oai:record", doc, XPathConstants.NODE);
     if (ndRecord!=null) {
@@ -50,7 +50,7 @@ class GetRecordParser extends DocParser {
     return null;
   }
   
-  private GetRecordRequest extractRequest() throws BadVerbException, BadArgumentException {
+  private GetRecordRequest extractRequest() throws BadArgumentException {
     Map<String,String[]> values = new HashMap<>();
     values.put("identifier", new String[] { readIdentifierAsString(doc) });
     values.put("metadataPrefix", new String[] { readMetadataPrefix(doc) });
