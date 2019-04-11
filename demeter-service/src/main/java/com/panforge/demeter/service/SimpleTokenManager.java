@@ -49,27 +49,31 @@ public class SimpleTokenManager implements TokenManager {
   }
 
   @Override
-  public synchronized ResumptionToken register(Supplier<String> supplier, long completeListSize, long cursor) {
-    OffsetDateTime now = OffsetDateTime.now();
-    
-    String tokenValue = UUID.randomUUID().toString();
-    ResumptionToken resumptionToken = new ResumptionToken(tokenValue, now.plus(expiration, ChronoUnit.MILLIS), completeListSize, cursor);
-    TokenEntry tokenEntry = new TokenEntry(resumptionToken, supplier);
-    tokens.put(tokenValue, tokenEntry);
-    
-    return resumptionToken;
+  public ResumptionToken register(Supplier<String> supplier, long completeListSize, long cursor) {
+    synchronized (tokens) {
+      OffsetDateTime now = OffsetDateTime.now();
+
+      String tokenValue = UUID.randomUUID().toString();
+      ResumptionToken resumptionToken = new ResumptionToken(tokenValue, now.plus(expiration, ChronoUnit.MILLIS), completeListSize, cursor);
+      TokenEntry tokenEntry = new TokenEntry(resumptionToken, supplier);
+      tokens.put(tokenValue, tokenEntry);
+
+      return resumptionToken;
+    }
   }
 
   @Override
-  public synchronized String invoke(String token) throws BadResumptionTokenException {
-    TokenEntry tokenEntry = tokens.get(token);
-    if (tokenEntry==null) {
-      throw new BadResumptionTokenException(String.format("Invalid token: '%s'", StringUtils.trimToEmpty(token)));
+  public String invoke(String token) throws BadResumptionTokenException {
+    synchronized (tokens) {
+      TokenEntry tokenEntry = tokens.get(token);
+      if (tokenEntry==null) {
+        throw new BadResumptionTokenException(String.format("Invalid token: '%s'", StringUtils.trimToEmpty(token)));
+      }
+      if (tokenEntry.resumptionToken.expired()) {
+        throw new BadResumptionTokenException(String.format("Expired token: '%s'", StringUtils.trimToEmpty(token)));
+      }
+      return tokenEntry.supplier.get();
     }
-    if (tokenEntry.resumptionToken.expired()) {
-      throw new BadResumptionTokenException(String.format("Expired token: '%s'", StringUtils.trimToEmpty(token)));
-    }
-    return tokenEntry.supplier.get();
   }
   
   private class TokenEntry {
