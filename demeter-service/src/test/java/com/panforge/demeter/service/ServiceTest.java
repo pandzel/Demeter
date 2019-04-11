@@ -92,6 +92,7 @@ public class ServiceTest {
     Response response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
+    assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.request);
     assertEquals("Invalid response type", Verb.ListSets, response.request.verb);
     
@@ -107,6 +108,7 @@ public class ServiceTest {
     Response response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
+    assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.request);
     assertEquals("Invalid response type", Verb.ListIdentifiers, response.request.verb);
     
@@ -124,6 +126,7 @@ public class ServiceTest {
     Response response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
+    assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.request);
     assertEquals("Invalid response type", Verb.ListIdentifiers, response.request.verb);
     
@@ -137,6 +140,7 @@ public class ServiceTest {
     response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
+    assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.request);
     assertEquals("Invalid response type", Verb.ListIdentifiers, response.request.verb);
     
@@ -152,6 +156,7 @@ public class ServiceTest {
     Response response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
+    assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.request);
     assertEquals("Invalid response type", Verb.ListRecords, response.request.verb);
     
@@ -169,6 +174,7 @@ public class ServiceTest {
     Response response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
+    assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.request);
     assertEquals("Invalid response type", Verb.ListRecords, response.request.verb);
     
@@ -182,6 +188,7 @@ public class ServiceTest {
     response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
+    assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.request);
     assertEquals("Invalid response type", Verb.ListRecords, response.request.verb);
     
@@ -197,6 +204,7 @@ public class ServiceTest {
     Response response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
+    assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.request);
     assertEquals("Invalid response type", Verb.GetRecord, response.request.verb);
     
