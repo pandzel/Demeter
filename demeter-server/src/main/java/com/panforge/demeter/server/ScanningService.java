@@ -22,9 +22,22 @@ import java.io.File;
  */
 public interface ScanningService {
   
+  /**
+   * Scans directory.
+   * @param folder root folder
+   * @param listener listener
+   */
   void scan(File folder, MetaListener listener);
   
+  /**
+   * Meta descriptor listener.
+   */
+  @FunctionalInterface
   interface MetaListener {
+    /**
+     * Accept descriptor.
+     * @param desc descrirptor
+     */
     void accept(MetaDescriptor desc);
   }
 }
