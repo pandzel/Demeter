@@ -21,6 +21,8 @@ import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.model.request.*;
 import com.panforge.demeter.core.model.response.*;
+import java.net.URISyntaxException;
+import java.time.OffsetDateTime;
 import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -28,8 +30,7 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 
 /**
- *
- * @author Piotr Andzel
+ * Service test
  */
 public class ServiceTest {
   private static Config config;
@@ -41,10 +42,10 @@ public class ServiceTest {
   }
   
   @BeforeClass
-  public static void setUpClass() {
+  public static void setUpClass() throws URISyntaxException {
     config = new Config();
     config.repositoryName = "Mockup repository";
-    contentProvider = new MockupContentProvider();
+    contentProvider = new MockupContentProvider().initialize();
     service = new Service(config, contentProvider);
     respParser = new ResponseParser();
   }
@@ -96,5 +97,20 @@ public class ServiceTest {
     
     ListSetsResponse responseObj = (ListSetsResponse)response;
     assertEquals("Invalid number of formats", contentProvider.listSets().total(), responseObj.listSets.length);
+  }
+  
+  @Test
+  public void testListHeaders() throws Exception {
+    ListIdentifiersRequest request = new ListIdentifiersRequest("oai_dc", null, null, null);
+    Map<String, String[]> parameters = request.getParameters();
+    String responseStr = service.execute(parameters);
+    Response response = respParser.parse(responseStr);
+    
+    assertNotNull("Empty response", response);
+    assertNotNull("Incomplete response", response.request);
+    assertEquals("Invalid response type", Verb.ListIdentifiers, response.request.verb);
+    
+    ListIdentifiersResponse responseObj = (ListIdentifiersResponse)response;
+    assertEquals("Invalid number of formats", contentProvider.listHeaders(null).total(), responseObj.headers.length);
   }
 }
