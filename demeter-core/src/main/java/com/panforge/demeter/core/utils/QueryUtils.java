@@ -24,6 +24,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 /**
  * Query utilities.
@@ -52,11 +53,32 @@ public class QueryUtils {
             }, Map::putAll);
   }
   
+  /**
+   * Trims parameters.
+   * <p>
+   * Removes empty parameters from the collection.
+   * @param params parameters to trim
+   * @return trimmed parameters
+   */
   public static Map<String,String[]> trimParams(Map<String,String[]> params) {
     Map<String, String[]> result = params.entrySet().stream()
             .collect(Collectors.toMap(e->e.getKey(), e->Arrays.stream(e.getValue()).filter(v->!StringUtils.isBlank(v)).toArray(String[]::new)))
             .entrySet().stream().filter(e->e.getValue()!=null && e.getValue().length>0).collect(Collectors.toMap(e->e.getKey(), e->e.getValue()));
     return result;
+  }
+  
+  /**
+   * Primes parameters.
+   * <p>
+   * Selects first non-empty parameter from multiple possible parameters
+   * @param params
+   * @return 
+   */
+  public static Map<String,String> primeParams(Map<String,String[]> params) {
+    return params.entrySet().stream()
+            .map(e -> new ImmutablePair<>(e.getKey(), Arrays.stream(e.getValue()).filter(v->!StringUtils.isBlank(v)).findFirst().orElse(null)))
+            .filter(pair->pair.getValue()!=null)
+            .collect(Collectors.toMap(p->p.getKey(), p->p.getValue()));
   }
   
   /**
