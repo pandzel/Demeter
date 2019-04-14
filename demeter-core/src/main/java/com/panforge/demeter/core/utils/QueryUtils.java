@@ -63,7 +63,8 @@ public class QueryUtils {
   public static Map<String,String[]> trimParams(Map<String,String[]> params) {
     Map<String, String[]> result = params.entrySet().stream()
             .collect(Collectors.toMap(e->e.getKey(), e->Arrays.stream(e.getValue()).filter(v->!StringUtils.isBlank(v)).toArray(String[]::new)))
-            .entrySet().stream().filter(e->e.getValue()!=null && e.getValue().length>0).collect(Collectors.toMap(e->e.getKey(), e->e.getValue()));
+            .entrySet().stream().filter(e->e.getValue()!=null && e.getValue().length>0)
+            .collect(()->new TreeMap<>(String.CASE_INSENSITIVE_ORDER), (m, e) -> m.put(e.getKey(), e.getValue()), Map::putAll);
     return result;
   }
   
@@ -78,7 +79,7 @@ public class QueryUtils {
     return params.entrySet().stream()
             .map(e -> new ImmutablePair<>(e.getKey(), Arrays.stream(e.getValue()).filter(v->!StringUtils.isBlank(v)).findFirst().orElse(null)))
             .filter(pair->pair.getValue()!=null)
-            .collect(Collectors.toMap(p->p.getKey(), p->p.getValue()));
+            .collect(()->new TreeMap<>(String.CASE_INSENSITIVE_ORDER), (m, e) -> m.put(e.getKey(), e.getValue()), Map::putAll);
   }
   
   /**
