@@ -18,6 +18,8 @@ package com.panforge.demeter.core.model.response;
 import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.request.Request;
 import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Base of all response types..
@@ -29,18 +31,19 @@ public abstract class Response<REQ extends Request> {
   public final OffsetDateTime responseDate;
   /** errors */
   public final ErrorInfo[] errors;
-  /** request */
-  public final REQ request;
+  /** request parameters */
+  public final Map<String, String[]> parameters;
 
   /**
    * Creates instance of the response.
    * @param responseDate response date
-   * @param request instance of the request
+   * @param errors errors
+   * @param parameters request parameters
    */
-  public Response(OffsetDateTime responseDate, ErrorInfo[] errors, REQ request) {
+  public Response(OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
     this.responseDate = responseDate;
     this.errors = errors;
-    this.request = request;
+    this.parameters = Collections.unmodifiableMap(parameters);
   }
   
   

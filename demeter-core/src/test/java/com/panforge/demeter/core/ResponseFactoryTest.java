@@ -95,7 +95,7 @@ public class ResponseFactoryTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListSetsResponse response = new ListSetsResponse(new Set[]{set}, resumptionToken, OffsetDateTime.now(), null, request);
+    ListSetsResponse response = new ListSetsResponse(new Set[]{set}, resumptionToken, OffsetDateTime.now(), null, request.getParameters());
     
     String rsp = f.createListSetsResponse(response);
     
@@ -130,7 +130,7 @@ public class ResponseFactoryTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListSetsResponse response = new ListSetsResponse(new Set[]{set}, resumptionToken, OffsetDateTime.now(), null, request);
+    ListSetsResponse response = new ListSetsResponse(new Set[]{set}, resumptionToken, OffsetDateTime.now(), null, request.getParameters());
     
     String rsp = f.createListSetsResponse(response);
     
@@ -168,7 +168,7 @@ public class ResponseFactoryTest {
             "http://www.openarchives.org/OAI/2.0/oai_dc/"
     );
     
-    ListMetadataFormatsResponse response = new ListMetadataFormatsResponse(new MetadataFormat[]{fmt}, OffsetDateTime.now(), null, request);
+    ListMetadataFormatsResponse response = new ListMetadataFormatsResponse(new MetadataFormat[]{fmt}, OffsetDateTime.now(), null, request.getParameters());
     
     String rsp = f.createListMetadataFormatsResponse(response);
     System.out.println(String.format("%s", rsp));
@@ -203,7 +203,7 @@ public class ResponseFactoryTest {
                     + "<sampleIdentifier>oai:lcoa1.loc.gov:loc.music/musdi.002</sampleIdentifier>"
                     + "</oai-identifier>"
     )};
-    IdentifyResponse response = IdentifyResponse.createFromConfig(config, descriptions, OffsetDateTime.now(), null, request);
+    IdentifyResponse response = IdentifyResponse.createFromConfig(config, descriptions, OffsetDateTime.now(), null, request.getParameters());
     
     String rsp = f.createIdentifyResponse(response);
     System.out.println(String.format("%s", rsp));
@@ -237,7 +237,7 @@ public class ResponseFactoryTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListIdentifiersResponse response = new ListIdentifiersResponse(new Header[] { header }, resumptionToken, OffsetDateTime.now(), null, request);
+    ListIdentifiersResponse response = new ListIdentifiersResponse(new Header[] { header }, resumptionToken, OffsetDateTime.now(), null, request.getParameters());
     
     String rsp = f.createListIdentifiersResponse(response);
     System.out.println(String.format("%s", rsp));
@@ -270,7 +270,7 @@ public class ResponseFactoryTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListIdentifiersResponse response = new ListIdentifiersResponse(new Header[] { header }, resumptionToken, OffsetDateTime.now(), null, request);
+    ListIdentifiersResponse response = new ListIdentifiersResponse(new Header[] { header }, resumptionToken, OffsetDateTime.now(), null, request.getParameters());
     
     String rsp = f.createListIdentifiersResponse(response);
     System.out.println(String.format("%s", rsp));
@@ -327,7 +327,7 @@ public class ResponseFactoryTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListRecordsResponse response = new ListRecordsResponse(new Record[] { record }, resumptionToken, OffsetDateTime.now(), null, request);
+    ListRecordsResponse response = new ListRecordsResponse(new Record[] { record }, resumptionToken, OffsetDateTime.now(), null, request.getParameters());
     
     String rsp = f.createListRecordsResponse(response);
     System.out.println(String.format("%s", rsp));
@@ -384,7 +384,7 @@ public class ResponseFactoryTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListRecordsResponse response = new ListRecordsResponse(new Record[] { record }, resumptionToken, OffsetDateTime.now(), null, request);
+    ListRecordsResponse response = new ListRecordsResponse(new Record[] { record }, resumptionToken, OffsetDateTime.now(), null, request.getParameters());
     
     String rsp = f.createListRecordsResponse(response);
     System.out.println(String.format("%s", rsp));
@@ -439,7 +439,7 @@ public class ResponseFactoryTest {
     
     Record record = new Record(header, metadata, about);
     
-    GetRecordResponse response = new GetRecordResponse(record, OffsetDateTime.now(), null, request);
+    GetRecordResponse response = new GetRecordResponse(record, OffsetDateTime.now(), null, request.getParameters());
     
     String rsp = f.createGetRecordResponse(response);
     System.out.println(String.format("%s", rsp));

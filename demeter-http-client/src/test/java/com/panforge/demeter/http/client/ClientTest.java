@@ -46,6 +46,7 @@ import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.elements.Set;
+import com.panforge.demeter.core.utils.QueryUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -112,7 +113,7 @@ public class ClientTest {
     ListMetadataFormatsResponse response = (ListMetadataFormatsResponse) client.execute(request);
     
     assertNotNull("No response received.", response);
-    assertEquals("Invalid verb", Verb.ListMetadataFormats, response.request.verb);
+    assertEquals("Invalid verb", Verb.ListMetadataFormats.name(), QueryUtils.primeParams(response.parameters).get("verb"));
   }
   
   @Test
@@ -121,7 +122,7 @@ public class ClientTest {
     ListSetsResponse response = (ListSetsResponse) client.execute(request);
     
     assertNotNull("No response received.", response);
-    assertEquals("Invalid verb", Verb.ListSets, response.request.verb);
+    assertEquals("Invalid verb", Verb.ListSets.name(), QueryUtils.primeParams(response.parameters).get("verb"));
   }
   
   @Test
@@ -130,7 +131,7 @@ public class ClientTest {
     ListIdentifiersResponse response = (ListIdentifiersResponse) client.execute(request);
     
     assertNotNull("No response received.", response);
-    assertEquals("Invalid verb", Verb.ListIdentifiers, response.request.verb);
+    assertEquals("Invalid verb", Verb.ListIdentifiers.name(), QueryUtils.primeParams(response.parameters).get("verb"));
   }
   
   @Test
@@ -139,7 +140,7 @@ public class ClientTest {
     ListRecordsResponse response = (ListRecordsResponse) client.execute(request);
     
     assertNotNull("No response received.", response);
-    assertEquals("Invalid verb", Verb.ListRecords, response.request.verb);
+    assertEquals("Invalid verb", Verb.ListRecords.name(), QueryUtils.primeParams(response.parameters).get("verb"));
   }
   
   @Test
@@ -148,7 +149,7 @@ public class ClientTest {
     GetRecordResponse response = (GetRecordResponse) client.execute(request);
     
     assertNotNull("No response received.", response);
-    assertEquals("Invalid verb", Verb.GetRecord, response.request.verb);
+    assertEquals("Invalid verb", Verb.GetRecord.name(), QueryUtils.primeParams(response.parameters).get("verb"));
   }
   
   @Test
@@ -157,7 +158,7 @@ public class ClientTest {
     IdentifyResponse response = (IdentifyResponse) client.execute(request);
     
     assertNotNull("No response received.", response);
-    assertEquals("Invalid verb", Verb.Identify, response.request.verb);
+    assertEquals("Invalid verb", Verb.Identify.name(), QueryUtils.primeParams(response.parameters).get("verb"));
   }
  
   private static String createListMetadataFormatsResponse() throws Exception {
@@ -169,7 +170,7 @@ public class ClientTest {
             "http://www.openarchives.org/OAI/2.0/oai_dc/"
     );
     
-    ListMetadataFormatsResponse response = new ListMetadataFormatsResponse(new MetadataFormat[]{fmt}, OffsetDateTime.now(), null, request);
+    ListMetadataFormatsResponse response = new ListMetadataFormatsResponse(new MetadataFormat[]{fmt}, OffsetDateTime.now(), null, request.getParameters());
     
     return responseFactory.createListMetadataFormatsResponse(response);
   }
@@ -181,7 +182,7 @@ public class ClientTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListSetsResponse response = new ListSetsResponse(new Set[]{set}, resumptionToken, OffsetDateTime.now(), null, request);
+    ListSetsResponse response = new ListSetsResponse(new Set[]{set}, resumptionToken, OffsetDateTime.now(), null, request.getParameters());
     
     return responseFactory.createListSetsResponse(response);
   }
@@ -198,7 +199,7 @@ public class ClientTest {
                     + "</oai-identifier>"
     )};
     
-    IdentifyResponse response = IdentifyResponse.createFromConfig(config, descriptions, OffsetDateTime.now(), null, request);
+    IdentifyResponse response = IdentifyResponse.createFromConfig(config, descriptions, OffsetDateTime.now(), null, request.getParameters());
     
     return responseFactory.createIdentifyResponse(response);
   }
@@ -210,7 +211,7 @@ public class ClientTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListIdentifiersResponse response = new ListIdentifiersResponse(new Header[] { header }, resumptionToken, OffsetDateTime.now(), null, request);
+    ListIdentifiersResponse response = new ListIdentifiersResponse(new Header[] { header }, resumptionToken, OffsetDateTime.now(), null, request.getParameters());
     
     return responseFactory.createListIdentifiersResponse(response);
   }
@@ -244,7 +245,7 @@ public class ClientTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListRecordsResponse response = new ListRecordsResponse(new Record[] { record }, resumptionToken, OffsetDateTime.now(), null, request);
+    ListRecordsResponse response = new ListRecordsResponse(new Record[] { record }, resumptionToken, OffsetDateTime.now(), null, request.getParameters());
     
     return responseFactory.createListRecordsResponse(response);
   }
@@ -276,7 +277,7 @@ public class ClientTest {
     
     Record record = new Record(header, metadata, about);
     
-    GetRecordResponse response = new GetRecordResponse(record, OffsetDateTime.now(), null, request);
+    GetRecordResponse response = new GetRecordResponse(record, OffsetDateTime.now(), null, request.getParameters());
     
     return responseFactory.createGetRecordResponse(response);
   }

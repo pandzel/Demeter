@@ -20,6 +20,7 @@ import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.model.request.ListIdentifiersRequest;
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 /**
  * ListIdentifiers response.
@@ -37,10 +38,10 @@ public final class ListIdentifiersResponse extends Response<ListIdentifiersReque
    * @param resumptionToken resumption token
    * @param responseDate response date
    * @param errors errors
-   * @param request request
+   * @param parameters request parameters
    */
-  public ListIdentifiersResponse(Header[] headers, ResumptionToken resumptionToken, OffsetDateTime responseDate, ErrorInfo[] errors, ListIdentifiersRequest request) {
-    super(responseDate, errors, request);
+  public ListIdentifiersResponse(Header[] headers, ResumptionToken resumptionToken, OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
+    super(responseDate, errors, parameters);
     this.headers = headers;
     this.resumptionToken = resumptionToken;
   }

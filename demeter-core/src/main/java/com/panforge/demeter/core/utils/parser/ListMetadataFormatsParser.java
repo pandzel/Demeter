@@ -45,7 +45,7 @@ class ListMetadataFormatsParser extends DocParser {
       formats.add(readMetadataFormat(node));
     }
     ListMetadataFormatsRequest request = new ListMetadataFormatsRequest(readIdentifier(doc));
-    return new ListMetadataFormatsResponse(formats.toArray(new MetadataFormat[formats.size()]), readResponseDate(doc), readErrors(doc), request);
+    return new ListMetadataFormatsResponse(formats.toArray(new MetadataFormat[formats.size()]), readResponseDate(doc), readErrors(doc), request.getParameters());
   }
   
   private MetadataFormat readMetadataFormat(Node node) {

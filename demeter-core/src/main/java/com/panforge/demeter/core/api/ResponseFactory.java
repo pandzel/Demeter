@@ -35,7 +35,6 @@ import com.panforge.demeter.core.utils.QueryUtils;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.w3c.dom.Document;
@@ -87,15 +86,7 @@ public class ResponseFactory {
     Record record = response.record;
     Header header = record.header;
 
-    Map<String, String> parameters = new HashMap<>();
-    if (response.request.getIdentifier() != null) {
-      parameters.put("identifier", response.request.getIdentifier().toASCIIString());
-    }
-    if (response.request.getMetadataPrefix() != null) {
-      parameters.put("metadataPrefix", response.request.getMetadataPrefix());
-    }
-
-    return createHeader(response, parameters)
+    return createHeader(response, response.parameters)
             .child("GetRecord")
             .child("record")
             .child("header")
@@ -123,22 +114,7 @@ public class ResponseFactory {
    * @return ListRecords XML string
    */
   public String createListRecordsResponse(ListRecordsResponse response) {
-    Map<String, String> parameters = new HashMap<>();
-    insertResumptionTokenParameter(parameters, response.request);
-    if (response.request.getFrom() != null) {
-      parameters.put("from", response.request.getFrom().format(DateTimeFormatter.ISO_DATE_TIME));
-    }
-    if (response.request.getUntil() != null) {
-      parameters.put("until", response.request.getUntil().format(DateTimeFormatter.ISO_DATE_TIME));
-    }
-    if (response.request.getSet() != null) {
-      parameters.put("set", response.request.getSet());
-    }
-    if (response.request.getMetadataPrefix() != null) {
-      parameters.put("metadataPrefix", response.request.getMetadataPrefix());
-    }
-
-    return createHeader(response, parameters)
+    return createHeader(response, response.parameters)
             .child("ListRecords")
             .forEach(Stream.of(response.records != null ? response.records : new Record[]{}), (nd, record) -> {
               Header header = record.header;
@@ -160,7 +136,7 @@ public class ResponseFactory {
                       .done()
                       .done();
             })
-            .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionDoken(nd, resumptionToken, response.request.getResumptionToken() == null))
+            .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionDoken(nd, resumptionToken, QueryUtils.primeParams(response.parameters).get("resumptionToken") == null))
             .end();
   }
 
@@ -171,22 +147,7 @@ public class ResponseFactory {
    * @return ListIdentifiers XML string
    */
   public String createListIdentifiersResponse(ListIdentifiersResponse response) {
-    Map<String, String> parameters = new HashMap<>();
-    insertResumptionTokenParameter(parameters, response.request);
-    if (response.request.getFrom() != null) {
-      parameters.put("from", response.request.getFrom().format(DateTimeFormatter.ISO_DATE_TIME));
-    }
-    if (response.request.getUntil() != null) {
-      parameters.put("until", response.request.getUntil().format(DateTimeFormatter.ISO_DATE_TIME));
-    }
-    if (response.request.getSet() != null) {
-      parameters.put("set", response.request.getSet());
-    }
-    if (response.request.getMetadataPrefix() != null) {
-      parameters.put("metadataPrefix", response.request.getMetadataPrefix());
-    }
-
-    return createHeader(response, parameters)
+    return createHeader(response, response.parameters)
             .child("ListIdentifiers")
             .forEach(Stream.of(response.headers != null ? response.headers : new Header[]{}), (nd, header) -> {
               nd.child("header")
@@ -199,7 +160,7 @@ public class ResponseFactory {
                       .done()
                       .done();
             })
-            .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionDoken(nd, resumptionToken, response.request.getResumptionToken() == null))
+            .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionDoken(nd, resumptionToken, QueryUtils.primeParams(response.parameters).get("resumptionToken") == null))
             .end();
   }
 
@@ -210,9 +171,7 @@ public class ResponseFactory {
    * @return Identify XML string
    */
   public String createIdentifyResponse(IdentifyResponse response) {
-    Map<String, String> parameters = new HashMap<>();
-
-    return createHeader(response, parameters)
+    return createHeader(response, response.parameters)
             .child("Identify")
             .child("repositoryName").value(response.repositoryName).done()
             .child("baseURL").value(response.baseURL).done()
@@ -237,17 +196,14 @@ public class ResponseFactory {
    * @return ListSets XML string
    */
   public String createListSetsResponse(ListSetsResponse response) {
-    Map<String, String> parameters = new HashMap<>();
-    insertResumptionTokenParameter(parameters, response.request);
-
-    return createHeader(response, parameters)
+    return createHeader(response, response.parameters)
             .child("ListSets", () -> response.listSets != null).forEach(Stream.of(response.listSets), (node, set) -> {
               node
                 .child("set")
                 .child("setSpec").value(set.setSpec).done()
                 .child("setName").value(set.setName).done()
                 .done()
-                .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionDoken(nd, resumptionToken, response.request.getResumptionToken() == null));
+                .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionDoken(nd, resumptionToken, QueryUtils.primeParams(response.parameters).get("resumptionToken") == null));
             }).done()
             .end();
   }
@@ -259,12 +215,7 @@ public class ResponseFactory {
    * @return ListMetadataFormats XML string
    */
   public String createListMetadataFormatsResponse(ListMetadataFormatsResponse response) {
-    Map<String, String> parameters = new HashMap<>();
-    if (response.request.getIdentifier() != null) {
-      parameters.put("identifier", response.request.getIdentifier().toASCIIString());
-    }
-
-    return createHeader(response, parameters)
+    return createHeader(response, response.parameters)
             .child("ListMetadataFormats", () -> response.metadataFormats != null).forEach(Stream.of(response.metadataFormats), (node, fmt) -> {
               node
                 .child("metadataFormat")
@@ -276,10 +227,10 @@ public class ResponseFactory {
             .end();
   }
 
-  private DocNode createHeader(Response response, Map<String, String> reqParams) {
+  private DocNode createHeader(Response response, Map<String, String[]> reqParams) {
     return new DocBuilder().begin()
             .child("responseDate").value(response.responseDate.format(DateTimeFormatter.ISO_DATE_TIME)).done()
-            .child("request").attr("verb", response.request.verb.name()).forEach(reqParams != null ? reqParams.entrySet().stream() : null, (n, e) -> n.attr(e.getKey(), e.getValue())).value(CTX.config.baseURL).done();
+            .child("request").attr("verb", QueryUtils.primeParams(response.parameters).get("verb").toString()).forEach(reqParams != null ? QueryUtils.primeParams(reqParams).entrySet().stream() : null, (n, e) -> n.attr(e.getKey(), e.getValue())).value(CTX.config.baseURL).done();
   }
 
   private void appendResumptionDoken(DocNode parent, ResumptionToken resumptionToken, boolean printValue) {

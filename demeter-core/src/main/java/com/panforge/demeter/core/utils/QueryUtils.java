@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
@@ -58,24 +57,12 @@ public class QueryUtils {
    * Trims parameters.
    * <p>
    * Removes empty parameters from the collection.
-   * @param params parameters to trim
+   * @param params parameters to trim 
    * @return trimmed parameters
    */
   public static Map<String,String[]> trimParams(Map<String,String[]> params) {
-    return trimParams(params, s->!StringUtils.isBlank(s));
-  }
-  
-  /**
-   * Trims parameters.
-   * <p>
-   * Removes empty parameters from the collection.
-   * @param params parameters to trim
-   * @param predicate predicate 
-   * @return trimmed parameters
-   */
-  public static Map<String,String[]> trimParams(Map<String,String[]> params, Predicate<String> predicate) {
     Map<String, String[]> result = params.entrySet().stream()
-            .collect(Collectors.toMap(e->e.getKey(), e->Arrays.stream(e.getValue()).filter(predicate).toArray(String[]::new)))
+            .collect(Collectors.toMap(e->e.getKey(), e->Arrays.stream(e.getValue()).filter(s->!StringUtils.isBlank(s)).toArray(String[]::new)))
             .entrySet().stream().filter(e->e.getValue()!=null && e.getValue().length>0)
             .collect(()->new TreeMap<>(String.CASE_INSENSITIVE_ORDER), (m, e) -> m.put(e.getKey(), e.getValue()), Map::putAll);
     return result;

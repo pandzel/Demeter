@@ -55,7 +55,7 @@ class ListIdentifiersParser extends DocParser {
             ? new ListIdentifiersRequest(requestResumptionToken)
             : extractRequest();
     ResumptionToken resumptionToken = readResponseResumptionToken(doc);
-    return new ListIdentifiersResponse(headers.toArray(new Header[headers.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), request);
+    return new ListIdentifiersResponse(headers.toArray(new Header[headers.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), request.getParameters());
   }
   
   private ListIdentifiersRequest extractRequest() throws BadArgumentException {

@@ -19,6 +19,7 @@ import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.request.IdentifyRequest;
 import java.time.OffsetDateTime;
+import java.util.Map;
 import org.w3c.dom.Document;
 
 /**
@@ -58,10 +59,10 @@ public final class IdentifyResponse extends Response<IdentifyRequest> {
    * @param descriptions descriptions
    * @param responseDate response date
    * @param errors errors
-   * @param request request
+   * @param parameters request parameters
    */
-  public IdentifyResponse(String repositoryName, String baseURL, String protocolVersion, String[] adminEmail, OffsetDateTime earliestDatestamp, Config.Deletion deletedRecord, String granularity, Config.Compression [] compression, Document[] descriptions, OffsetDateTime responseDate, ErrorInfo[] errors, IdentifyRequest request) {
-    super(responseDate, errors, request);
+  public IdentifyResponse(String repositoryName, String baseURL, String protocolVersion, String[] adminEmail, OffsetDateTime earliestDatestamp, Config.Deletion deletedRecord, String granularity, Config.Compression [] compression, Document[] descriptions, OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
+    super(responseDate, errors, parameters);
     this.repositoryName = repositoryName;
     this.baseURL = baseURL;
     this.protocolVersion = protocolVersion;
@@ -79,10 +80,10 @@ public final class IdentifyResponse extends Response<IdentifyRequest> {
    * @param descriptions descriptions
    * @param responseDate response date
    * @param errors errors
-   * @param request request
+   * @param parameters request parameters
    * @return identify response
    */
-  public static IdentifyResponse createFromConfig(Config config, Document[] descriptions, OffsetDateTime responseDate, ErrorInfo[] errors, IdentifyRequest request) {
+  public static IdentifyResponse createFromConfig(Config config, Document[] descriptions, OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
     IdentifyResponse response = new IdentifyResponse(
             config.repositoryName,
             config.baseURL,
@@ -95,7 +96,7 @@ public final class IdentifyResponse extends Response<IdentifyRequest> {
             descriptions,
             responseDate,
             errors,
-            request
+            parameters
     );
     
     return response;

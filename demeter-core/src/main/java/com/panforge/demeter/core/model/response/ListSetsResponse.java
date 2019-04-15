@@ -20,6 +20,7 @@ import com.panforge.demeter.core.model.response.elements.Set;
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.model.request.ListSetsRequest;
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 /**
  * ListSets response.
@@ -37,10 +38,10 @@ public final class ListSetsResponse extends Response<ListSetsRequest> {
    * @param resumptionToken resumption token
    * @param responseDate response date
    * @param errors errors
-   * @param request request
+   * @param parameters request parameters
    */
-  public ListSetsResponse(Set[] listSets, ResumptionToken resumptionToken, OffsetDateTime responseDate, ErrorInfo[] errors, ListSetsRequest request) {
-    super(responseDate, errors, request);
+  public ListSetsResponse(Set[] listSets, ResumptionToken resumptionToken, OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
+    super(responseDate, errors, parameters);
     this.listSets = listSets;
     this.resumptionToken = resumptionToken;
   }
