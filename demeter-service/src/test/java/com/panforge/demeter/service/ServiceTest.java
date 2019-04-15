@@ -60,7 +60,7 @@ public class ServiceTest {
     IdentifyRequest request = new IdentifyRequest();
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = service.execute(parameters);
-    Response response = respParser.parse(responseStr);
+    Response<? extends Request> response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
     assertNotNull("Incomplete response", response.parameters);
@@ -75,7 +75,7 @@ public class ServiceTest {
     ListMetadataFormatsRequest request = new ListMetadataFormatsRequest(null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = service.execute(parameters);
-    Response response = respParser.parse(responseStr);
+    Response<? extends Request> response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
     assertNotNull("Incomplete response", response.parameters);
@@ -90,7 +90,7 @@ public class ServiceTest {
     ListSetsRequest request = new ListSetsRequest();
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = service.execute(parameters);
-    Response response = respParser.parse(responseStr);
+    Response<? extends Request> response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);
@@ -106,7 +106,7 @@ public class ServiceTest {
     ListIdentifiersRequest request = new ListIdentifiersRequest("oai_dc", null, null, null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = service.execute(parameters);
-    Response response = respParser.parse(responseStr);
+    Response<? extends Request> response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);
@@ -124,7 +124,7 @@ public class ServiceTest {
     ListIdentifiersRequest request = new ListIdentifiersRequest("oai_dc", null, null, null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = auxService.execute(parameters);
-    Response response = respParser.parse(responseStr);
+    Response<? extends Request> response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);
@@ -154,7 +154,7 @@ public class ServiceTest {
     ListRecordsRequest request = new ListRecordsRequest("oai_dc", null, null, null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = service.execute(parameters);
-    Response response = respParser.parse(responseStr);
+    Response<? extends Request> response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);
@@ -172,7 +172,7 @@ public class ServiceTest {
     ListRecordsRequest request = new ListRecordsRequest("oai_dc", null, null, null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = auxService.execute(parameters);
-    Response response = respParser.parse(responseStr);
+    Response<? extends Request> response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);
@@ -202,7 +202,7 @@ public class ServiceTest {
     GetRecordRequest request = new GetRecordRequest(URI.create("001"), "oai_dc");
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = service.execute(parameters);
-    Response response = respParser.parse(responseStr);
+    Response<? extends Request> response = respParser.parse(responseStr);
     
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);

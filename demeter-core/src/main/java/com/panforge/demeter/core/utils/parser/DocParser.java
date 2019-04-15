@@ -19,8 +19,8 @@ import com.panforge.demeter.core.model.ErrorCode;
 import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.model.Verb;
-import com.panforge.demeter.core.api.exception.BadArgumentException;
 import com.panforge.demeter.core.api.exception.BadVerbException;
+import com.panforge.demeter.core.model.request.Request;
 import com.panforge.demeter.core.model.response.Response;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.elements.Record;
@@ -79,7 +79,7 @@ public class DocParser {
    * @return response as an object
    * @throws BadVerbException if parsing fails
    */
-  public Response parse() throws BadVerbException {
+  public Response<? extends Request> parse() throws BadVerbException {
     DocParser parser = getInstance(readVerb(doc));
     return parser.parse();
   }

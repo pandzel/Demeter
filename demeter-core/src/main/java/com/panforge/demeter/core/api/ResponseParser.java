@@ -15,8 +15,8 @@
  */
 package com.panforge.demeter.core.api;
 
-import com.panforge.demeter.core.api.exception.BadArgumentException;
 import com.panforge.demeter.core.api.exception.BadVerbException;
+import com.panforge.demeter.core.model.request.Request;
 import com.panforge.demeter.core.model.response.Response;
 import com.panforge.demeter.core.utils.XmlUtils;
 import com.panforge.demeter.core.utils.parser.DocParser;
@@ -41,7 +41,7 @@ public class ResponseParser {
    * @throws org.xml.sax.SAXException if error parsing xml
    * @throws BadVerbException if parsing fails
    */
-  public Response parse(String xml) throws IOException, SAXException, BadVerbException {
+  public Response<? extends Request> parse(String xml) throws IOException, SAXException, BadVerbException {
     Document doc = XmlUtils.parseToXml(xml);
     DocParser docParser = new DocParser(doc);
     return docParser.parse();
@@ -56,7 +56,7 @@ public class ResponseParser {
    * @throws org.xml.sax.SAXException if error parsing xml
    * @throws BadVerbException if parsing fails
    */
-  public Response parse(InputStream xmlStream) throws IOException, SAXException, BadVerbException {
+  public Response<? extends Request> parse(InputStream xmlStream) throws IOException, SAXException, BadVerbException {
     Document doc = XmlUtils.parseToXml(xmlStream);
     DocParser docParser = new DocParser(doc);
     return docParser.parse();

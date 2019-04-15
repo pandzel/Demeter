@@ -21,6 +21,7 @@ import com.panforge.demeter.core.utils.builder.DocBuilder;
 import com.panforge.demeter.core.utils.builder.DocNode;
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.model.Verb;
+import com.panforge.demeter.core.model.request.Request;
 import com.panforge.demeter.core.model.request.RequestWithToken;
 import com.panforge.demeter.core.model.response.GetRecordResponse;
 import com.panforge.demeter.core.model.response.IdentifyResponse;
@@ -69,7 +70,7 @@ public class ResponseFactory {
     reqParams = QueryUtils.rejectKeys(reqParams, "verb");
     return new DocBuilder().begin()
             .child("responseDate").value(responseDate.format(DateTimeFormatter.ISO_DATE_TIME)).done()
-            .child("request").attr("verb", ()->verb.name(), ()->verb!=null).forEach(reqParams != null ? QueryUtils.paramsToList(reqParams).stream() : null, (n, e) -> n.attr(e[0], e[1])).value(CTX.config.baseURL).done()
+            .child("request").attr("verb", ()->verb!=null? verb.name(): null, ()->verb!=null).forEach(reqParams != null ? QueryUtils.paramsToList(reqParams).stream() : null, (n, e) -> n.attr(e[0], e[1])).value(CTX.config.baseURL).done()
             .forEach(Arrays.stream(errors!=null? errors: new ErrorInfo[0]), (nd,error)->{
               nd.child("error", () -> error != null).attr("code", error != null ? error.errorCode.name() : "").value(error != null ? error.message : "");
             })
@@ -227,10 +228,10 @@ public class ResponseFactory {
             .end();
   }
 
-  private DocNode createHeader(Response response, Map<String, String[]> reqParams) {
+  private DocNode createHeader(Response<? extends Request> response, Map<String, String[]> reqParams) {
     return new DocBuilder().begin()
             .child("responseDate").value(response.responseDate.format(DateTimeFormatter.ISO_DATE_TIME)).done()
-            .child("request").attr("verb", QueryUtils.primeParams(response.parameters).get("verb").toString()).forEach(reqParams != null ? QueryUtils.primeParams(reqParams).entrySet().stream() : null, (n, e) -> n.attr(e.getKey(), e.getValue())).value(CTX.config.baseURL).done();
+            .child("request").attr("verb", QueryUtils.primeParams(response.parameters).get("verb")).forEach(reqParams != null ? QueryUtils.primeParams(reqParams).entrySet().stream() : null, (n, e) -> n.attr(e.getKey(), e.getValue())).value(CTX.config.baseURL).done();
   }
 
   private void appendResumptionDoken(DocNode parent, ResumptionToken resumptionToken, boolean printValue) {
