@@ -17,6 +17,7 @@ package com.panforge.demeter.core.utils.parser;
 
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.api.exception.BadArgumentException;
+import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.model.request.ListIdentifiersRequest;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.ListIdentifiersResponse;
@@ -45,26 +46,24 @@ class ListIdentifiersParser extends DocParser {
   }
 
   @Override
-  public ListIdentifiersResponse parse() throws BadArgumentException {
+  public ListIdentifiersResponse parse() {
     ArrayList<Header> headers = new ArrayList<>();
     for (Node node : nodes((NodeList) evaluate("//oai:OAI-PMH/oai:ListIdentifiers/oai:header", doc, XPathConstants.NODESET))) {
       headers.add(readHeader(node));
     }
-    String requestResumptionToken = readRequestResumptionToken(doc);
-    ListIdentifiersRequest request = requestResumptionToken!=null
-            ? new ListIdentifiersRequest(requestResumptionToken)
-            : extractRequest();
     ResumptionToken resumptionToken = readResponseResumptionToken(doc);
-    return new ListIdentifiersResponse(headers.toArray(new Header[headers.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), request.getParameters());
+    return new ListIdentifiersResponse(headers.toArray(new Header[headers.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), extractRequest());
   }
   
-  private ListIdentifiersRequest extractRequest() throws BadArgumentException {
+  private Map<String,String[]> extractRequest() {
     Map<String,String[]> values = new HashMap<>();
+    values.put("verb", new String[] { Verb.ListIdentifiers.name() });
+    values.put("resumptionToken", new String[]{ readRequestResumptionToken(doc) });
     values.put("metadataPrefix", new String[]{ readMetadataPrefix(doc) });
     values.put("from", new String[]{ readFromAsString(doc) });
     values.put("until", new String[]{ readUntilAsString(doc) });
     values.put("set", new String[]{ readSet(doc) });
-    return ListIdentifiersRequest.create(values);
+    return values;
   }
 
   private Header readHeader(Node node) {

@@ -40,9 +40,8 @@ public class ResponseParser {
    * @throws java.io.IOException if error reading response
    * @throws org.xml.sax.SAXException if error parsing xml
    * @throws BadVerbException if parsing fails
-   * @throws BadArgumentException if parsing fails
    */
-  public Response parse(String xml) throws IOException, SAXException, BadArgumentException, BadVerbException {
+  public Response parse(String xml) throws IOException, SAXException, BadVerbException {
     Document doc = XmlUtils.parseToXml(xml);
     DocParser docParser = new DocParser(doc);
     return docParser.parse();
@@ -56,9 +55,8 @@ public class ResponseParser {
    * @throws java.io.IOException if error reading response
    * @throws org.xml.sax.SAXException if error parsing xml
    * @throws BadVerbException if parsing fails
-   * @throws BadArgumentException if parsing fails
    */
-  public Response parse(InputStream xmlStream) throws IOException, SAXException, BadArgumentException, BadVerbException {
+  public Response parse(InputStream xmlStream) throws IOException, SAXException, BadVerbException {
     Document doc = XmlUtils.parseToXml(xmlStream);
     DocParser docParser = new DocParser(doc);
     return docParser.parse();

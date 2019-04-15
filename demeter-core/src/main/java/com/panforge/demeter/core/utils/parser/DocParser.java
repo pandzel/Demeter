@@ -78,9 +78,8 @@ public class DocParser {
    * Parses XML response document.
    * @return response as an object
    * @throws BadVerbException if parsing fails
-   * @throws BadArgumentException if parsing fails
    */
-  public Response parse() throws BadVerbException, BadArgumentException {
+  public Response parse() throws BadVerbException {
     DocParser parser = getInstance(readVerb(doc));
     return parser.parse();
   }

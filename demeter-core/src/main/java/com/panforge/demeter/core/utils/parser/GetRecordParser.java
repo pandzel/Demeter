@@ -15,9 +15,7 @@
  */
 package com.panforge.demeter.core.utils.parser;
 
-import com.panforge.demeter.core.api.exception.BadArgumentException;
-import com.panforge.demeter.core.api.exception.BadVerbException;
-import com.panforge.demeter.core.model.request.GetRecordRequest;
+import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.model.response.GetRecordResponse;
 import com.panforge.demeter.core.model.response.elements.Record;
 import java.util.HashMap;
@@ -40,21 +38,21 @@ class GetRecordParser extends DocParser {
   }
 
   @Override
-  public GetRecordResponse parse() throws BadArgumentException {
-    GetRecordRequest request = extractRequest();
+  public GetRecordResponse parse() {
     Node ndRecord = (Node)evaluate("//oai:OAI-PMH/oai:GetRecord/oai:record", doc, XPathConstants.NODE);
     if (ndRecord!=null) {
       Record record = readRecord(ndRecord);
-      return new GetRecordResponse(record, readResponseDate(doc), readErrors(doc), request.getParameters());
+      return new GetRecordResponse(record, readResponseDate(doc), readErrors(doc), extractRequest());
     }
     return null;
   }
   
-  private GetRecordRequest extractRequest() throws BadArgumentException {
+  private Map<String,String[]> extractRequest() {
     Map<String,String[]> values = new HashMap<>();
+    values.put("verb", new String[] { Verb.GetRecord.name() });
     values.put("identifier", new String[] { readIdentifierAsString(doc) });
     values.put("metadataPrefix", new String[] { readMetadataPrefix(doc) });
-    return GetRecordRequest.create(values);
+    return values;
   }
   
 }

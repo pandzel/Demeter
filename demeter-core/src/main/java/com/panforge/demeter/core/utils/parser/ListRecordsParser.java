@@ -17,6 +17,7 @@ package com.panforge.demeter.core.utils.parser;
 
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.api.exception.BadArgumentException;
+import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.model.request.ListRecordsRequest;
 import com.panforge.demeter.core.model.response.ListRecordsResponse;
 import com.panforge.demeter.core.model.response.elements.Record;
@@ -43,26 +44,24 @@ class ListRecordsParser extends DocParser {
   }
 
   @Override
-  public ListRecordsResponse parse() throws BadArgumentException {
+  public ListRecordsResponse parse() {
     ArrayList<Record> records = new ArrayList<>();
     for (Node node : nodes((NodeList) evaluate("//oai:OAI-PMH/oai:ListRecords/oai:record", doc, XPathConstants.NODESET))) {
       records.add(readRecord(node));
     }
-    String requestResumptionToken = readRequestResumptionToken(doc);
-    ListRecordsRequest request = requestResumptionToken!=null
-            ? new ListRecordsRequest(requestResumptionToken)
-            : extractRequest();
     ResumptionToken resumptionToken = readResponseResumptionToken(doc);
-    return new ListRecordsResponse(records.toArray(new Record[records.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), request.getParameters());
+    return new ListRecordsResponse(records.toArray(new Record[records.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), extractRequest());
   }
   
-  private ListRecordsRequest extractRequest() throws BadArgumentException {
+  private Map<String,String[]> extractRequest() {
     Map<String,String[]> values = new HashMap<>();
+    values.put("verb", new String[] { Verb.ListRecords.name() });
+    values.put("resumptionToken", new String[]{ readRequestResumptionToken(doc) });
     values.put("metadataPrefix", new String[]{ readMetadataPrefix(doc) });
     values.put("from", new String[]{ readFromAsString(doc) });
     values.put("until", new String[]{ readUntilAsString(doc) });
     values.put("set", new String[]{ readSet(doc) });
-    return ListRecordsRequest.create(values);
+    return values;
   }
 
 }
