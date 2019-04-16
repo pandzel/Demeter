@@ -145,8 +145,8 @@ public class ParamProcessor {
     /**
      * Sets value from parameters.
      * @param parameters input parameters
-     * @throws ProtocolException if error setting parameter
+     * @throws BadArgumentException if error setting parameter
      */
-    void set(String[] parameters) throws ProtocolException;
+    void set(String[] parameters) throws BadArgumentException;
   }
 }
