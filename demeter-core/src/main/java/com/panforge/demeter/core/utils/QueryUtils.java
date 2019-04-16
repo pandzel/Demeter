@@ -72,8 +72,8 @@ public class QueryUtils {
    * Primes parameters.
    * <p>
    * Selects first non-empty parameter from multiple possible parameters
-   * @param params
-   * @return 
+   * @param params request parameters
+   * @return primed request parameters
    */
   public static Map<String,String> primeParams(Map<String,String[]> params) {
     return params.entrySet().stream()
