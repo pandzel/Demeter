@@ -34,16 +34,29 @@ import org.apache.commons.lang3.Validate;
  */
 public final class ListIdentifiersRequest extends RequestWithToken {
 
+  /** starting date (optional) */
   private OffsetDateTime from;
+  /** ending date (optional) */
   private OffsetDateTime until;
+  /** metadata prefix (mandatory) */
   private String metadataPrefix;
+  /** set (optional) */
   private String set;
+
+  /**
+   * Creates instance of the request.
+   * @param resumptionToken resumption token
+   * @return instance of the request
+   */
+  public static ListIdentifiersRequest resume(String resumptionToken) {
+    return new ListIdentifiersRequest(resumptionToken);
+  }
   
   /**
    * Creates instance of the request.
    * @param resumptionToken resumption token
    */
-  public ListIdentifiersRequest(String resumptionToken) {
+  ListIdentifiersRequest(String resumptionToken) {
     super(Verb.ListIdentifiers);
     this.resumptionToken = resumptionToken;
     Validate.notEmpty(resumptionToken, "Missing resumption token");
@@ -51,10 +64,10 @@ public final class ListIdentifiersRequest extends RequestWithToken {
 
   /**
    * Creates instance of the request.
-   * @param metadataPrefix the metadata prefix
-   * @param from the 'from' date
-   * @param until the 'until' date
-   * @param set the set
+   * @param metadataPrefix the metadata prefix (mandatory)
+   * @param from the 'from' date (optional)
+   * @param until the 'until' date (optional)
+   * @param set the set (optional)
    */
   public ListIdentifiersRequest(String metadataPrefix, OffsetDateTime from, OffsetDateTime until, String set) {
     super(Verb.ListIdentifiers);

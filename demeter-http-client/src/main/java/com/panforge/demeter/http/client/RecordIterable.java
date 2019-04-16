@@ -16,7 +16,6 @@
 package com.panforge.demeter.http.client;
 
 import com.panforge.demeter.core.model.ErrorInfo;
-import com.panforge.demeter.core.api.exception.ProtocolException;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.elements.Record;
 import java.util.Iterator;

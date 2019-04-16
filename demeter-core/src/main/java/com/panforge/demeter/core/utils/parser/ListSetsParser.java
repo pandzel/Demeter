@@ -46,7 +46,7 @@ class ListSetsParser extends DocParser {
       sets.add(readSet(node));
     }
     String rt = readRequestResumptionToken(doc);
-    ListSetsRequest request = rt!=null? new ListSetsRequest(readRequestResumptionToken(doc)): new ListSetsRequest();
+    ListSetsRequest request = rt!=null? ListSetsRequest.resume(readRequestResumptionToken(doc)): new ListSetsRequest();
     ResumptionToken resumptionToken = readResponseResumptionToken(doc);
     return new ListSetsResponse(sets.toArray(new Set[sets.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), request.getParameters());
   }

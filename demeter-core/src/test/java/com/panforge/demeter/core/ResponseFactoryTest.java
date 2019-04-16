@@ -126,7 +126,7 @@ public class ResponseFactoryTest {
   public void testCreateListSetsResponseWithResumptionToken() throws Exception {
     Set set = new Set("music", "Music (set)");
     
-    ListSetsRequest request = new ListSetsRequest("token");
+    ListSetsRequest request = ListSetsRequest.resume("token");
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
@@ -264,7 +264,7 @@ public class ResponseFactoryTest {
   
   @Test
   public void testListIdentifiersResponseWithResumptionToken() throws Exception {
-    ListIdentifiersRequest request = new ListIdentifiersRequest("token");
+    ListIdentifiersRequest request = ListIdentifiersRequest.resume("token");
     
     Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[] { "music" }, false);
     
@@ -355,7 +355,7 @@ public class ResponseFactoryTest {
   
   @Test
   public void testListRecordsResponseWithResumptionToken() throws Exception {
-    ListRecordsRequest request = new ListRecordsRequest("token");
+    ListRecordsRequest request = ListRecordsRequest.resume("token");
     
     Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[] { "music" }, false);
     

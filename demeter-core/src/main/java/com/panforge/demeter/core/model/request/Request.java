@@ -20,7 +20,7 @@ import com.panforge.demeter.core.utils.QueryUtils;
 import java.util.Map;
 
 /**
- * Base of all requests..
+ * Base of all requests.
  */
 public abstract class Request {
   /** the verb */

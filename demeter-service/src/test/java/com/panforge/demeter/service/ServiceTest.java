@@ -135,7 +135,7 @@ public class ServiceTest {
     assertTrue("Invalid number of identifiers", responseObj.headers.length <= auxBatchSize);
     assertNotNull("Missing resumptionToken", responseObj.resumptionToken);
     
-    request = new ListIdentifiersRequest(responseObj.resumptionToken.value);
+    request = ListIdentifiersRequest.resume(responseObj.resumptionToken.value);
     parameters = request.getParameters();
     responseStr = auxService.execute(parameters);
     response = respParser.parse(responseStr);
@@ -183,7 +183,7 @@ public class ServiceTest {
     assertTrue("Invalid number of records", responseObj.records.length <= auxBatchSize);
     assertNotNull("Missing resumptionToken", responseObj.resumptionToken);
     
-    request = new ListRecordsRequest(responseObj.resumptionToken.value);
+    request = ListRecordsRequest.resume(responseObj.resumptionToken.value);
     parameters = request.getParameters();
     responseStr = auxService.execute(parameters);
     response = respParser.parse(responseStr);

@@ -119,7 +119,7 @@ class HeaderIterator implements Iterator<Header> {
   private ListIdentifiersRequest makeRequestObject() {
     return resumptionToken == null
             ? new ListIdentifiersRequest(metadataPrefix, getFrom(), getUntil(), getSet())
-            : new ListIdentifiersRequest(resumptionToken);
+            : ListIdentifiersRequest.resume(resumptionToken);
   }
 
   private void handleError(ProtocolException ex) {

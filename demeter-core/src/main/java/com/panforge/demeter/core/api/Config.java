@@ -28,13 +28,13 @@ public class Config {
   public String baseURL;
   /** protocol version (default: 2.0) */
   public String protocolVersion = "2.0";
-  /** administrators emails */
+  /** administrators emails (default: empty array)*/
   public String[] adminEmail = new String[]{};
   /** earliest date stamp */
   public OffsetDateTime earliestDatestamp;
   /** determines how information is stored about deleted records (default: no)*/
   public Deletion deletedRecord = Deletion.No;
-  /** granularity */
+  /** granularity (default: YYYY-MM-DDThh:mm:ssZ)*/
   public String granularity = "YYYY-MM-DDThh:mm:ssZ";
   /** data compression (default: all) */
   public Compression [] compression = Compression.values();

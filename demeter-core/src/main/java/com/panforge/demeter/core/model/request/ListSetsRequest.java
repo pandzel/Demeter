@@ -33,8 +33,17 @@ public final class ListSetsRequest extends RequestWithToken {
   /**
    * Creates instance of the request.
    * @param resumptionToken resumption token
+   * @return instance of the request
    */
-  public ListSetsRequest(String resumptionToken) {
+  public static ListSetsRequest resume(String resumptionToken) {
+    return new ListSetsRequest(resumptionToken);
+  }
+
+  /**
+   * Creates instance of the request.
+   * @param resumptionToken resumption token
+   */
+  ListSetsRequest(String resumptionToken) {
     super(Verb.ListSets);
     this.resumptionToken = resumptionToken;
     Validate.notEmpty(resumptionToken, "Missing resumption token");
