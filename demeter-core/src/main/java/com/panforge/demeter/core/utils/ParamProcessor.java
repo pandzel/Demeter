@@ -31,7 +31,7 @@ import org.apache.commons.lang3.Validate;
  * Parameters processor.
  */
 public class ParamProcessor {
-  private Map<String, Setter> actors = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+  private Map<String, Setter> ACTORS = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
   
   /**
    * Creates instance of the builder.
@@ -70,7 +70,7 @@ public class ParamProcessor {
     List<ErrorInfo> errorInfos = new ArrayList<>();
     
     for (Map.Entry<String, String[]> param: params.entrySet()) {
-      Setter op = actors.remove(param.getKey());
+      Setter op = ACTORS.remove(param.getKey());
       if (op==null) {
         errorInfos.add(new ErrorInfo(ErrorCode.badArgument, 
                 String.format("Unrecognized argument: %s", Arrays.stream(param.getValue()).map(v -> String.format("%s=%s", param.getKey(), v)).collect(Collectors.joining(", ")))));
@@ -83,7 +83,7 @@ public class ParamProcessor {
       }
     }
     
-    for (Map.Entry<String, Setter> actor: actors.entrySet()) {
+    for (Map.Entry<String, Setter> actor: ACTORS.entrySet()) {
       String[] values = params.get(actor.getKey());
       try {
         actor.getValue().set(values);
@@ -115,7 +115,7 @@ public class ParamProcessor {
      * @param setter value setter
      */
     Builder(String name, Setter setter) {
-      processor.actors.put(name, setter);
+      processor.ACTORS.put(name, setter);
     }
     
     /**
@@ -125,7 +125,7 @@ public class ParamProcessor {
      * @return the builder
      */
     public Builder with(String name, Setter setter) {
-      processor.actors.put(name, setter);
+      processor.ACTORS.put(name, setter);
       return this;
     }
     

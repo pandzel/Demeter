@@ -29,7 +29,7 @@ import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.elements.Set;
 import com.panforge.demeter.core.utils.XmlUtils;
 import com.panforge.demeter.core.utils.nodeiter.NodeIterable;
-import com.panforge.demeter.core.utils.parser.SimpleNamespaceContext;
+import com.panforge.demeter.core.utils.SimpleNamespaceContext;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;

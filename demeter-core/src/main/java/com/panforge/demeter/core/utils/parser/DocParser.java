@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.core.utils.parser;
 
+import com.panforge.demeter.core.utils.SimpleNamespaceContext;
 import com.panforge.demeter.core.model.ErrorCode;
 import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.ResumptionToken;

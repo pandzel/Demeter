@@ -17,7 +17,7 @@ package com.panforge.demeter.server.beans;
 
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.utils.nodeiter.NodeIterable;
-import com.panforge.demeter.core.utils.parser.SimpleNamespaceContext;
+import com.panforge.demeter.core.utils.SimpleNamespaceContext;
 import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessor;
 import java.io.File;
