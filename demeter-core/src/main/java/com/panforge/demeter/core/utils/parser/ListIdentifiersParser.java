@@ -16,14 +16,10 @@
 package com.panforge.demeter.core.utils.parser;
 
 import com.panforge.demeter.core.model.ResumptionToken;
-import com.panforge.demeter.core.api.exception.BadArgumentException;
 import com.panforge.demeter.core.model.Verb;
-import com.panforge.demeter.core.model.request.ListIdentifiersRequest;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.ListIdentifiersResponse;
-import com.panforge.demeter.core.utils.DateTimeUtils;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.nodes;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,23 +60,6 @@ class ListIdentifiersParser extends DocParser {
     values.put("until", new String[]{ readUntilAsString(doc) });
     values.put("set", new String[]{ readSet(doc) });
     return values;
-  }
-
-  private Header readHeader(Node node) {
-    return new Header(
-            URI.create((String) evaluate("oai:identifier", node, XPathConstants.STRING)),
-            DateTimeUtils.parseTimestamp((String) evaluate("oai:datestamp", node, XPathConstants.STRING)),
-            parseSet((NodeList) evaluate("oai:setSpec", node, XPathConstants.NODESET)),
-            "deleted".equalsIgnoreCase((String)evaluate("@status", node, XPathConstants.STRING))
-    );
-  }
-
-  private String[] parseSet(NodeList nodeSet) {
-    ArrayList<String> sets = new ArrayList<>();
-    for (Node node : nodes(nodeSet)) {
-      sets.add(node.getTextContent());
-    }
-    return sets.toArray(new String[sets.size()]);
   }
 
 }

@@ -16,9 +16,7 @@
 package com.panforge.demeter.core.utils.parser;
 
 import com.panforge.demeter.core.model.ResumptionToken;
-import com.panforge.demeter.core.api.exception.BadArgumentException;
 import com.panforge.demeter.core.model.Verb;
-import com.panforge.demeter.core.model.request.ListRecordsRequest;
 import com.panforge.demeter.core.model.response.ListRecordsResponse;
 import com.panforge.demeter.core.model.response.elements.Record;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.nodes;

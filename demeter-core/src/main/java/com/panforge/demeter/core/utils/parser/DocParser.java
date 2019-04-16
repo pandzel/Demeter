@@ -32,6 +32,9 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Function;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -50,15 +53,25 @@ import org.w3c.dom.NodeList;
  * Document parser.
  */
 public class DocParser {
-  protected final static XPathFactory xPathFactory = XPathFactory.newInstance();
-  protected final static XPath xPath = xPathFactory.newXPath();
-  protected final static DocumentBuilder builder;
+  private final static Map<Verb, Function<Document, DocParser>> PARSERS = new TreeMap<>((v1, v2) -> v1.name().compareToIgnoreCase(v2.name()));
+  
+  protected final static XPathFactory XPATH_FACTORY = XPathFactory.newInstance();
+  protected final static XPath XPATH = XPATH_FACTORY.newXPath();
+  protected final static DocumentBuilder BUILDER;
+  
   static {
+    PARSERS.put(Verb.Identify, IdentifyParser::new);
+    PARSERS.put(Verb.ListMetadataFormats, ListMetadataFormatsParser::new);
+    PARSERS.put(Verb.ListSets, ListSetsParser::new);
+    PARSERS.put(Verb.ListIdentifiers, ListIdentifiersParser::new);
+    PARSERS.put(Verb.ListRecords, ListRecordsParser::new);
+    PARSERS.put(Verb.GetRecord, GetRecordParser::new);
+    
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setNamespaceAware(true);
-      builder = factory.newDocumentBuilder();
-      xPath.setNamespaceContext(new SimpleNamespaceContext().add("oai", "http://www.openarchives.org/OAI/2.0/"));
+      BUILDER = factory.newDocumentBuilder();
+      XPATH.setNamespaceContext(new SimpleNamespaceContext().add("oai", "http://www.openarchives.org/OAI/2.0/"));
     } catch (ParserConfigurationException ex) {
       throw new RuntimeException("Error creating document builder.", ex);
     }
@@ -80,31 +93,8 @@ public class DocParser {
    * @throws BadVerbException if parsing fails
    */
   public Response<? extends Request> parse() throws BadVerbException {
-    DocParser parser = getInstance(readVerb(doc));
+    DocParser parser = PARSERS.get(readVerb(doc)).apply(doc);
     return parser.parse();
-  }
-
-  /**
-   * Gets corresponding to the verb parser instance
-   * @param verb the verb
-   * @return parser instance
-   */
-  protected final DocParser getInstance(Verb verb) {
-    switch (verb) {
-      case ListSets:
-        return new ListSetsParser(doc);
-      case ListRecords:
-        return new ListRecordsParser(doc);
-      case ListMetadataFormats:
-        return new ListMetadataFormatsParser(doc);
-      case ListIdentifiers:
-        return new ListIdentifiersParser(doc);
-      case Identify:
-        return new IdentifyParser(doc);
-      case GetRecord:
-        return new GetRecordParser(doc);
-    }
-    return null;
   }
   
   /**
@@ -167,6 +157,11 @@ public class DocParser {
     return metadataPrefix;
   }
 
+  /**
+   * Reads identifier as string.
+   * @param doc the document
+   * @return the identifier
+   */
   protected String readIdentifierAsString(Document doc) {
     String sIdentifier = StringUtils.trimToNull((String)evaluate("//oai:OAI-PMH/oai:request/@identifier", doc, XPathConstants.STRING));
     return sIdentifier;
@@ -268,7 +263,7 @@ public class DocParser {
    */
   protected final Object evaluate(String expression, Object item, QName returnType) {
     try {
-      return xPath.evaluate(expression, item, returnType);
+      return XPATH.evaluate(expression, item, returnType);
     } catch (XPathExpressionException ex) {
       throw new RuntimeException(String.format("Invalid XPath expression: '%s'", expression), ex);
     }
@@ -287,7 +282,7 @@ public class DocParser {
     if (ndMetadata!=null) {
       Node metadataDocumentNode = stream(ndMetadata.getChildNodes()).filter(n->n.getNodeType()==1).findFirst().orElse(null);
       if (metadataDocumentNode!=null) {
-        metadata = builder.newDocument();
+        metadata = BUILDER.newDocument();
         Node adopted = metadata.adoptNode(metadataDocumentNode);
         metadata.appendChild(adopted);
       }
@@ -298,7 +293,7 @@ public class DocParser {
     if (ndAbout!=null) {
       Node aboutDocumentNode = stream(ndAbout.getChildNodes()).filter(n->n.getNodeType()==1).findFirst().orElse(null);
       if (aboutDocumentNode!=null) {
-        about = builder.newDocument();
+        about = BUILDER.newDocument();
         Node adopted = about.adoptNode(aboutDocumentNode);
         about.appendChild(adopted);
       }
@@ -312,7 +307,7 @@ public class DocParser {
    * @param node the node
    * @return the header
    */
-  private Header readHeader(Node node) {
+  protected Header readHeader(Node node) {
       return new Header(
               URI.create((String) evaluate("oai:identifier", node, XPathConstants.STRING)),
               DateTimeUtils.parseTimestamp((String) evaluate("oai:datestamp", node, XPathConstants.STRING)),

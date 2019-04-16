@@ -83,7 +83,7 @@ class IdentifyParser extends DocParser {
     for (Node node : nodes(nodeList)) {
       Node descriptionNode = stream(node.getChildNodes()).filter(n -> n.getNodeType() == 1).findFirst().orElse(null);
       if (descriptionNode != null) {
-        Document descDoc = builder.newDocument();
+        Document descDoc = BUILDER.newDocument();
         Node adopted = descDoc.adoptNode(descriptionNode);
         descDoc.appendChild(adopted);
         descriptions.add(descDoc);
