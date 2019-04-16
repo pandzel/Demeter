@@ -34,14 +34,13 @@ public final class ListRecordsResponse extends Response<ListRecordsRequest> {
 
   /**
    * Creates instance of the response.
+   * @param parameters request parameters
+   * @param responseDate response date
    * @param records records
    * @param resumptionToken resumption token
-   * @param responseDate response date
-   * @param errors errors
-   * @param parameters request parameters
    */
-  public ListRecordsResponse(Record[] records, ResumptionToken resumptionToken, OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
-    super(responseDate, errors, parameters);
+  public ListRecordsResponse(Map<String, String[]> parameters, OffsetDateTime responseDate, Record[] records, ResumptionToken resumptionToken) {
+    super(parameters, responseDate);
     this.records = records;
     this.resumptionToken = resumptionToken;
   }

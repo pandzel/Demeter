@@ -34,14 +34,13 @@ public final class ListSetsResponse extends Response<ListSetsRequest> {
 
   /**
    * Creates instance of the response.
+   * @param parameters request parameters
+   * @param responseDate response date
    * @param listSets list of sets
    * @param resumptionToken resumption token
-   * @param responseDate response date
-   * @param errors errors
-   * @param parameters request parameters
    */
-  public ListSetsResponse(Set[] listSets, ResumptionToken resumptionToken, OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
-    super(responseDate, errors, parameters);
+  public ListSetsResponse(Map<String, String[]> parameters, OffsetDateTime responseDate, Set[] listSets, ResumptionToken resumptionToken) {
+    super(parameters, responseDate);
     this.listSets = listSets;
     this.resumptionToken = resumptionToken;
   }

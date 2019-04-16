@@ -50,7 +50,7 @@ class ListIdentifiersParser extends DocParser {
   public Response<? extends Request> parse() {
     ErrorInfo[] errors = readErrors(doc);
     if (!ArrayUtils.isEmpty(errors)) {
-      return new ErrorResponse(readResponseDate(doc), errors, extractRequest());
+      return new ErrorResponse(extractRequest(), readResponseDate(doc), errors);
     }
     
     ArrayList<Header> headers = new ArrayList<>();
@@ -59,7 +59,7 @@ class ListIdentifiersParser extends DocParser {
     }
     ResumptionToken resumptionToken = readResponseResumptionToken(doc);
     
-    return new ListIdentifiersResponse(headers.toArray(new Header[headers.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), extractRequest());
+    return new ListIdentifiersResponse(extractRequest(), readResponseDate(doc), headers.toArray(new Header[headers.size()]), resumptionToken);
   }
   
   private Map<String,String[]> extractRequest() {

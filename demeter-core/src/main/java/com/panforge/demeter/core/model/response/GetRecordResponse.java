@@ -31,13 +31,12 @@ public final class GetRecordResponse extends Response<GetRecordRequest> {
 
   /**
    * Creates instance of the response.
-   * @param record record
-   * @param responseDate response date
-   * @param errors errors
    * @param parameters request parameters
+   * @param responseDate response date
+   * @param record record
    */
-  public GetRecordResponse(Record record, OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
-    super(responseDate, errors, parameters);
+  public GetRecordResponse(Map<String, String[]> parameters, OffsetDateTime responseDate, Record record) {
+    super(parameters, responseDate);
     this.record = record;
   }
 }

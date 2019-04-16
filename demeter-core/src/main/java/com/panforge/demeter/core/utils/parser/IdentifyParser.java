@@ -17,8 +17,11 @@ package com.panforge.demeter.core.utils.parser;
 
 import com.panforge.demeter.core.api.Config.Deletion;
 import com.panforge.demeter.core.api.Config.Compression;
+import com.panforge.demeter.core.model.ErrorInfo;
+import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.model.request.IdentifyRequest;
 import com.panforge.demeter.core.model.request.Request;
+import com.panforge.demeter.core.model.response.ErrorResponse;
 import com.panforge.demeter.core.model.response.IdentifyResponse;
 import com.panforge.demeter.core.model.response.Response;
 import static com.panforge.demeter.core.utils.DateTimeUtils.parseTimestamp;
@@ -26,7 +29,10 @@ import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.nodes;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.stream;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.xpath.XPathConstants;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -47,6 +53,11 @@ class IdentifyParser extends DocParser {
 
   @Override
   public Response<? extends Request> parse() {
+    ErrorInfo[] errors = readErrors(doc);
+    if (!ArrayUtils.isEmpty(errors)) {
+      return new ErrorResponse(extractRequest(), readResponseDate(doc), errors);
+    }
+    
     IdentifyRequest request = new IdentifyRequest();
 
     String repositoryName = (String) evaluate("//oai:OAI-PMH/oai:Identify/oai:repositoryName", doc, XPathConstants.STRING);
@@ -60,7 +71,7 @@ class IdentifyParser extends DocParser {
 
     Document[] descriptions = readDescriptions((NodeList) evaluate("//oai:OAI-PMH/oai:Identify/oai:description", doc, XPathConstants.NODESET));
 
-    return new IdentifyResponse(repositoryName, baseURL, protocolVersion, edminEmails, earliestDatestamp, deletedRecord, granularity, compression, descriptions, readResponseDate(doc), readErrors(doc), request.getParameters());
+    return new IdentifyResponse(extractRequest(), readResponseDate(doc), repositoryName, baseURL, protocolVersion, edminEmails, earliestDatestamp, deletedRecord, granularity, compression, descriptions);
   }
 
   private Compression [] readCompression() {
@@ -92,5 +103,11 @@ class IdentifyParser extends DocParser {
       }
     }
     return descriptions.toArray(new Document[descriptions.size()]);
+  }
+  
+  private Map<String,String[]> extractRequest() {
+    Map<String,String[]> values = new HashMap<>();
+    values.put("verb", new String[] { Verb.Identify.name() });
+    return values;
   }
 }

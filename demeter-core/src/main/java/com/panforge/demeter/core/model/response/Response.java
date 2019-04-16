@@ -27,23 +27,32 @@ import java.util.Map;
  */
 public abstract class Response<REQ extends Request> {
   
+  /** request parameters */
+  public final Map<String, String[]> parameters;
   /** response date */
   public final OffsetDateTime responseDate;
   /** errors */
   public final ErrorInfo[] errors;
-  /** request parameters */
-  public final Map<String, String[]> parameters;
 
   /**
    * Creates instance of the response.
+   * @param parameters request parameters
    * @param responseDate response date
    * @param errors errors
-   * @param parameters request parameters
    */
-  public Response(OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
+  public Response(Map<String, String[]> parameters, OffsetDateTime responseDate, ErrorInfo[] errors) {
+    this.parameters = Collections.unmodifiableMap(parameters);
     this.responseDate = responseDate;
     this.errors = errors;
-    this.parameters = Collections.unmodifiableMap(parameters);
+  }
+
+  /**
+   * Creates instance of the response.
+   * @param parameters request parameters
+   * @param responseDate response date
+   */
+  public Response(Map<String, String[]> parameters, OffsetDateTime responseDate) {
+    this(parameters, responseDate, null);
   }
   
   

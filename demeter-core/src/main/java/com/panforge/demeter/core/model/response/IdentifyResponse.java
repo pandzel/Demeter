@@ -58,11 +58,10 @@ public final class IdentifyResponse extends Response<IdentifyRequest> {
    * @param compression compression policy
    * @param descriptions descriptions
    * @param responseDate response date
-   * @param errors errors
    * @param parameters request parameters
    */
-  public IdentifyResponse(String repositoryName, String baseURL, String protocolVersion, String[] adminEmail, OffsetDateTime earliestDatestamp, Config.Deletion deletedRecord, String granularity, Config.Compression [] compression, Document[] descriptions, OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
-    super(responseDate, errors, parameters);
+  public IdentifyResponse(Map<String, String[]> parameters,  OffsetDateTime responseDate, String repositoryName, String baseURL, String protocolVersion, String[] adminEmail, OffsetDateTime earliestDatestamp, Config.Deletion deletedRecord, String granularity, Config.Compression [] compression, Document[] descriptions) {
+    super(parameters, responseDate);
     this.repositoryName = repositoryName;
     this.baseURL = baseURL;
     this.protocolVersion = protocolVersion;
@@ -79,12 +78,13 @@ public final class IdentifyResponse extends Response<IdentifyRequest> {
    * @param config the configuration
    * @param descriptions descriptions
    * @param responseDate response date
-   * @param errors errors
    * @param parameters request parameters
    * @return identify response
    */
-  public static IdentifyResponse createFromConfig(Config config, Document[] descriptions, OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
+  public static IdentifyResponse createFromConfig(Map<String, String[]> parameters,  OffsetDateTime responseDate, Config config, Document[] descriptions) {
     IdentifyResponse response = new IdentifyResponse(
+            parameters,
+            responseDate,
             config.repositoryName,
             config.baseURL,
             config.protocolVersion,
@@ -93,10 +93,7 @@ public final class IdentifyResponse extends Response<IdentifyRequest> {
             config.deletedRecord,
             config.granularity,
             config.compression,
-            descriptions,
-            responseDate,
-            errors,
-            parameters
+            descriptions
     );
     
     return response;

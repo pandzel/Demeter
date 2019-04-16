@@ -34,14 +34,13 @@ public final class ListIdentifiersResponse extends Response<ListIdentifiersReque
 
   /**
    * Creates instance of the response.
+   * @param parameters request parameters
+   * @param responseDate response date
    * @param headers headers
    * @param resumptionToken resumption token
-   * @param responseDate response date
-   * @param errors errors
-   * @param parameters request parameters
    */
-  public ListIdentifiersResponse(Header[] headers, ResumptionToken resumptionToken, OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
-    super(responseDate, errors, parameters);
+  public ListIdentifiersResponse(Map<String, String[]> parameters, OffsetDateTime responseDate, Header[] headers, ResumptionToken resumptionToken) {
+    super(parameters, responseDate);
     this.headers = headers;
     this.resumptionToken = resumptionToken;
   }

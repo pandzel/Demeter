@@ -50,7 +50,7 @@ class ListMetadataFormatsParser extends DocParser {
   public Response<? extends Request> parse() {
     ErrorInfo[] errors = readErrors(doc);
     if (!ArrayUtils.isEmpty(errors)) {
-      return new ErrorResponse(readResponseDate(doc), errors, extractRequest());
+      return new ErrorResponse(extractRequest(), readResponseDate(doc), errors);
     }
     
     ArrayList<MetadataFormat> formats = new ArrayList<>();
@@ -58,7 +58,7 @@ class ListMetadataFormatsParser extends DocParser {
       formats.add(readMetadataFormat(node));
     }
     
-    return new ListMetadataFormatsResponse(formats.toArray(new MetadataFormat[formats.size()]), readResponseDate(doc), readErrors(doc), extractRequest());
+    return new ListMetadataFormatsResponse(extractRequest(), readResponseDate(doc), formats.toArray(new MetadataFormat[formats.size()]));
   }
   
   private MetadataFormat readMetadataFormat(Node node) {

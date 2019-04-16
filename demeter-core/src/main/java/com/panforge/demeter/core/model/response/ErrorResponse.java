@@ -25,8 +25,14 @@ import java.util.Map;
  */
 public class ErrorResponse extends Response<Request>{
   
-  public ErrorResponse(OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
-    super(responseDate, errors, parameters);
+  /**
+   * Creates instance of the response.
+   * @param parameters request parameters
+   * @param responseDate response date
+   * @param errors errors
+   */
+  public ErrorResponse(Map<String, String[]> parameters, OffsetDateTime responseDate, ErrorInfo[] errors) {
+    super(parameters, responseDate, errors);
   }
   
 }

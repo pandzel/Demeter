@@ -46,13 +46,13 @@ class GetRecordParser extends DocParser {
   public Response<? extends Request> parse() {
     ErrorInfo[] errors = readErrors(doc);
     if (!ArrayUtils.isEmpty(errors)) {
-      return new ErrorResponse(readResponseDate(doc), errors, extractRequest());
+      return new ErrorResponse(extractRequest(), readResponseDate(doc), errors);
     }
     
     Node ndRecord = (Node)evaluate("//oai:OAI-PMH/oai:GetRecord/oai:record", doc, XPathConstants.NODE);
     if (ndRecord!=null) {
       Record record = readRecord(ndRecord);
-      return new GetRecordResponse(record, readResponseDate(doc), readErrors(doc), extractRequest());
+      return new GetRecordResponse(extractRequest(), readResponseDate(doc), record);
     }
     
     return null;

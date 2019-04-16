@@ -111,7 +111,7 @@ public class ResponseParserTest {
     
     Record record = new Record(header, metadata, about);
     
-    GetRecordResponse response = new GetRecordResponse(record, OffsetDateTime.now(), null, request.getParameters());
+    GetRecordResponse response = new GetRecordResponse(request.getParameters(), OffsetDateTime.now(), record);
     
     String rsp = f.createGetRecordResponse(response);
     GetRecordResponse parsed = (GetRecordResponse)parser.parse(rsp);
@@ -150,7 +150,7 @@ public class ResponseParserTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListRecordsResponse response = new ListRecordsResponse(new Record[] { record }, resumptionToken, OffsetDateTime.now(), null, request.getParameters());
+    ListRecordsResponse response = new ListRecordsResponse(request.getParameters(), OffsetDateTime.now(), new Record[] { record }, resumptionToken);
     
     String rsp = f.createListRecordsResponse(response);
     
@@ -176,7 +176,7 @@ public class ResponseParserTest {
                     + "</oai-identifier>"
     )};
     
-    IdentifyResponse response = IdentifyResponse.createFromConfig(config, descriptions, OffsetDateTime.now(), null, request.getParameters());
+    IdentifyResponse response = IdentifyResponse.createFromConfig(request.getParameters(), OffsetDateTime.now(), config, descriptions);
     
     String rsp = f.createIdentifyResponse(response);
     
@@ -202,7 +202,7 @@ public class ResponseParserTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListIdentifiersResponse response = new ListIdentifiersResponse(new Header[] { header }, resumptionToken, OffsetDateTime.now(), null, request.getParameters());
+    ListIdentifiersResponse response = new ListIdentifiersResponse(request.getParameters(), OffsetDateTime.now(), new Header[] { header }, resumptionToken);
     
     String rsp = f.createListIdentifiersResponse(response);
     
@@ -225,7 +225,7 @@ public class ResponseParserTest {
             "http://www.openarchives.org/OAI/2.0/oai_dc/"
     );
     
-    ListMetadataFormatsResponse response = new ListMetadataFormatsResponse(new MetadataFormat[]{fmt}, OffsetDateTime.now(), null, request.getParameters());
+    ListMetadataFormatsResponse response = new ListMetadataFormatsResponse(request.getParameters(), OffsetDateTime.now(), new MetadataFormat[]{fmt});
     
     String rsp = f.createListMetadataFormatsResponse(response);
     
@@ -244,7 +244,7 @@ public class ResponseParserTest {
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
     
-    ListSetsResponse response = new ListSetsResponse(new Set[]{set}, resumptionToken, OffsetDateTime.now(), null, request.getParameters());
+    ListSetsResponse response = new ListSetsResponse(request.getParameters(), OffsetDateTime.now(), new Set[]{set}, resumptionToken);
     
     String rsp = f.createListSetsResponse(response);
     

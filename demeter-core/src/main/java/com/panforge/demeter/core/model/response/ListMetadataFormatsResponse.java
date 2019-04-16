@@ -31,13 +31,12 @@ public final class ListMetadataFormatsResponse extends Response<ListMetadataForm
 
   /**
    * Creates instance of the response.
-   * @param metadataFormats metadata formats
-   * @param responseDate response date
-   * @param errors errors
    * @param parameters request parameters
+   * @param responseDate response date
+   * @param metadataFormats metadata formats
    */
-  public ListMetadataFormatsResponse(MetadataFormat[] metadataFormats, OffsetDateTime responseDate, ErrorInfo[] errors, Map<String, String[]> parameters) {
-    super(responseDate, errors, parameters);
+  public ListMetadataFormatsResponse(Map<String, String[]> parameters, OffsetDateTime responseDate, MetadataFormat[] metadataFormats) {
+    super(parameters, responseDate);
     this.metadataFormats = metadataFormats;
   }
   

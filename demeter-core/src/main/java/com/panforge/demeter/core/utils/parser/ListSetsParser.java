@@ -18,7 +18,6 @@ package com.panforge.demeter.core.utils.parser;
 import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.model.Verb;
-import com.panforge.demeter.core.model.request.ListSetsRequest;
 import com.panforge.demeter.core.model.request.Request;
 import com.panforge.demeter.core.model.response.ErrorResponse;
 import com.panforge.demeter.core.model.response.ListSetsResponse;
@@ -51,7 +50,7 @@ class ListSetsParser extends DocParser {
   public Response<? extends Request> parse() {
     ErrorInfo[] errors = readErrors(doc);
     if (!ArrayUtils.isEmpty(errors)) {
-      return new ErrorResponse(readResponseDate(doc), errors, extractRequest());
+      return new ErrorResponse(extractRequest(), readResponseDate(doc), errors);
     }
     
     ArrayList<Set> sets = new ArrayList<>();
@@ -60,7 +59,7 @@ class ListSetsParser extends DocParser {
     }
     ResumptionToken resumptionToken = readResponseResumptionToken(doc);
     
-    return new ListSetsResponse(sets.toArray(new Set[sets.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), extractRequest());
+    return new ListSetsResponse(extractRequest(), readResponseDate(doc), sets.toArray(new Set[sets.size()]), resumptionToken);
   }
 
   private Set readSet(Node node) {

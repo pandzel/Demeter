@@ -50,7 +50,7 @@ class ListRecordsParser extends DocParser {
   public Response<? extends Request> parse() {
     ErrorInfo[] errors = readErrors(doc);
     if (!ArrayUtils.isEmpty(errors)) {
-      return new ErrorResponse(readResponseDate(doc), errors, extractRequest());
+      return new ErrorResponse(extractRequest(), readResponseDate(doc), errors);
     }
     
     ArrayList<Record> records = new ArrayList<>();
@@ -59,7 +59,7 @@ class ListRecordsParser extends DocParser {
     }
     ResumptionToken resumptionToken = readResponseResumptionToken(doc);
     
-    return new ListRecordsResponse(records.toArray(new Record[records.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), extractRequest());
+    return new ListRecordsResponse(extractRequest(), readResponseDate(doc), records.toArray(new Record[records.size()]), resumptionToken);
   }
   
   private Map<String,String[]> extractRequest() {
