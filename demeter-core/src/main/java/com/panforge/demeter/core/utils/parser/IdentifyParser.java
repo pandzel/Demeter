@@ -18,7 +18,9 @@ package com.panforge.demeter.core.utils.parser;
 import com.panforge.demeter.core.api.Config.Deletion;
 import com.panforge.demeter.core.api.Config.Compression;
 import com.panforge.demeter.core.model.request.IdentifyRequest;
+import com.panforge.demeter.core.model.request.Request;
 import com.panforge.demeter.core.model.response.IdentifyResponse;
+import com.panforge.demeter.core.model.response.Response;
 import static com.panforge.demeter.core.utils.DateTimeUtils.parseTimestamp;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.nodes;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.stream;
@@ -44,7 +46,7 @@ class IdentifyParser extends DocParser {
   }
 
   @Override
-  public IdentifyResponse parse() {
+  public Response<? extends Request> parse() {
     IdentifyRequest request = new IdentifyRequest();
 
     String repositoryName = (String) evaluate("//oai:OAI-PMH/oai:Identify/oai:repositoryName", doc, XPathConstants.STRING);

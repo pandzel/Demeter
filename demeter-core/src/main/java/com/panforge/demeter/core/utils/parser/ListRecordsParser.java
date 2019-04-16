@@ -15,15 +15,20 @@
  */
 package com.panforge.demeter.core.utils.parser;
 
+import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.model.Verb;
+import com.panforge.demeter.core.model.request.Request;
+import com.panforge.demeter.core.model.response.ErrorResponse;
 import com.panforge.demeter.core.model.response.ListRecordsResponse;
+import com.panforge.demeter.core.model.response.Response;
 import com.panforge.demeter.core.model.response.elements.Record;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.nodes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.xpath.XPathConstants;
+import org.apache.commons.lang3.ArrayUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -42,12 +47,18 @@ class ListRecordsParser extends DocParser {
   }
 
   @Override
-  public ListRecordsResponse parse() {
+  public Response<? extends Request> parse() {
+    ErrorInfo[] errors = readErrors(doc);
+    if (!ArrayUtils.isEmpty(errors)) {
+      return new ErrorResponse(readResponseDate(doc), errors, extractRequest());
+    }
+    
     ArrayList<Record> records = new ArrayList<>();
     for (Node node : nodes((NodeList) evaluate("//oai:OAI-PMH/oai:ListRecords/oai:record", doc, XPathConstants.NODESET))) {
       records.add(readRecord(node));
     }
     ResumptionToken resumptionToken = readResponseResumptionToken(doc);
+    
     return new ListRecordsResponse(records.toArray(new Record[records.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), extractRequest());
   }
   

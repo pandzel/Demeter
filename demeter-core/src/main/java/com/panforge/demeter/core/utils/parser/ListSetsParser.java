@@ -15,13 +15,21 @@
  */
 package com.panforge.demeter.core.utils.parser;
 
+import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.ResumptionToken;
+import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.model.request.ListSetsRequest;
+import com.panforge.demeter.core.model.request.Request;
+import com.panforge.demeter.core.model.response.ErrorResponse;
 import com.panforge.demeter.core.model.response.ListSetsResponse;
+import com.panforge.demeter.core.model.response.Response;
 import com.panforge.demeter.core.model.response.elements.Set;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.nodes;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.xpath.XPathConstants;
+import org.apache.commons.lang3.ArrayUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -40,15 +48,19 @@ class ListSetsParser extends DocParser {
   }
 
   @Override
-  public ListSetsResponse parse() {
+  public Response<? extends Request> parse() {
+    ErrorInfo[] errors = readErrors(doc);
+    if (!ArrayUtils.isEmpty(errors)) {
+      return new ErrorResponse(readResponseDate(doc), errors, extractRequest());
+    }
+    
     ArrayList<Set> sets = new ArrayList<>();
     for (Node node : nodes((NodeList)evaluate("//oai:OAI-PMH/oai:ListSets/oai:set", doc, XPathConstants.NODESET))) {
       sets.add(readSet(node));
     }
-    String rt = readRequestResumptionToken(doc);
-    ListSetsRequest request = rt!=null? ListSetsRequest.resume(readRequestResumptionToken(doc)): new ListSetsRequest();
     ResumptionToken resumptionToken = readResponseResumptionToken(doc);
-    return new ListSetsResponse(sets.toArray(new Set[sets.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), request.getParameters());
+    
+    return new ListSetsResponse(sets.toArray(new Set[sets.size()]), resumptionToken, readResponseDate(doc), readErrors(doc), extractRequest());
   }
 
   private Set readSet(Node node) {
@@ -56,6 +68,13 @@ class ListSetsParser extends DocParser {
             (String) evaluate("oai:setSpec", node, XPathConstants.STRING),
             (String) evaluate("oai:setName", node, XPathConstants.STRING)
     );
+  }
+  
+  private Map<String,String[]> extractRequest() {
+    Map<String,String[]> values = new HashMap<>();
+    values.put("verb", new String[] { Verb.ListSets.name() });
+    values.put("resumptionToken", new String[]{ readRequestResumptionToken(doc) });
+    return values;
   }
 
 }
