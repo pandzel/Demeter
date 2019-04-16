@@ -57,19 +57,20 @@ import java.util.Spliterator;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Service.
  */
 public class Service {
   public static final int DEFAULT_BATCH_SIZE = 10;
-  protected final ContentProvider repo;
-  protected final TokenManager tokenManager;
+  private final ContentProvider repo;
+  private final TokenManager tokenManager;
   
-  protected final Context ctx;
-  protected final RequestParser parser;
-  protected final ResponseFactory factory;
-  protected final int batchSize;
+  private final Context ctx;
+  private final RequestParser parser;
+  private final ResponseFactory factory;
+  private final int batchSize;
 
   /**
    * Creates instance of the service.
@@ -82,6 +83,10 @@ public class Service {
     this.repo = repo;
     this.tokenManager = tokenManager;
     this.batchSize = batchSize;
+    
+    Validate.notNull(config, "Missing configuration");
+    Validate.notNull(repo, "Missing content provider");
+    Validate.notNull(tokenManager, "Missing token manager");
     
     this.ctx = new Context(config);
     this.parser = new RequestParser();
