@@ -109,7 +109,7 @@ public class ContentProviderBean implements ContentProvider {
     List<Header> headers = descriptors.values().stream()
                     .map(l -> {
                       MetaDescriptor md = l.values().stream()
-                              .filter(desc->!desc.matches(filter))
+                              .filter(desc->desc.matches(filter))
                               .sorted((a, b) -> a.datestamp.compareTo(b.datestamp))
                               .findFirst()
                               .orElse(null);
