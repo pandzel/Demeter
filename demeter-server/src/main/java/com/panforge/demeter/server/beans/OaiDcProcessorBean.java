@@ -23,6 +23,8 @@ import com.panforge.demeter.server.MetaProcessor;
 import java.io.File;
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -98,7 +100,8 @@ public class OaiDcProcessorBean implements MetaProcessor {
   @Override
   public MetaDescriptor descriptor(File file, Document doc) {
     try {
-      return new MetaDescriptor(this, file, URI.create((String) xPath.evaluate("//dc:identifier", doc, XPathConstants.STRING)), oai_dc, OffsetDateTime.MAX);
+      OffsetDateTime fileTimestamp = OffsetDateTime.ofInstant(new Date(file.lastModified()).toInstant(), ZoneId.systemDefault());
+      return new MetaDescriptor(this, file, URI.create((String) xPath.evaluate("//dc:identifier", doc, XPathConstants.STRING)), oai_dc, fileTimestamp);
     } catch (XPathExpressionException ex) {
       return null;
     }
