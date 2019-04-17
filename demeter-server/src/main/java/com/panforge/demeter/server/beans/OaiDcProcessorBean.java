@@ -18,6 +18,7 @@ package com.panforge.demeter.server.beans;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.utils.nodeiter.NodeIterable;
 import com.panforge.demeter.core.utils.SimpleNamespaceContext;
+import static com.panforge.demeter.core.utils.XmlUtils.formatToString;
 import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessor;
 import java.io.File;
@@ -119,7 +120,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
       NodeIterable.stream(dcNodes).forEach(nd->{
         ndUris.putAll(collectNamespaces(nd));
       });
-      ndUris.put("oai_dc", "http://www.openarchives.org/OAI/2.0/");
+      ndUris.put("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
       
       // create new document
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -128,7 +129,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
       Document document = builder.newDocument();
       
       // create top-level element
-      Element oaiDc = document.createElementNS("http://www.openarchives.org/OAI/2.0/", "dc");
+      Element oaiDc = document.createElementNS("http://www.openarchives.org/OAI/2.0/oai_dc/", "dc");
       ndUris.entrySet().forEach(e->{
         oaiDc.setAttribute("xmlns:"+e.getKey(), e.getValue());
       });

@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.core.utils.builder;
 
+import com.panforge.demeter.core.utils.XmlUtils;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.UUID;
@@ -214,18 +215,7 @@ public class DocNode {
    * @return document as XML string
    */
   public String end() {
-    try {
-      TransformerFactory factory = TransformerFactory.newInstance();
-      Transformer transformer = factory.newTransformer();
-      transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-      Writer out = new StringWriter();
-      transformer.transform(new DOMSource(doc()), new StreamResult(out));
-      return out.toString();
-    } catch (TransformerException|TransformerFactoryConfigurationError ex) {
-      throw new RuntimeException("Error building document.", ex);
-    }
+    return XmlUtils.formatToString(doc());
   }
 
   /**
