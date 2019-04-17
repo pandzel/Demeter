@@ -44,8 +44,29 @@ public class DocBuilder {
       document.appendChild(oaiPmh);
 
       oaiPmh.setAttribute("xmlns", "http://www.openarchives.org/OAI/2.0/");
+      oaiPmh.setAttribute("xmlns:rights", "http://www.openarchives.org/OAI/2.0/rights/");
+      oaiPmh.setAttribute("xmlns:provenance", "http://www.openarchives.org/OAI/2.0/provenance");
+      oaiPmh.setAttribute("xmlns:friends", "http://www.openarchives.org/OAI/2.0/friends/");
+      oaiPmh.setAttribute("xmlns:branding", "http://www.openarchives.org/OAI/2.0/branding/");
+      oaiPmh.setAttribute("xmlns:gateway", "http://www.openarchives.org/OAI/2.0/gateway/");
+      oaiPmh.setAttribute("xmlns:eprints", "http://www.openarchives.org/OAI/1.1/eprints");
+      oaiPmh.setAttribute("xmlns:rfc1807", "http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt");
+      oaiPmh.setAttribute("xmlns:marc21", "http://www.loc.gov/MARC21/slim");
+      oaiPmh.setAttribute("xmlns:oai_marc", "http://www.openarchives.org/OAI/1.1/oai_marc");
+      
       oaiPmh.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-      oaiPmh.setAttribute("xsi:schemaLocation", "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd");
+      oaiPmh.setAttribute("xsi:schemaLocation", 
+                  "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd "
+                + "http://www.openarchives.org/OAI/2.0/rights/ http://www.openarchives.org/OAI/2.0/rightsManifest.xsd "
+                + "http://www.openarchives.org/OAI/2.0/provenance http://www.openarchives.org/OAI/2.0/provenance.xsd "
+                + "http://www.openarchives.org/OAI/2.0/friends/ http://www.openarchives.org/OAI/2.0/friends.xsd "
+                + "http://www.openarchives.org/OAI/2.0/branding/ http://www.openarchives.org/OAI/2.0/branding.xsd "
+                + "http://www.openarchives.org/OAI/2.0/gateway/ http://www.openarchives.org/OAI/2.0/gateway.xsd "
+                + "http://www.openarchives.org/OAI/1.1/eprints http://www.openarchives.org/OAI/1.1/eprints.xsd "
+                + "http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt http://www.openarchives.org/OAI/1.1/rfc1807.xsd "
+                + "http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd "
+                + "http://www.openarchives.org/OAI/1.1/oai_marc http://www.openarchives.org/OAI/1.1/oai_marc.xsd"
+      );
 
       return new DocNode(oaiPmh);
     } catch (ParserConfigurationException ex) {
