@@ -57,6 +57,7 @@ public class QueryUtils {
    * @return query string
    */
   public static String paramsToQuery(Map<String, String[]> params) {
+    Validate.notNull(params, "Missing parameters");
     return paramsToQuery(params, Collectors.joining("&"));
   }
   
@@ -81,13 +82,13 @@ public class QueryUtils {
    * @return parameters list
    */
   public static List<String[]> paramsToList(Map<String, String[]> params) {
+    Validate.notNull(params, "Missing parameters");
     return params.entrySet().stream()
             .flatMap(e -> Arrays.stream(e.getValue()).map(v -> new String[]{e.getKey(), v}))
             .collect(Collectors.toList());
   }
   
   private static String paramsToQuery(Map<String, String[]> params, Collector<CharSequence,?,String> collector) {
-    Validate.notNull(params, "Missing parameters");
     return paramsToList(params).stream()
             .map(kvp -> String.format("%s=%s", kvp[0], kvp[1]))
             .collect(collector);
