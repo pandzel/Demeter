@@ -51,7 +51,7 @@
           Identify repository: <a href="oai?verb=Identify" target="_blank">oai?verb=Identify</a><br>
           List metadata formats: <a href="oai?verb=ListMetadataFormats" target="_blank">oai?verb=ListMetadataFormats</a><br>
           List identifiers: <a href="oai?verb=ListIdentifiers&metadataPrefix=oai_dc" target="_blank">oai?verb=ListIdentifiers&metadataPrefix=oai_dc</a><br>
-          List records: <a href="oai?verb=ListIdentifiers&metadataPrefix=oai_dc" target="_blank">oai?verb=ListRecords&metadataPrefix=oai_dc</a><br>
+          List records: <a href="oai?verb=ListRecords&metadataPrefix=oai_dc" target="_blank">oai?verb=ListRecords&metadataPrefix=oai_dc</a><br>
         </div>
       </div>
     </body>
