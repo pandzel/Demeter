@@ -44,6 +44,8 @@ public class DocBuilder {
       document.appendChild(oaiPmh);
 
       oaiPmh.setAttribute("xmlns", "http://www.openarchives.org/OAI/2.0/");
+      
+      oaiPmh.setAttribute("xmlns:oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
       oaiPmh.setAttribute("xmlns:rights", "http://www.openarchives.org/OAI/2.0/rights/");
       oaiPmh.setAttribute("xmlns:provenance", "http://www.openarchives.org/OAI/2.0/provenance");
       oaiPmh.setAttribute("xmlns:friends", "http://www.openarchives.org/OAI/2.0/friends/");
@@ -57,6 +59,7 @@ public class DocBuilder {
       oaiPmh.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
       oaiPmh.setAttribute("xsi:schemaLocation", 
                   "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd "
+                + "http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd"
                 + "http://www.openarchives.org/OAI/2.0/rights/ http://www.openarchives.org/OAI/2.0/rightsManifest.xsd "
                 + "http://www.openarchives.org/OAI/2.0/provenance http://www.openarchives.org/OAI/2.0/provenance.xsd "
                 + "http://www.openarchives.org/OAI/2.0/friends/ http://www.openarchives.org/OAI/2.0/friends.xsd "
