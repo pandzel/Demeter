@@ -18,8 +18,10 @@ package com.panforge.demeter.core.model.response;
 import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.request.Request;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Base of all response types..
@@ -55,5 +57,14 @@ public abstract class Response<REQ extends Request> {
     this(parameters, responseDate, null);
   }
   
+  /**
+   * Gets first parameter value by name.
+   * @param name parameter name.
+   * @return parameter value or <code>null</code>
+   */
+  public String getParameter(String name) {
+    String [] values = parameters.get(name);
+    return values!=null? Arrays.stream(values).filter(v -> !StringUtils.isBlank(v)).findFirst().orElse(null): null;
+  }
   
 }

@@ -18,12 +18,9 @@ package com.panforge.demeter.core.model.request;
 import com.panforge.demeter.core.utils.ParamProcessor;
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.api.exception.BadArgumentException;
-import static com.panforge.demeter.core.utils.QueryUtils.trimParams;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -78,34 +75,28 @@ public final class GetRecordRequest extends Request {
    * @throws BadArgumentException if invalid parameters
    */
   public static GetRecordRequest create(Map<String,String[]> params) throws BadArgumentException {
-    params = trimParams(params);
     GetRecordRequest request = new GetRecordRequest();
     ParamProcessor
             .with("identifier", v -> {
               if (v==null) {
                 throw new BadArgumentException(String.format("Missing identifier"));
               }
-              if (v.length>1) {
-                 throw new BadArgumentException(String.format("Illegal number of identifiers: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
-              }
               try {
-                request.identifier = URI.create(v[0]);
+                request.identifier = URI.create(v);
               } catch (IllegalArgumentException|NullPointerException ex) {
-                throw new BadArgumentException(String.format("Invalid identifier format: %s", v[0]));
+                throw new BadArgumentException(String.format("Invalid identifier format: %s", v));
               }
             })
             .with("metadataPrefix", v -> {
               if (v==null) {
                 throw new BadArgumentException(String.format("Missing metadataPrefix"));
               }
-              if (v.length>1) {
-                 throw new BadArgumentException(String.format("Illegal number of metadata formats: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
-              }
-              request.metadataPrefix = v[0];
+              request.metadataPrefix = v;
             })
             .build().execute(params);
     return request;
   }
+  
   @Override
   public Map<String, String[]> getParameters() {
     Map<String,String[]> parameters = new HashMap<>();

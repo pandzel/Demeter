@@ -18,7 +18,6 @@ package com.panforge.demeter.core.model.request;
 import com.panforge.demeter.core.utils.ParamProcessor;
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.api.exception.BadArgumentException;
-import static com.panforge.demeter.core.utils.QueryUtils.trimParams;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +40,6 @@ public final class IdentifyRequest extends Request {
    * @throws BadArgumentException if creation fails
    */
   public static IdentifyRequest create(Map<String,String[]> params) throws BadArgumentException {
-    params = trimParams(params);
     ParamProcessor.build().execute(params);
     return new IdentifyRequest();
   }

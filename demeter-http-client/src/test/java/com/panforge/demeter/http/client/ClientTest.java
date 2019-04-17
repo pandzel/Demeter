@@ -113,7 +113,7 @@ public class ClientTest {
     ListMetadataFormatsResponse response = (ListMetadataFormatsResponse) client.execute(request);
     
     assertNotNull("No response received.", response);
-    assertEquals("Invalid verb", Verb.ListMetadataFormats.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid verb", Verb.ListMetadataFormats.name(), response.getParameter("verb"));
   }
   
   @Test
@@ -122,7 +122,7 @@ public class ClientTest {
     ListSetsResponse response = (ListSetsResponse) client.execute(request);
     
     assertNotNull("No response received.", response);
-    assertEquals("Invalid verb", Verb.ListSets.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid verb", Verb.ListSets.name(), response.getParameter("verb"));
   }
   
   @Test
@@ -131,7 +131,7 @@ public class ClientTest {
     ListIdentifiersResponse response = (ListIdentifiersResponse) client.execute(request);
     
     assertNotNull("No response received.", response);
-    assertEquals("Invalid verb", Verb.ListIdentifiers.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid verb", Verb.ListIdentifiers.name(), response.getParameter("verb"));
   }
   
   @Test
@@ -140,7 +140,7 @@ public class ClientTest {
     ListRecordsResponse response = (ListRecordsResponse) client.execute(request);
     
     assertNotNull("No response received.", response);
-    assertEquals("Invalid verb", Verb.ListRecords.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid verb", Verb.ListRecords.name(), response.getParameter("verb"));
   }
   
   @Test
@@ -149,7 +149,7 @@ public class ClientTest {
     GetRecordResponse response = (GetRecordResponse) client.execute(request);
     
     assertNotNull("No response received.", response);
-    assertEquals("Invalid verb", Verb.GetRecord.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid verb", Verb.GetRecord.name(), response.getParameter("verb"));
   }
   
   @Test
@@ -158,7 +158,7 @@ public class ClientTest {
     IdentifyResponse response = (IdentifyResponse) client.execute(request);
     
     assertNotNull("No response received.", response);
-    assertEquals("Invalid verb", Verb.Identify.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid verb", Verb.Identify.name(), response.getParameter("verb"));
   }
  
   private static String createListMetadataFormatsResponse() throws Exception {

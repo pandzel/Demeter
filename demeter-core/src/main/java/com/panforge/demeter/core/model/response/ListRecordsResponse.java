@@ -15,7 +15,6 @@
  */
 package com.panforge.demeter.core.model.response;
 
-import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.model.request.ListRecordsRequest;

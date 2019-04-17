@@ -18,11 +18,8 @@ package com.panforge.demeter.core.model.request;
 import com.panforge.demeter.core.utils.ParamProcessor;
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.api.exception.BadArgumentException;
-import static com.panforge.demeter.core.utils.QueryUtils.trimParams;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -63,15 +60,11 @@ public final class ListSetsRequest extends RequestWithToken {
    * @throws BadArgumentException if creation fails
    */
   public static ListSetsRequest create(Map<String, String[]> params) throws BadArgumentException {
-    params = trimParams(params);
     ListSetsRequest request = new ListSetsRequest();
     ParamProcessor
             .with("resumptionToken", v -> {
               if (v!=null) {
-                if (v.length > 1) {
-                  throw new BadArgumentException(String.format("Illegal number of resumption tokens: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
-                }
-                request.resumptionToken = v[0];
+                request.resumptionToken = v;
               }
             })
             .build().execute(params);

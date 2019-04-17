@@ -22,9 +22,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
 /**
  * Query utilities.
@@ -54,35 +52,6 @@ public class QueryUtils {
   }
   
   /**
-   * Trims parameters.
-   * <p>
-   * Removes empty parameters from the collection.
-   * @param params parameters to trim 
-   * @return trimmed parameters
-   */
-  public static Map<String,String[]> trimParams(Map<String,String[]> params) {
-    Map<String, String[]> result = params.entrySet().stream()
-            .collect(Collectors.toMap(e->e.getKey(), e->Arrays.stream(e.getValue()).filter(s->!StringUtils.isBlank(s)).toArray(String[]::new)))
-            .entrySet().stream().filter(e->e.getValue()!=null && e.getValue().length>0)
-            .collect(()->new TreeMap<>(String.CASE_INSENSITIVE_ORDER), (m, e) -> m.put(e.getKey(), e.getValue()), Map::putAll);
-    return result;
-  }
-  
-  /**
-   * Primes parameters.
-   * <p>
-   * Selects first non-empty parameter from multiple possible parameters
-   * @param params request parameters
-   * @return primed request parameters
-   */
-  public static Map<String,String> primeParams(Map<String,String[]> params) {
-    return params.entrySet().stream()
-            .map(e -> new ImmutablePair<>(e.getKey(), Arrays.stream(e.getValue()).filter(v->!StringUtils.isBlank(v)).findFirst().orElse(null)))
-            .filter(pair->pair.getValue()!=null)
-            .collect(()->new TreeMap<>(String.CASE_INSENSITIVE_ORDER), (m, e) -> m.put(e.getKey(), e.getValue()), Map::putAll);
-  }
-  
-  /**
    * Converts map of parameters into a query string.
    * @param params map of parameters
    * @return query string
@@ -98,6 +67,7 @@ public class QueryUtils {
    * @return modified map
    */
   public static Map<String,String[]> rejectKeys(Map<String,String[]> params, String...keysToReject) {
+    Validate.notNull(params, "Missing parameters");
     return params.entrySet().stream()
             .filter(e -> !Arrays.stream(keysToReject).anyMatch(k -> k.equalsIgnoreCase(e.getKey())))
             .collect(()->new TreeMap<>(String.CASE_INSENSITIVE_ORDER), (m, e) ->m.put(e.getKey(), e.getValue()), Map::putAll);

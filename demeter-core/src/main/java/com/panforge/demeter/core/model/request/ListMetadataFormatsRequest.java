@@ -18,12 +18,9 @@ package com.panforge.demeter.core.model.request;
 import com.panforge.demeter.core.utils.ParamProcessor;
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.api.exception.BadArgumentException;
-import static com.panforge.demeter.core.utils.QueryUtils.trimParams;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * ListMetadataFormats request.
@@ -64,18 +61,14 @@ public final class ListMetadataFormatsRequest extends Request {
    * @throws BadArgumentException if creation fails
    */
   public static ListMetadataFormatsRequest create(Map<String, String[]> params) throws BadArgumentException {
-    params = trimParams(params);
     ListMetadataFormatsRequest request = new ListMetadataFormatsRequest();
     ParamProcessor
             .with("identifier", v -> {
               if (v!=null) {
-                if (v.length > 1) {
-                  throw new BadArgumentException(String.format("Illegal number of identifiers: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
-                }
                 try {
-                  request.identifier = URI.create(v[0]);
+                  request.identifier = URI.create(v);
                 } catch (IllegalArgumentException|NullPointerException ex) {
-                  throw new BadArgumentException(String.format("Invalid identifier format: %s", v[0]));
+                  throw new BadArgumentException(String.format("Invalid identifier format: %s", v));
                 }
               }
             })

@@ -22,10 +22,7 @@ import com.panforge.demeter.core.content.Filter;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.stream.Collectors;
 import static com.panforge.demeter.core.utils.DateTimeUtils.parseRequestTimestamp;
-import static com.panforge.demeter.core.utils.QueryUtils.trimParams;
-import java.util.Arrays;
 import java.util.HashMap;
 import org.apache.commons.lang3.Validate;
 
@@ -132,16 +129,12 @@ public final class ListIdentifiersRequest extends RequestWithToken {
    * @throws BadArgumentException if creation fails
    */
   public static ListIdentifiersRequest create(Map<String, String[]> params) throws BadArgumentException {
-    params = trimParams(params);
     ListIdentifiersRequest request = new ListIdentifiersRequest();
     if (params.containsKey("resumptionToken")) {
       ParamProcessor
               .with("resumptionToken", v -> {
                 if (v != null) {
-                  if (v.length > 1) {
-                    throw new BadArgumentException(String.format("Illegal number of resumption tokens: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
-                  }
-                  request.resumptionToken = v[0];
+                  request.resumptionToken = v;
                 }
               })
               .build().execute(params);
@@ -149,35 +142,23 @@ public final class ListIdentifiersRequest extends RequestWithToken {
       ParamProcessor
               .with("from", v -> {
                 if (v != null) {
-                  if (v.length > 1) {
-                    throw new BadArgumentException(String.format("Illegal number of identifiers: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
-                  }
-                  request.from = parseRequestTimestamp(v[0]);
+                  request.from = parseRequestTimestamp(v);
                 }
               })
               .with("until", v -> {
                 if (v != null) {
-                  if (v.length > 1) {
-                    throw new BadArgumentException(String.format("Illegal number of identifiers: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
-                  }
-                  request.until = parseRequestTimestamp(v[0]);
+                  request.until = parseRequestTimestamp(v);
                 }
               })
               .with("metadataPrefix", v -> {
                 if (v == null) {
                   throw new BadArgumentException(String.format("Missing metadataPrefix"));
                 }
-                if (v.length > 1) {
-                  throw new BadArgumentException(String.format("Illegal number of identifiers: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
-                }
-                request.metadataPrefix = v[0];
+                request.metadataPrefix = v;
               })
               .with("set", v -> {
                 if (v != null) {
-                  if (v.length > 1) {
-                    throw new BadArgumentException(String.format("Illegal number of identifiers: %s", Arrays.stream(v).collect(Collectors.joining(", "))));
-                  }
-                  request.set = v[0];
+                  request.set = v;
                 }
               })
               .build().execute(params);

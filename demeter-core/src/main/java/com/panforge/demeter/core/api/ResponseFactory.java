@@ -22,7 +22,6 @@ import com.panforge.demeter.core.utils.builder.DocNode;
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.model.request.Request;
-import com.panforge.demeter.core.model.request.RequestWithToken;
 import com.panforge.demeter.core.model.response.GetRecordResponse;
 import com.panforge.demeter.core.model.response.IdentifyResponse;
 import com.panforge.demeter.core.model.response.ListIdentifiersResponse;
@@ -36,6 +35,7 @@ import com.panforge.demeter.core.utils.QueryUtils;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.w3c.dom.Document;
@@ -137,7 +137,7 @@ public class ResponseFactory {
                       .done()
                       .done();
             })
-            .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionDoken(nd, resumptionToken, QueryUtils.primeParams(response.parameters).get("resumptionToken") == null))
+            .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionToken(nd, resumptionToken, response.getParameter("resumptionToken") == null))
             .end();
   }
 
@@ -161,7 +161,7 @@ public class ResponseFactory {
                       .done()
                       .done();
             })
-            .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionDoken(nd, resumptionToken, QueryUtils.primeParams(response.parameters).get("resumptionToken") == null))
+            .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionToken(nd, resumptionToken, response.getParameter("resumptionToken") == null))
             .end();
   }
 
@@ -204,7 +204,7 @@ public class ResponseFactory {
                 .child("setSpec").value(set.setSpec).done()
                 .child("setName").value(set.setName).done()
                 .done()
-                .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionDoken(nd, resumptionToken, QueryUtils.primeParams(response.parameters).get("resumptionToken") == null));
+                .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionToken(nd, resumptionToken, response.getParameter("resumptionToken") == null));
             }).done()
             .end();
   }
@@ -231,20 +231,14 @@ public class ResponseFactory {
   private DocNode createHeader(Response<? extends Request> response, Map<String, String[]> reqParams) {
     return new DocBuilder().begin()
             .child("responseDate").value(response.responseDate.format(DateTimeFormatter.ISO_DATE_TIME)).done()
-            .child("request").attr("verb", QueryUtils.primeParams(response.parameters).get("verb")).forEach(reqParams != null ? QueryUtils.primeParams(reqParams).entrySet().stream() : null, (n, e) -> n.attr(e.getKey(), e.getValue())).value(CTX.config.baseURL).done();
+            .child("request").attr("verb", response.getParameter("verb")).forEach(reqParams != null ? reqParams.entrySet().stream() : new HashMap<String,String[]>().entrySet().stream(), (n, e) -> Arrays.stream(e.getValue()).forEach(val->n.attr(e.getKey(), val))).value(CTX.config.baseURL).done();
   }
 
-  private void appendResumptionDoken(DocNode parent, ResumptionToken resumptionToken, boolean printValue) {
+  private void appendResumptionToken(DocNode parent, ResumptionToken resumptionToken, boolean printValue) {
     parent.child("resumptionToken", () -> resumptionToken != null)
             .attr("expirationDate", () -> resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME), () -> resumptionToken.expirationDate != null)
             .attr("completeListSize", Long.toString(resumptionToken.completeListSize))
             .attr("cursor", Long.toString(resumptionToken.cursor))
             .value(printValue ? resumptionToken.value : null).done();
-  }
-
-  private void insertResumptionTokenParameter(Map<String, String> parameters, RequestWithToken request) {
-    if (request != null & request.getResumptionToken() != null) {
-      parameters.put("resumptionToken", request.getResumptionToken());
-    }
   }
 }

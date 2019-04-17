@@ -74,9 +74,13 @@ public class ParamProcessor {
       if (op==null) {
         errorInfos.add(new ErrorInfo(ErrorCode.badArgument, 
                 String.format("Unrecognized argument: %s", Arrays.stream(param.getValue()).map(v -> String.format("%s=%s", param.getKey(), v)).collect(Collectors.joining(", ")))));
+      } else if (param.getValue()==null || param.getValue().length!=1) {
+        errorInfos.add(new ErrorInfo(ErrorCode.badArgument, 
+                String.format("Only single value allowed for argument: %s", Arrays.stream(param.getValue()).map(v -> String.format("%s=%s", param.getKey(), v)).collect(Collectors.joining(", ")))));
       } else {
+        String value = param.getValue()[0];
         try {
-          op.set(param.getValue());
+          op.set(value);
         } catch (ProtocolException ex) {
           errorInfos.addAll(Arrays.asList(ex.infos));
         }
@@ -85,8 +89,12 @@ public class ParamProcessor {
     
     for (Map.Entry<String, Setter> actor: ACTORS.entrySet()) {
       String[] values = params.get(actor.getKey());
+      if (values!=null && values.length!=1) {
+          errorInfos.add(new ErrorInfo(ErrorCode.badArgument, 
+                String.format("Only single value allowed for argument: %s", Arrays.stream(values).map(v -> String.format("%s=%s", actor.getKey(), v)).collect(Collectors.joining(", ")))));
+      }
       try {
-        actor.getValue().set(values);
+        actor.getValue().set(values!=null? values[0]: null);
       } catch (ProtocolException ex) {
         errorInfos.addAll(Arrays.asList(ex.infos));
       }
@@ -144,9 +152,9 @@ public class ParamProcessor {
   public static interface Setter {
     /**
      * Sets value from parameters.
-     * @param parameters input parameters
+     * @param value value
      * @throws BadArgumentException if error setting parameter
      */
-    void set(String[] parameters) throws BadArgumentException;
+    void set(String value) throws BadArgumentException;
   }
 }

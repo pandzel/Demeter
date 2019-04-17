@@ -64,7 +64,7 @@ public class ServiceTest {
     
     assertNotNull("Empty response", response);
     assertNotNull("Incomplete response", response.parameters);
-    assertEquals("Invalid response type", Verb.Identify.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid response type", Verb.Identify.name(), response.getParameter("verb"));
     
     IdentifyResponse responseObj = (IdentifyResponse)response;
     assertEquals("Invalid identify", config.repositoryName, responseObj.repositoryName);
@@ -79,7 +79,7 @@ public class ServiceTest {
     
     assertNotNull("Empty response", response);
     assertNotNull("Incomplete response", response.parameters);
-    assertEquals("Invalid response type", Verb.ListMetadataFormats.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid response type", Verb.ListMetadataFormats.name(), response.getParameter("verb"));
     
     ListMetadataFormatsResponse responseObj = (ListMetadataFormatsResponse)response;
     assertEquals("Invalid number of formats", contentProvider.listMetadataFormats(null).total(), responseObj.metadataFormats.length);
@@ -95,7 +95,7 @@ public class ServiceTest {
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.parameters);
-    assertEquals("Invalid response type", Verb.ListSets.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid response type", Verb.ListSets.name(), response.getParameter("verb"));
     
     ListSetsResponse responseObj = (ListSetsResponse)response;
     assertEquals("Invalid number of formats", contentProvider.listSets().total(), responseObj.listSets.length);
@@ -111,7 +111,7 @@ public class ServiceTest {
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.parameters);
-    assertEquals("Invalid response type", Verb.ListIdentifiers.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid response type", Verb.ListIdentifiers.name(), response.getParameter("verb"));
     
     ListIdentifiersResponse responseObj = (ListIdentifiersResponse)response;
     assertEquals("Invalid number of identifiers", contentProvider.listHeaders(null).total(), responseObj.headers.length);
@@ -129,7 +129,7 @@ public class ServiceTest {
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.parameters);
-    assertEquals("Invalid response type", Verb.ListIdentifiers.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid response type", Verb.ListIdentifiers.name(), response.getParameter("verb"));
     
     ListIdentifiersResponse responseObj = (ListIdentifiersResponse)response;
     assertTrue("Invalid number of identifiers", responseObj.headers.length <= auxBatchSize);
@@ -143,7 +143,7 @@ public class ServiceTest {
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.parameters);
-    assertEquals("Invalid response type", Verb.ListIdentifiers.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid response type", Verb.ListIdentifiers.name(), response.getParameter("verb"));
     
     responseObj = (ListIdentifiersResponse)response;
     assertTrue("Invalid number of identifiers", auxBatchSize + responseObj.headers.length == contentProvider.listHeaders(null).total());
@@ -159,7 +159,7 @@ public class ServiceTest {
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.parameters);
-    assertEquals("Invalid response type", Verb.ListRecords.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid response type", Verb.ListRecords.name(), response.getParameter("verb"));
     
     ListRecordsResponse responseObj = (ListRecordsResponse)response;
     assertEquals("Invalid number of formats", contentProvider.listHeaders(null).total(), responseObj.records.length);
@@ -177,7 +177,7 @@ public class ServiceTest {
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.parameters);
-    assertEquals("Invalid response type", Verb.ListRecords.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid response type", Verb.ListRecords.name(), response.getParameter("verb"));
     
     ListRecordsResponse responseObj = (ListRecordsResponse)response;
     assertTrue("Invalid number of records", responseObj.records.length <= auxBatchSize);
@@ -191,7 +191,7 @@ public class ServiceTest {
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.parameters);
-    assertEquals("Invalid response type", Verb.ListRecords.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid response type", Verb.ListRecords.name(), response.getParameter("verb"));
     
     responseObj = (ListRecordsResponse)response;
     assertTrue("Invalid number of records", auxBatchSize + responseObj.records.length == contentProvider.listHeaders(null).total());
@@ -207,7 +207,7 @@ public class ServiceTest {
     assertNotNull("Empty response", response);
     assertNull("Errors received", response.errors);
     assertNotNull("Incomplete response", response.parameters);
-    assertEquals("Invalid response type", Verb.GetRecord.name(), QueryUtils.primeParams(response.parameters).get("verb"));
+    assertEquals("Invalid response type", Verb.GetRecord.name(), response.getParameter("verb"));
     
     GetRecordResponse responseObj = (GetRecordResponse)response;
     assertNotNull("Missing record", responseObj.record);
