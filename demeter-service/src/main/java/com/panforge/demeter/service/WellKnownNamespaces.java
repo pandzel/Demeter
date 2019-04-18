@@ -16,19 +16,27 @@
 package com.panforge.demeter.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Well known names paces.
  */
 public class WellKnownNamespaces {
-  private static final ObjectMapper mapper = new ObjectMapper();
+  private static final ObjectMapper MAPPER = new ObjectMapper();
+  
+  private final Map<String, Namespace> namespaces = new HashMap<>();
 
   /**
    * Loads namespaces from 'well-known-namespaces.json'
    */
   public void load() {
     try (InputStream inp = Thread.currentThread().getContextClassLoader().getResourceAsStream("well-known-namespaces.json");) {
-      Namespaces namespaces = mapper.readValue(inp, Namespaces.class);
+      Namespaces ns = MAPPER.readValue(inp, Namespaces.class);
+      ns.stream().forEach(n->{
+        namespaces.put(n.namespace, n);
+        namespaces.put(n.schema, n);
+      });
     } catch (Exception e) {}
   }
 }

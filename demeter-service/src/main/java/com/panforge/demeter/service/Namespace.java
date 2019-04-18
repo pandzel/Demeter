@@ -15,6 +15,8 @@
  */
 package com.panforge.demeter.service;
 
+import java.util.Objects;
+
 /**
  * Namespace.
  */
@@ -23,4 +25,35 @@ class Namespace {
   public String namespace;
   /** schema name */
   public String schema;
+
+  @Override
+  public int hashCode() {
+    int hash = 5;
+    hash = 17 * hash + Objects.hashCode(this.namespace);
+    hash = 17 * hash + Objects.hashCode(this.schema);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final Namespace other = (Namespace) obj;
+    if (!Objects.equals(this.namespace, other.namespace)) {
+      return false;
+    }
+    if (!Objects.equals(this.schema, other.schema)) {
+      return false;
+    }
+    return true;
+  }
+  
+  
 }
