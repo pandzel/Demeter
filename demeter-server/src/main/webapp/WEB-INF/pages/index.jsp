@@ -1,3 +1,4 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -52,6 +53,14 @@
           List metadata formats: <a href="oai?verb=ListMetadataFormats" target="_blank">oai?verb=ListMetadataFormats</a><br>
           List identifiers: <a href="oai?verb=ListIdentifiers&metadataPrefix=oai_dc" target="_blank">oai?verb=ListIdentifiers&metadataPrefix=oai_dc</a><br>
           List records: <a href="oai?verb=ListRecords&metadataPrefix=oai_dc" target="_blank">oai?verb=ListRecords&metadataPrefix=oai_dc</a><br>
+          <c:set var="count" value="1" scope="page" />
+          <c:if test="${!firstIds.isEmpty()}">
+            Sample records: 
+            <c:forEach items="${firstIds}" var="id">
+              <span>[<a href="oai?verb=GetRecord&metadataPrefix=oai_dc&identifier=${id}" target="_blank"><c:out value="${count}"/>]</a></span>
+              <c:set var="count" value="${count + 1}" scope="page"/>
+            </c:forEach>
+          </c:if>
         </div>
       </div>
     </body>
