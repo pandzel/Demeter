@@ -18,7 +18,6 @@ package com.panforge.demeter.server.beans;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.utils.nodeiter.NodeIterable;
 import com.panforge.demeter.core.utils.SimpleNamespaceContext;
-import static com.panforge.demeter.core.utils.XmlUtils.formatToString;
 import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessor;
 import java.io.File;
@@ -36,6 +35,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -52,13 +52,13 @@ import org.w3c.dom.NodeList;
 public class OaiDcProcessorBean implements MetaProcessor {
   private static final Logger LOG = LoggerFactory.getLogger(OaiDcProcessorBean.class);
 
-  private final static XPathFactory xPathFactory = XPathFactory.newInstance();
-  private final static XPath xPath = xPathFactory.newXPath();
+  private final static XPathFactory XPATH_FACTORY = XPathFactory.newInstance();
+  private final static XPath XPATH = XPATH_FACTORY.newXPath();
 
   static {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setNamespaceAware(true);
-    xPath.setNamespaceContext(new SimpleNamespaceContext()
+    XPATH.setNamespaceContext(new SimpleNamespaceContext()
             .add("oai", "http://www.openarchives.org/OAI/2.0/")
             .add("dc", "http://purl.org/dc/elements/1.1/")
             .add("dct", "http://purl.org/dc/terms/")
@@ -68,7 +68,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
     );
   }
 
-  private final static MetadataFormat oai_dc = new MetadataFormat(
+  private final static MetadataFormat OAI_DC = new MetadataFormat(
           "oai_dc",
           "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
           "http://www.openarchives.org/OAI/2.0/oai_dc/"
@@ -86,13 +86,13 @@ public class OaiDcProcessorBean implements MetaProcessor {
 
   @Override
   public MetadataFormat format() {
-    return oai_dc;
+    return OAI_DC;
   }
 
   @Override
   public boolean interrogate(File file, Document doc) {
     try {
-      return (Boolean) xPath.evaluate("count(//dc:identifier)>0", doc, XPathConstants.BOOLEAN);
+      return (Boolean) XPATH.evaluate("count(//dc:identifier)>0", doc, XPathConstants.BOOLEAN);
     } catch (XPathExpressionException ex) {
       return false;
     }
@@ -102,7 +102,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
   public MetaDescriptor descriptor(File file, Document doc) {
     try {
       OffsetDateTime fileTimestamp = OffsetDateTime.ofInstant(new Date(file.lastModified()).toInstant(), ZoneId.systemDefault());
-      return new MetaDescriptor(this, file, URI.create((String) xPath.evaluate("//dc:identifier", doc, XPathConstants.STRING)), oai_dc, fileTimestamp);
+      return new MetaDescriptor(this, file, URI.create((String) XPATH.evaluate("//dc:identifier", doc, XPathConstants.STRING)), OAI_DC, fileTimestamp);
     } catch (XPathExpressionException ex) {
       return null;
     }
@@ -112,15 +112,15 @@ public class OaiDcProcessorBean implements MetaProcessor {
   public Document adopt(File file, Document doc) {
     try {
       // get parent node for identifier and list all its children
-      Node descNode = (Node)xPath.evaluate("//dc:identifier", doc, XPathConstants.NODE);
-      NodeList dcNodes = (NodeList)xPath.evaluate("*", descNode.getParentNode(), XPathConstants.NODESET);
+      Node descNode = (Node)XPATH.evaluate("//dc:identifier", doc, XPathConstants.NODE);
+      NodeList dcNodes = (NodeList)XPATH.evaluate("*", descNode.getParentNode(), XPathConstants.NODESET);
       
       // collect all namespaces and prefixes
       HashMap<String,String> ndUris = new HashMap<>();
       NodeIterable.stream(dcNodes).forEach(nd->{
         ndUris.putAll(collectNamespaces(nd));
       });
-      ndUris.put("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
+      ndUris.put(OAI_DC.metadataPrefix, OAI_DC.metadataNamespace);
       
       // create new document
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -129,10 +129,11 @@ public class OaiDcProcessorBean implements MetaProcessor {
       Document document = builder.newDocument();
       
       // create top-level element
-      Element oaiDc = document.createElementNS("http://www.openarchives.org/OAI/2.0/oai_dc/", "dc");
+      Element oaiDc = document.createElement(String.format("%s:dc", OAI_DC.metadataPrefix));
       ndUris.entrySet().forEach(e->{
         oaiDc.setAttribute("xmlns:"+e.getKey(), e.getValue());
       });
+      // TODO: implement schema locations mechanism
       document.appendChild(oaiDc);
 
       // addopt all relevant nodes from the input document to the new document
@@ -150,7 +151,9 @@ public class OaiDcProcessorBean implements MetaProcessor {
 
   private Map<String,String> collectNamespaces(Node nd) {
     HashMap<String,String> ndUris = new HashMap<>();
-    ndUris.put(nd.getPrefix(), nd.getNamespaceURI());
+    if (!StringUtils.isBlank(nd.getPrefix())) {
+      ndUris.put(nd.getPrefix(), nd.getNamespaceURI());
+    }
     
     NodeIterable.stream(nd.getChildNodes()).forEach(chNd->ndUris.putAll(collectNamespaces(chNd)));
     
