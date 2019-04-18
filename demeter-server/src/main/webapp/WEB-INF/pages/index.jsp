@@ -23,6 +23,9 @@
           .stage h3 {
             background-color: lightblue;
           }
+          .stage .index {
+            
+          }
         </style>
     </head>
     <body>
@@ -57,7 +60,7 @@
           <c:if test="${!firstIds.isEmpty()}">
             Sample records: 
             <c:forEach items="${firstIds}" var="id">
-              <span>[<a href="oai?verb=GetRecord&metadataPrefix=oai_dc&identifier=${id}" target="_blank"><c:out value="${count}"/>]</a></span>
+              <span class="index">[<a href="oai?verb=GetRecord&metadataPrefix=oai_dc&identifier=${id}" target="_blank"><c:out value="${count}"/></a>]<c:if test="${count < firstIds.size()}">,</c:if></span>
               <c:set var="count" value="${count + 1}" scope="page"/>
             </c:forEach>
           </c:if>

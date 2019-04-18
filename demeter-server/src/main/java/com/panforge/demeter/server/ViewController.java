@@ -19,7 +19,6 @@ import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.content.Cursor;
 import com.panforge.demeter.core.content.Filter;
 import com.panforge.demeter.core.model.response.elements.Header;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
