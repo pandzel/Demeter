@@ -19,10 +19,11 @@ import java.io.Closeable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Cursor.
- * @param <T> type of the data accessible by the cursor
+ * @param <T> type of data
  */
 public interface Cursor<T> extends Closeable, Iterable<T> {
   @Override
@@ -33,6 +34,14 @@ public interface Cursor<T> extends Closeable, Iterable<T> {
    * @return total number of elements
    */
   public long total();
+  
+  /**
+   * Creates a stream.
+   * @return stream of data
+   */
+  default Stream<T> createStream() {
+    return StreamSupport.stream(this.spliterator(), false);
+  }
   
   /**
    * Creates instance of the cursor from the list.
