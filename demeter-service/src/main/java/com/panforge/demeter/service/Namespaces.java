@@ -18,7 +18,7 @@ package com.panforge.demeter.service;
 import java.util.ArrayList;
 
 /**
- * Namespaces.
+ * Name spaces.
  */
 class Namespaces extends ArrayList<Namespace> {
   

@@ -15,14 +15,12 @@
  */
 package com.panforge.demeter.service;
 
-import org.junit.AfterClass;
+import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
- *
- * @author Piotr Andzel
+ * Well known namespace test.
  */
 public class WellKnownNamespacesTest {
   private static WellKnownNamespaces wkns;
@@ -36,7 +34,7 @@ public class WellKnownNamespacesTest {
   }
 
   @Test
-  public void testLoad() {
+  public void testLoad() throws IOException {
     wkns.load();
   }
   

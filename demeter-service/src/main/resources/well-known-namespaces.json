@@ -1,6 +1,58 @@
 [
   {
+    "namespace": "http://www.openarchives.org/OAI/2.0/",
+    "schema": "http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"
+  },
+  {
     "namespace": "http://www.openarchives.org/OAI/2.0/oai_dc/",
     "schema": "http://www.openarchives.org/OAI/2.0/oai_dc.xsd"
+  },
+  {
+    "namespace": "http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt",
+    "schema": "http://www.openarchives.org/OAI/1.1/rfc1807.xsd"
+  },
+  {
+    "namespace": "http://www.loc.gov/MARC21/slim",
+    "schema": "http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"
+  },
+  {
+    "namespace": "http://www.openarchives.org/OAI/1.1/oai_marc",
+    "schema": "http://www.openarchives.org/OAI/1.1/oai_marc.xsd"
+  },
+  {
+    "namespace": "http://www.openarchives.org/OAI/2.0/rights/",
+    "schema": "http://www.openarchives.org/OAI/2.0/rightsManifest.xsd"
+  },
+  {
+    "namespace": "http://www.openarchives.org/OAI/2.0/provenance",
+    "schema": "http://www.openarchives.org/OAI/2.0/provenance.xsd"
+  },
+  {
+    "namespace": "http://www.openarchives.org/OAI/1.1/eprints",
+    "schema": "http://www.openarchives.org/OAI/1.1/eprints.xsd"
+  },
+  {
+    "namespace": "http://www.openarchives.org/OAI/2.0/friends/",
+    "schema": "http://www.openarchives.org/OAI/2.0/friends.xsd"
+  },
+  {
+    "namespace": "http://www.openarchives.org/OAI/2.0/branding/",
+    "schema": "http://www.openarchives.org/OAI/2.0/branding.xsd"
+  },
+  {
+    "namespace": "http://www.openarchives.org/OAI/2.0/gateway/",
+    "schema": "http://www.openarchives.org/OAI/2.0/gateway.xsd"
+  },
+  {
+     "namespace": "http://purl.org/dc/elements/1.1/",
+     "schema": "http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd"
+  },
+  {
+    "namespace": "http://purl.org/dc/terms/",
+    "schema": "http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd"
+  },
+  {
+    "namespace": "http://purl.org/dc/dcmitype/",
+    "schema": "http://www.dublincore.org/schemas/xmls/qdc/2008/02/11/dcmitype.xsd"
   }
 ]

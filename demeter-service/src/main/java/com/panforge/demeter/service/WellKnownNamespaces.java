@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,15 +29,16 @@ public class WellKnownNamespaces {
   private final Map<String, Namespace> namespaces = new HashMap<>();
 
   /**
-   * Loads namespaces from 'well-known-namespaces.json'
+   * Loads name spaces from 'well-known-namespaces.json'
+   * @throws java.io.IOException if unable to load definition file
    */
-  public void load() {
+  public void load() throws IOException {
     try (InputStream inp = Thread.currentThread().getContextClassLoader().getResourceAsStream("well-known-namespaces.json");) {
       Namespaces ns = MAPPER.readValue(inp, Namespaces.class);
       ns.stream().forEach(n->{
         namespaces.put(n.namespace, n);
         namespaces.put(n.schema, n);
       });
-    } catch (Exception e) {}
+    }
   }
 }

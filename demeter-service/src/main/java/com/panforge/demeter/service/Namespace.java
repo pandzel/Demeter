@@ -15,16 +15,26 @@
  */
 package com.panforge.demeter.service;
 
+import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import java.util.Objects;
 
 /**
  * Namespace.
  */
-class Namespace {
+public class Namespace {
   /** namespace */
   public String namespace;
   /** schema name */
   public String schema;
+  
+  /**
+   * Gets metadata format.
+   * @param prefix prefix
+   * @return metadata format
+   */
+  public MetadataFormat toMetadataFormat(String prefix) {
+    return new MetadataFormat(prefix, schema, namespace);
+  }
 
   @Override
   public int hashCode() {
