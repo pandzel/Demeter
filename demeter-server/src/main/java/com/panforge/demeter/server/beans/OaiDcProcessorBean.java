@@ -20,6 +20,7 @@ import com.panforge.demeter.core.utils.nodeiter.NodeIterable;
 import com.panforge.demeter.core.utils.SimpleNamespaceContext;
 import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessor;
+import com.panforge.demeter.service.WellKnownNamespaces;
 import java.io.File;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -133,7 +134,8 @@ public class OaiDcProcessorBean implements MetaProcessor {
       ndUris.entrySet().forEach(e->{
         oaiDc.setAttribute("xmlns:"+e.getKey(), e.getValue());
       });
-      // TODO: implement schema locations mechanism
+      oaiDc.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+      oaiDc.setAttribute("xsi:schemaLocation", WellKnownNamespaces.INSTANCE.buildSchemaLocation(ndUris.values().toArray(new String[ndUris.size()])));
       document.appendChild(oaiDc);
 
       // addopt all relevant nodes from the input document to the new document

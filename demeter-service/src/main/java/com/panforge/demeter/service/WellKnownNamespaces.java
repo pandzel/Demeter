@@ -23,12 +23,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Well known names paces.
  */
 public class WellKnownNamespaces {
+  private static final Logger LOGGER = LoggerFactory.getLogger(WellKnownNamespaces.class);
   private static final ObjectMapper MAPPER = new ObjectMapper();
+  public static final WellKnownNamespaces INSTANCE = new WellKnownNamespaces();
+  static {
+    try {
+      INSTANCE.load();
+    } catch (IOException ex) {
+      LOGGER.error(String.format("Error reading well known namespaces."), ex);
+    }
+  }
   
   private Map<String, Namespace> namespaces = new HashMap<>();
   
