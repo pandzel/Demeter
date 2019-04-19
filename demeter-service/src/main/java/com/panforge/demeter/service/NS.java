@@ -15,11 +15,20 @@
  */
 package com.panforge.demeter.service;
 
-import java.util.ArrayList;
-
 /**
- * Name spaces.
+ * Name space parsing structure
  */
-class Namespaces extends ArrayList<Namespace> {
+class NS {
+  /** name space */
+  public String namespace;
+  /** schema name */
+  public String schema;
   
+  /**
+   * Converts to namespace.
+   * @return namespace
+   */
+  public Namespace toNamespace() {
+    return new Namespace(namespace, schema);
+  }
 }

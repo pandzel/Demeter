@@ -17,15 +17,28 @@ package com.panforge.demeter.service;
 
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import java.util.Objects;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Name space.
  */
 public class Namespace {
   /** name space */
-  public String namespace;
+  public final String namespace;
   /** schema name */
-  public String schema;
+  public final String schema;
+
+  /**
+   * Creates instance of the name space.
+   * @param namespace
+   * @param schema 
+   */
+  public Namespace(String namespace, String schema) {
+    Validate.notBlank(namespace, "Missing namespace");
+    Validate.notBlank(namespace, "Missing schema");
+    this.namespace = namespace;
+    this.schema = schema;
+  }
   
   /**
    * Gets metadata format.

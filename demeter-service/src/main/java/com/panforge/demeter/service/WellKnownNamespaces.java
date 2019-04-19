@@ -62,8 +62,8 @@ public class WellKnownNamespaces {
   public void load() throws IOException {
     Map<String, Namespace> buffer = new HashMap<>();
     try (InputStream inp = Thread.currentThread().getContextClassLoader().getResourceAsStream("well-known-namespaces.json");) {
-      Namespaces ns = MAPPER.readValue(inp, Namespaces.class);
-      ns.stream().forEach(n->{
+      NSArray nsa = MAPPER.readValue(inp, NSArray.class);
+      nsa.stream().map(NS::toNamespace).forEach(n->{
         buffer.put(n.namespace, n);
         buffer.put(n.schema, n);
       });
