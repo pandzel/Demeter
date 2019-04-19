@@ -17,8 +17,12 @@ package com.panforge.demeter.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Well known names paces.
@@ -26,19 +30,44 @@ import java.util.Map;
 public class WellKnownNamespaces {
   private static final ObjectMapper MAPPER = new ObjectMapper();
   
-  private final Map<String, Namespace> namespaces = new HashMap<>();
+  private Map<String, Namespace> namespaces = new HashMap<>();
+  
+  /**
+   * Find name space by name or schema.
+   * @param nameOrSchema
+   * @return name space or <code>null</code>
+   */
+  public Namespace find(String nameOrSchema) {
+    return namespaces.get(nameOrSchema);
+  }
+  
+  /**
+   * Builds schema location string for given names or schemas
+   * @param namesOrSchemas names or schemas
+   * @return schema location string
+   */
+  public String buildSchemaLocation(String...namesOrSchemas) {
+    return Arrays.stream(namesOrSchemas)
+            .map(nameOrSchema->find(nameOrSchema))
+            .filter(ObjectUtils::allNotNull)
+            .distinct()
+            .map(Namespace::toSchemaLocation)
+            .collect(Collectors.joining(" "));
+  }
 
   /**
    * Loads name spaces from 'well-known-namespaces.json'
    * @throws java.io.IOException if unable to load definition file
    */
   public void load() throws IOException {
+    Map<String, Namespace> buffer = new HashMap<>();
     try (InputStream inp = Thread.currentThread().getContextClassLoader().getResourceAsStream("well-known-namespaces.json");) {
       Namespaces ns = MAPPER.readValue(inp, Namespaces.class);
       ns.stream().forEach(n->{
-        namespaces.put(n.namespace, n);
-        namespaces.put(n.schema, n);
+        buffer.put(n.namespace, n);
+        buffer.put(n.schema, n);
       });
     }
+    namespaces = Collections.unmodifiableMap(buffer);
   }
 }

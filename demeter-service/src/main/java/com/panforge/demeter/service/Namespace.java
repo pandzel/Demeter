@@ -19,10 +19,10 @@ import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import java.util.Objects;
 
 /**
- * Namespace.
+ * Name space.
  */
 public class Namespace {
-  /** namespace */
+  /** name space */
   public String namespace;
   /** schema name */
   public String schema;
@@ -34,6 +34,14 @@ public class Namespace {
    */
   public MetadataFormat toMetadataFormat(String prefix) {
     return new MetadataFormat(prefix, schema, namespace);
+  }
+  
+  /**
+   * Gets schema location string.
+   * @return schema location string
+   */
+  public String toSchemaLocation() {
+    return String.format("%s %s", namespace, schema);
   }
 
   @Override
