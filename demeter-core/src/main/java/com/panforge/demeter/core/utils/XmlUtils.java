@@ -40,6 +40,24 @@ import org.xml.sax.SAXException;
  * XML utilities.
  */
 public class XmlUtils {
+  
+  /**
+   * Creates new document.
+   * @return document
+   */
+  public static Document newDocument() {
+    try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      factory.setNamespaceAware(true);
+      javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
+      Document document = builder.newDocument();
+      
+      return document;
+    } catch (ParserConfigurationException ex) {
+      throw new RuntimeException("Error building document.", ex);
+    }
+  }
+  
   /**
    * Parses string containing xml into a document.
    * @param xml XML string

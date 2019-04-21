@@ -15,9 +15,8 @@
  */
 package com.panforge.demeter.core.utils.builder;
 
+import com.panforge.demeter.core.utils.XmlUtils;
 import java.util.function.BooleanSupplier;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -34,23 +33,16 @@ public class DocBuilder {
    * @return document node
    */
   public DocNode begin() {
-    try {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      factory.setNamespaceAware(true);
-      javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
-      Document document = builder.newDocument();
+    Document document = XmlUtils.newDocument();
 
-      Element oaiPmh = document.createElementNS("http://www.openarchives.org/OAI/2.0/", "OAI-PMH");
-      document.appendChild(oaiPmh);
+    Element oaiPmh = document.createElementNS("http://www.openarchives.org/OAI/2.0/", "OAI-PMH");
+    document.appendChild(oaiPmh);
 
-      oaiPmh.setAttribute("xmlns", "http://www.openarchives.org/OAI/2.0/");
-      oaiPmh.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-      oaiPmh.setAttribute("xsi:schemaLocation", "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd");
+    oaiPmh.setAttribute("xmlns", "http://www.openarchives.org/OAI/2.0/");
+    oaiPmh.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+    oaiPmh.setAttribute("xsi:schemaLocation", "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd");
 
-      return new DocNode(oaiPmh);
-    } catch (ParserConfigurationException ex) {
-      throw new RuntimeException("Error building document.", ex);
-    }
+    return new DocNode(oaiPmh);
   }
 
 
