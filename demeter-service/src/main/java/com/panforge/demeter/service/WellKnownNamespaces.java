@@ -41,7 +41,7 @@ public class WellKnownNamespaces {
     }
   }
   
-  private Map<String, Namespace> namespaces = new HashMap<>();
+  private Map<String, Namespace> namespaces = Collections.emptyMap();
   
   /**
    * Find name space by name or schema.

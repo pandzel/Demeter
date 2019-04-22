@@ -111,6 +111,10 @@ public class XmlUtils {
    */
   public static String formatToString(Document document) {
     try {
+      XmlTraverser traverser = new XmlTraverser();
+      
+      traverser.traverse(document);
+      
       TransformerFactory factory = TransformerFactory.newInstance();
       Transformer transformer = factory.newTransformer();
       transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
@@ -118,7 +122,12 @@ public class XmlUtils {
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
       Writer out = new StringWriter();
       transformer.transform(new DOMSource(document), new StreamResult(out));
-      return out.toString();
+      
+      String xml = out.toString();
+      
+      xml = traverser.update(xml);
+      
+      return xml;
     } catch (TransformerException|TransformerFactoryConfigurationError ex) {
       throw new RuntimeException("Error building document.", ex);
     }
