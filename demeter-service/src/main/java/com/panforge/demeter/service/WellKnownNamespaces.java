@@ -20,9 +20,11 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +66,33 @@ public class WellKnownNamespaces {
             .distinct()
             .map(Namespace::toSchemaLocation)
             .collect(Collectors.joining(" "));
+  }
+  
+  /**
+   * Merges schema locations.
+   * @param locations schema locations
+   * @return 
+   */
+  public String mergeSchemaLocations(String...locations) {
+    Map<String,String> locationsMap = new HashMap<>();
+    List<String> locationsList = Arrays.asList(locations);
+    Collections.reverse(locationsList);
+    locationsList.forEach(schemaLocation->locationsMap.putAll(parseSchemaLocation(schemaLocation)));
+    return locationsMap.entrySet().stream().map(e->String.format("%s %s", e.getKey(), e.getValue())).collect(Collectors.joining(" "));
+  }
+  
+  /**
+   * Parses schema location.
+   * @param schemaLocation schema locations
+   * @return parsed schema location
+   */
+  private Map<String,String> parseSchemaLocation(String schemaLocation) {
+    Map<String,String> locationsMap = new HashMap<>();
+    String [] sl = StringUtils.trimToEmpty(schemaLocation).split(" ");
+    for (int i=0; i+1<sl.length; i++) {
+      locationsMap.put(sl[0], sl[1]);
+    }
+    return locationsMap;
   }
 
   /**

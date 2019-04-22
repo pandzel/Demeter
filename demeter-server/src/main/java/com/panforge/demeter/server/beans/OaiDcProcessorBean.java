@@ -135,7 +135,11 @@ public class OaiDcProcessorBean implements MetaProcessor {
         oaiDc.setAttribute("xmlns:"+e.getKey(), e.getValue());
       });
       oaiDc.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-      oaiDc.setAttribute("xsi:schemaLocation", WellKnownNamespaces.INSTANCE.buildSchemaLocation(ndUris.values().toArray(new String[ndUris.size()])));
+      String mergedSchemaLocations = WellKnownNamespaces.INSTANCE.mergeSchemaLocations(
+              StringUtils.trimToEmpty(oaiDc.getAttribute("xsi:schemaLocation")), 
+              WellKnownNamespaces.INSTANCE.buildSchemaLocation(ndUris.values().toArray(new String[ndUris.size()]))
+      );
+      oaiDc.setAttribute("xsi:schemaLocation", mergedSchemaLocations);
       document.appendChild(oaiDc);
 
       // addopt all relevant nodes from the input document to the new document
