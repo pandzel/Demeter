@@ -27,6 +27,7 @@ public final class Set {
   public final String setSpec;
   /** set name */
   public final String setName;
+  // TODO: add 'setDescription' element
 
   /**
    * Creates instance of the set.

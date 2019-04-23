@@ -38,7 +38,7 @@ public class Config {
   public String granularity = "YYYY-MM-DDThh:mm:ssZ";
   /** data compression (default: all) */
   public Compression [] compression = Compression.values();
-  
+  // TODO: add 'description' container
   
   /** 
    * modes of storing information about deleted records.

@@ -27,6 +27,7 @@ public final class Record {
   public final Header header;
   /** metadata */
   public final Document metadata;
+  // TODO: zero or more 'about' elements; 'about' is a contaner holding different types of information
   /** about information */
   public final Document about;
 
