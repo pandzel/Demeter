@@ -54,5 +54,9 @@
   {
     "namespace": "http://purl.org/dc/dcmitype/",
     "schema": "http://www.dublincore.org/schemas/xmls/qdc/2008/02/11/dcmitype.xsd"
+  },
+  {
+    "namespace": "http://www.opengis.net/ows",
+    "schema": "http://schemas.opengis.net/ows/1.0.0/owsAll.xsd"
   }
 ]

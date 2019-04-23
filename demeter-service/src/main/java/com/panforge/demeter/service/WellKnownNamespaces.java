@@ -76,6 +76,7 @@ public class WellKnownNamespaces {
   public String mergeSchemaLocations(String...locations) {
     Map<String,String> locationsMap = new HashMap<>();
     List<String> locationsList = Arrays.asList(locations);
+    // reverse list so first element will overwrite second, hence it will appear with higher priority
     Collections.reverse(locationsList);
     locationsList.forEach(schemaLocation->locationsMap.putAll(parseSchemaLocation(schemaLocation)));
     return locationsMap.entrySet().stream().map(e->String.format("%s %s", e.getKey(), e.getValue())).collect(Collectors.joining(" "));
@@ -89,8 +90,8 @@ public class WellKnownNamespaces {
   private Map<String,String> parseSchemaLocation(String schemaLocation) {
     Map<String,String> locationsMap = new HashMap<>();
     String [] sl = StringUtils.trimToEmpty(schemaLocation).split(" ");
-    for (int i=0; i+1<sl.length; i++) {
-      locationsMap.put(sl[0], sl[1]);
+    for (int i=0; i+1<sl.length; i+=2) {
+      locationsMap.put(StringUtils.trimToEmpty(sl[i]), StringUtils.trimToEmpty(sl[i+1]));
     }
     return locationsMap;
   }
