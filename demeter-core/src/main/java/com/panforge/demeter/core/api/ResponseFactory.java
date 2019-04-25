@@ -31,6 +31,7 @@ import com.panforge.demeter.core.model.response.ListRecordsResponse;
 import com.panforge.demeter.core.model.response.ListSetsResponse;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.Response;
+import com.panforge.demeter.core.model.response.elements.Description;
 import com.panforge.demeter.core.utils.QueryUtils;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,7 +39,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
-import org.w3c.dom.Document;
 
 /**
  * Response factory.
@@ -186,7 +186,7 @@ public class ResponseFactory {
             .forEach(Stream.of(response.compression != null ? response.compression : new Compression[]{}), (nd, v) -> {
               nd.child("compression").value(v.name()).done();
             })
-            .forEach(Stream.of(response.descriptions != null ? response.descriptions : new Document[]{}), (nd, doc) -> nd.child("description", () -> doc.getFirstChild() != null).addDocument(doc))
+            .forEach(Stream.of(response.descriptions != null ? response.descriptions : new Description[]{}).map(Description::createDocument).filter(doc->doc!=null), (nd, doc) -> nd.child("description").addDocument(doc))
             .end();
   }
 
