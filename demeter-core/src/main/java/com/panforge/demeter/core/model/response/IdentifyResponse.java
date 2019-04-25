@@ -17,10 +17,9 @@ package com.panforge.demeter.core.model.response;
 
 import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.core.model.request.IdentifyRequest;
-import com.panforge.demeter.core.model.response.elements.Description;
+import com.panforge.demeter.core.model.response.guidelines.RepositoryDescription;
 import java.time.OffsetDateTime;
 import java.util.Map;
-import org.w3c.dom.Document;
 
 /**
  * Identify response.
@@ -44,7 +43,7 @@ public final class IdentifyResponse extends Response<IdentifyRequest> {
   /** compression policy */
   public final Config.Compression [] compression;
   /** descriptions */
-  public final Description [] descriptions;
+  public final RepositoryDescription [] descriptions;
 
   /**
    * Creates instance of the response.
@@ -60,7 +59,7 @@ public final class IdentifyResponse extends Response<IdentifyRequest> {
    * @param responseDate response date
    * @param parameters request parameters
    */
-  public IdentifyResponse(Map<String, String[]> parameters,  OffsetDateTime responseDate, String repositoryName, String baseURL, String protocolVersion, String[] adminEmail, OffsetDateTime earliestDatestamp, Config.Deletion deletedRecord, String granularity, Config.Compression [] compression, Description[] descriptions) {
+  public IdentifyResponse(Map<String, String[]> parameters,  OffsetDateTime responseDate, String repositoryName, String baseURL, String protocolVersion, String[] adminEmail, OffsetDateTime earliestDatestamp, Config.Deletion deletedRecord, String granularity, Config.Compression [] compression, RepositoryDescription[] descriptions) {
     super(parameters, responseDate);
     this.repositoryName = repositoryName;
     this.baseURL = baseURL;
@@ -81,7 +80,7 @@ public final class IdentifyResponse extends Response<IdentifyRequest> {
    * @param parameters request parameters
    * @return identify response
    */
-  public static IdentifyResponse createFromConfig(Map<String, String[]> parameters,  OffsetDateTime responseDate, Config config, Description[] descriptions) {
+  public static IdentifyResponse createFromConfig(Map<String, String[]> parameters,  OffsetDateTime responseDate, Config config, RepositoryDescription[] descriptions) {
     IdentifyResponse response = new IdentifyResponse(
             parameters,
             responseDate,

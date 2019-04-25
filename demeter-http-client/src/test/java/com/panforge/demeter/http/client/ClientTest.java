@@ -42,10 +42,10 @@ import com.panforge.demeter.core.model.request.ListIdentifiersRequest;
 import com.panforge.demeter.core.model.request.ListMetadataFormatsRequest;
 import com.panforge.demeter.core.model.request.ListRecordsRequest;
 import com.panforge.demeter.core.model.request.ListSetsRequest;
-import com.panforge.demeter.core.model.response.elements.Description;
+import com.panforge.demeter.core.model.response.guidelines.RepositoryDescription;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
-import com.panforge.demeter.core.model.response.elements.OaiIdentifier;
+import com.panforge.demeter.core.model.response.guidelines.OaiIdentifier;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.elements.Set;
 import com.panforge.demeter.core.utils.QueryUtils;
@@ -191,7 +191,7 @@ public class ClientTest {
   
   private static String createIdentifyResponse() throws Exception {
     IdentifyRequest request = new IdentifyRequest();
-    Description [] descriptions = new Description[] { new Description(new OaiIdentifier("oai_dc", URI.create("0001"), ",", URI.create("identifier")))};
+    RepositoryDescription [] descriptions = new RepositoryDescription[] { new RepositoryDescription(new OaiIdentifier("oai_dc", URI.create("0001"), ",", URI.create("identifier")))};
     
     IdentifyResponse response = IdentifyResponse.createFromConfig(request.getParameters(), OffsetDateTime.now(), config, descriptions);
     
