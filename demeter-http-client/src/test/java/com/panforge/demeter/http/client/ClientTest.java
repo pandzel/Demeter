@@ -48,7 +48,6 @@ import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.model.response.guidelines.OaiIdentifier;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.elements.Set;
-import com.panforge.demeter.core.utils.QueryUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -178,7 +177,7 @@ public class ClientTest {
   }
   
   private static String createListSetsResponse() throws Exception {
-    Set set = new Set("music", "Music (set)");
+    Set set = new Set("music", "Music (set)", null);
     
     ListSetsRequest request = new ListSetsRequest();
     

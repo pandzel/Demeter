@@ -91,7 +91,7 @@ public class ResponseFactoryTest {
 
   @Test
   public void testCreateListSetsResponse() throws Exception {
-    Set set = new Set("music", "Music (set)");
+    Set set = new Set("music", "Music (set)", null);
     
     ListSetsRequest request = new ListSetsRequest();
     
@@ -126,7 +126,7 @@ public class ResponseFactoryTest {
 
   @Test
   public void testCreateListSetsResponseWithResumptionToken() throws Exception {
-    Set set = new Set("music", "Music (set)");
+    Set set = new Set("music", "Music (set)", null);
     
     ListSetsRequest request = ListSetsRequest.resume("token");
     

@@ -65,7 +65,9 @@ class ListSetsParser extends DocParser {
   private Set readSet(Node node) {
     return new Set(
             (String) evaluate("oai:setSpec", node, XPathConstants.STRING),
-            (String) evaluate("oai:setName", node, XPathConstants.STRING)
+            (String) evaluate("oai:setName", node, XPathConstants.STRING),
+            // TODO: add parsing set descriptions
+            null
     );
   }
   

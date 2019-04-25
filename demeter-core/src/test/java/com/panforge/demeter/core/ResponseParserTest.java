@@ -233,7 +233,7 @@ public class ResponseParserTest {
   
   @Test
   public void testListSetsResponse() throws Exception  {
-    Set set = new Set("music", "Music (set)");
+    Set set = new Set("music", "Music (set)", null);
     
     ListSetsRequest request = new ListSetsRequest();
     

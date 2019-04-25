@@ -203,6 +203,7 @@ public class ResponseFactory {
                 .child("set")
                 .child("setSpec").value(set.setSpec).done()
                 .child("setName").value(set.setName).done()
+                // TODO: generate set descriptions node
                 .done()
                 .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionToken(nd, resumptionToken, response.getParameter("resumptionToken") == null));
             }).done()

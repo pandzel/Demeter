@@ -58,13 +58,13 @@ import org.xml.sax.SAXException;
  */
 public class MockupContentProvider implements ContentProvider {
 
-  private final static XPathFactory xPathFactory = XPathFactory.newInstance();
-  private final static XPath xPath = xPathFactory.newXPath();
+  private final static XPathFactory XPATH_FACTORY = XPathFactory.newInstance();
+  private final static XPath XPATH = XPATH_FACTORY.newXPath();
 
   static {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setNamespaceAware(true);
-    xPath.setNamespaceContext(new SimpleNamespaceContext()
+    XPATH.setNamespaceContext(new SimpleNamespaceContext()
             .add("oai", "http://www.openarchives.org/OAI/2.0/")
             .add("dc", "http://purl.org/dc/elements/1.1/")
             .add("dct", "http://purl.org/dc/terms/")
@@ -74,15 +74,15 @@ public class MockupContentProvider implements ContentProvider {
     );
   }
 
-  private final static MetadataFormat oai_dc = new MetadataFormat(
+  private final static MetadataFormat OAI_DC = new MetadataFormat(
           "oai_dc",
           "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
           "http://www.openarchives.org/OAI/2.0/oai_dc/"
   );
 
-  private final static Set mainSet = new Set("main", "Main set");
+  private final static Set MAIN_SET = new Set("main", "Main set", null);
   
-  private List<MetaDescriptor> descriptors = new ArrayList<>();
+  private final List<MetaDescriptor> descriptors = new ArrayList<>();
   
   ContentProvider initialize() throws URISyntaxException {
     File root = new File(Thread.currentThread().getContextClassLoader().getResource("content").toURI());
@@ -93,12 +93,12 @@ public class MockupContentProvider implements ContentProvider {
 
   @Override
   public Cursor<MetadataFormat> listMetadataFormats(URI identifier) throws IdDoesNotExistException, NoMetadataFormatsException {
-    return Cursor.of(new MetadataFormat[]{oai_dc});
+    return Cursor.of(new MetadataFormat[]{OAI_DC});
   }
 
   @Override
   public Cursor<Set> listSets() throws NoSetHierarchyException {
-    return Cursor.of(new Set[]{mainSet});
+    return Cursor.of(new Set[]{MAIN_SET});
   }
 
   @Override
@@ -129,8 +129,8 @@ public class MockupContentProvider implements ContentProvider {
   private Document adopt(File file, Document doc) {
     try {
       // get parent node for identifier and list all its children
-      Node descNode = (Node)xPath.evaluate("//dc:identifier", doc, XPathConstants.NODE);
-      NodeList dcNodes = (NodeList)xPath.evaluate("*", descNode.getParentNode(), XPathConstants.NODESET);
+      Node descNode = (Node)XPATH.evaluate("//dc:identifier", doc, XPathConstants.NODE);
+      NodeList dcNodes = (NodeList)XPATH.evaluate("*", descNode.getParentNode(), XPathConstants.NODESET);
       
       // collect all namespaces and prefixes
       HashMap<String,String> ndUris = new HashMap<>();
@@ -167,7 +167,7 @@ public class MockupContentProvider implements ContentProvider {
 
   private MetaDescriptor descriptor(File file, Document doc) {
     try {
-      return new MetaDescriptor(file, URI.create((String) xPath.evaluate("//dc:identifier", doc, XPathConstants.STRING)), oai_dc, OffsetDateTime.MAX);
+      return new MetaDescriptor(file, URI.create((String) XPATH.evaluate("//dc:identifier", doc, XPathConstants.STRING)), OAI_DC, OffsetDateTime.MAX);
     } catch (XPathExpressionException ex) {
       return null;
     }
