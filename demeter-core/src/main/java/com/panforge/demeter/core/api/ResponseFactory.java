@@ -101,8 +101,9 @@ public class ResponseFactory {
             .child("metadata", () -> record.metadata != null && record.metadata.getFirstChild() != null)
             .addDocument(record.metadata)
             .done()
-            .child("about", () -> record.about != null && record.about.getFirstChild() != null)
-            .addDocument((record.about))
+            // TODO: produce about information
+            // .child("about", () -> record.about != null && record.about.getFirstChild() != null)
+            // .addDocument((record.about))
             .done()
             .done()
             .end();
@@ -131,8 +132,9 @@ public class ResponseFactory {
                       .child("metadata", () -> record.metadata != null && record.metadata.getFirstChild() != null)
                       .addDocument(record.metadata)
                       .done()
-                      .child("about", () -> record.about != null && record.about.getFirstChild() != null)
-                      .addDocument((record.about))
+                      // TODO: produce about information
+                      // .child("about", () -> record.about != null && record.about.getFirstChild() != null)
+                      // .addDocument((record.about))
                       .done()
                       .done()
                       .done();

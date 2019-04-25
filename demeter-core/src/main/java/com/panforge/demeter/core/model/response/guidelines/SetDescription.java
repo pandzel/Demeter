@@ -13,35 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.panforge.demeter.core.model.response.elements;
+package com.panforge.demeter.core.model.response.guidelines;
 
-import com.panforge.demeter.core.model.response.guidelines.About;
 import org.apache.commons.lang3.Validate;
 import org.w3c.dom.Document;
 
 /**
- * Record.
+ * Set description.
  */
-public final class Record {
-  
-  /** header */
-  public final Header header;
-  /** metadata */
-  public final Document metadata;
-  /** about information */
-  public final About [] about;
+public class SetDescription {
+  public final RightsManifest rightsManifest;
+  public final Branding branding;
 
-  /**
-   * Creates instance of the record.
-   * @param header header
-   * @param metadata metadata
-   * @param about about information
-   */
-  public Record(Header header, Document metadata, About [] about) {
-    Validate.notNull(header, "Missing header");
-    this.header = header;
-    this.metadata = metadata;
-    this.about = about;
+  public SetDescription(RightsManifest rightsManifest) {
+    Validate.notNull(rightsManifest, "Missing rightsManifest.");
+    this.rightsManifest = rightsManifest;
+    this.branding = null;
+  }
+
+  public SetDescription(Branding branding) {
+    Validate.notNull(branding, "Missing branding.");
+    this.rightsManifest = null;
+    this.branding = branding;
   }
   
+  public Document createDocument() {
+    // TODO: genereta description document.
+    return null;
+  }
 }
