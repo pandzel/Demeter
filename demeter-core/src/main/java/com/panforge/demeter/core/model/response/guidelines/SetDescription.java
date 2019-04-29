@@ -16,7 +16,6 @@
 package com.panforge.demeter.core.model.response.guidelines;
 
 import org.apache.commons.lang3.Validate;
-import org.w3c.dom.Document;
 
 /**
  * Set description.
@@ -45,15 +44,6 @@ public class SetDescription {
     Validate.notNull(branding, "Missing branding.");
     this.rightsManifest = null;
     this.branding = branding;
-  }
-  
-  /**
-   * Creates XML document.
-   * @return document
-   */
-  public Document createDocument() {
-    // TODO: genereta description document.
-    return null;
   }
 
   @Override

@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
+import org.w3c.dom.Document;
 
 /**
  * Response factory.
@@ -188,7 +189,7 @@ public class ResponseFactory {
             .forEach(Stream.of(response.compression != null ? response.compression : new Compression[]{}), (nd, v) -> {
               nd.child("compression").value(v.name()).done();
             })
-            .forEach(Stream.of(response.descriptions != null ? response.descriptions : new RepositoryDescription[]{}).map(RepositoryDescription::createDocument).filter(doc->doc!=null), (nd, doc) -> nd.child("description").addDocument(doc))
+            .forEach(Stream.of(response.descriptions != null ? response.descriptions : new RepositoryDescription[]{}).map(rd->createDocument(rd)).filter(doc->doc!=null), (nd, doc) -> nd.child("description").addDocument(doc))
             .end();
   }
 
@@ -243,5 +244,10 @@ public class ResponseFactory {
             .attr("completeListSize", Long.toString(resumptionToken.completeListSize))
             .attr("cursor", Long.toString(resumptionToken.cursor))
             .value(printValue ? resumptionToken.value : null).done();
+  }
+  
+  private Document createDocument(RepositoryDescription rd) {
+    // TODO: generate repository description document.
+    return null;
   }
 }

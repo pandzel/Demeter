@@ -16,7 +16,6 @@
 package com.panforge.demeter.core.model.response.guidelines;
 
 import org.apache.commons.lang3.Validate;
-import org.w3c.dom.Document;
 
 /**
  * Repository description.
@@ -117,15 +116,6 @@ public final class RepositoryDescription {
     this.friends = null;
     this.branding = null;
     this.gateway = gateway;
-  }
-  
-  /**
-   * Creates XML document.
-   * @return document
-   */
-  public Document createDocument() {
-    // TODO: generate description document.
-    return null;
   }
 
   @Override
