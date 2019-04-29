@@ -17,7 +17,6 @@ package com.panforge.demeter.core.model.response.guidelines;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Branding.

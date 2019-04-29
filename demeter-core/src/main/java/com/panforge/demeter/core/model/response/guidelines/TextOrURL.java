@@ -49,6 +49,6 @@ public final class TextOrURL {
 
   @Override
   public String toString() {
-    return "TextOrURL{" + "text=" + text + ", url=" + url + '}';
+    return text!=null? text: url!=null? url.toExternalForm(): "";
   }
 }
