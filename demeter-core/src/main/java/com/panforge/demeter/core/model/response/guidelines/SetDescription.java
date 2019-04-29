@@ -22,23 +22,42 @@ import org.w3c.dom.Document;
  * Set description.
  */
 public class SetDescription {
+  /** rights manifest */
   public final RightsManifest rightsManifest;
+  /** branding */
   public final Branding branding;
 
+  /**
+   * Creates instance of 'set description' section.
+   * @param rightsManifest rights manifest (mandatory)
+   */
   public SetDescription(RightsManifest rightsManifest) {
     Validate.notNull(rightsManifest, "Missing rightsManifest.");
     this.rightsManifest = rightsManifest;
     this.branding = null;
   }
 
+  /**
+   * Creates instance of 'set description' section.
+   * @param branding branding (mandatory)
+   */
   public SetDescription(Branding branding) {
     Validate.notNull(branding, "Missing branding.");
     this.rightsManifest = null;
     this.branding = branding;
   }
   
+  /**
+   * Creates XML document.
+   * @return document
+   */
   public Document createDocument() {
     // TODO: genereta description document.
     return null;
+  }
+
+  @Override
+  public String toString() {
+    return "SetDescription{" + "rightsManifest=" + rightsManifest + ", branding=" + branding + '}';
   }
 }

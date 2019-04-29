@@ -21,14 +21,26 @@ import org.apache.commons.lang3.Validate;
  * Metadata rendering.
  */
 public final class MetadataRendering {
+  /** metadata namespace */
   public final String metadataNamespace;
+  /** mime type */
   public final String mimeType;
 
+  /**
+   * Creates instance of 'metadata rendering' section.
+   * @param metadataNamespace metadata namespaces (mandatory)
+   * @param mimeType mime type (mandatory)
+   */
   public MetadataRendering(String metadataNamespace, String mimeType) {
     Validate.notBlank(metadataNamespace, "Missing metadata namespace.");
     Validate.notBlank(mimeType, "Missing mime type.");
     this.metadataNamespace = metadataNamespace;
     this.mimeType = mimeType;
+  }
+
+  @Override
+  public String toString() {
+    return "MetadataRendering{" + "metadataNamespace=" + metadataNamespace + ", mimeType=" + mimeType + '}';
   }
   
 }

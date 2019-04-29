@@ -15,17 +15,31 @@
  */
 package com.panforge.demeter.core.model.response.guidelines;
 
+import org.apache.commons.lang3.Validate;
+
 /**
  * About record information.
  */
 public final class About {
+  /** provenance */
   public final Provenance provenance;
+  /** rights */
   public final Rights rights;
 
+  /**
+   * Creates instance of the 'About' section.
+   * @param provenance provenance
+   * @param rights rights
+   */
   public About(Provenance provenance, Rights rights) {
+    Validate.isTrue(provenance!=null || rights!=null, "Either provenance or rights (or both) must be present.");
     this.provenance = provenance;
     this.rights = rights;
   }
-  
+
+  @Override
+  public String toString() {
+    return "About{" + "provenance=" + provenance + ", rights=" + rights + '}';
+  }
   
 }

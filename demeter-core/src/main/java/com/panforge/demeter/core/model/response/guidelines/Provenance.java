@@ -24,14 +24,31 @@ import org.apache.commons.lang3.Validate;
  * Provenance.
  */
 public final class Provenance {
+  /** harvest date */
   public final OffsetDateTime harvestDate;
+  /** altered indicator */
   public final boolean altered;
+  /** base URL */
   public final URL baseUrl;
+  /** identifier */
   public final URI identifier;
+  /** date stamp */
   public final OffsetDateTime datestamp;
+  /** metadata namespace */
   public final URI metadataNamespace;
+  /** origin description */
   public final Provenance originDescription;
 
+  /**
+   * Creates instance of 'provenance' section.
+   * @param harvestDate harvest date (mandatory)
+   * @param altered <code>true</code> if altered
+   * @param baseUrl base URL (optional)
+   * @param identifier identifier (mandatory)
+   * @param datestamp date stamp (mandatory)
+   * @param metadataNamespace metadata namespace (mandatory)
+   * @param originDescription  origin description (optional)
+   */
   public Provenance(OffsetDateTime harvestDate, boolean altered, URL baseUrl, URI identifier, OffsetDateTime datestamp, URI metadataNamespace, Provenance originDescription) {
     Validate.notNull(harvestDate, "Missing harvest date");
     Validate.notNull(baseUrl, "Missing base URL");
@@ -45,5 +62,10 @@ public final class Provenance {
     this.datestamp = datestamp;
     this.metadataNamespace = metadataNamespace;
     this.originDescription = originDescription;
+  }
+
+  @Override
+  public String toString() {
+    return "Provenance{" + "harvestDate=" + harvestDate + ", altered=" + altered + ", baseUrl=" + baseUrl + ", identifier=" + identifier + ", datestamp=" + datestamp + ", metadataNamespace=" + metadataNamespace + ", originDescription=" + originDescription + '}';
   }
 }

@@ -22,13 +22,23 @@ import org.w3c.dom.Document;
  * Repository description.
  */
 public final class RepositoryDescription {
+  /** oai identifier */
   public final OaiIdentifier oaiIdentifier;
+  /** rights manifest */
   public final RightsManifest rightsManifest;
+  /** eprints */
   public final EPrints eprints;
+  /** friends */
   public final Friends friends;
+  /** branding */
   public final Branding branding;
+  /** gateway */
   public final Gateway gateway;
 
+  /**
+   * Creates instance of 'repository description' section.
+   * @param oaiIdentifier oai identifier (mandatory)
+   */
   public RepositoryDescription(OaiIdentifier oaiIdentifier) {
     Validate.notNull(oaiIdentifier, "Missing oaiIdentifier.");
     this.oaiIdentifier = oaiIdentifier;
@@ -39,6 +49,10 @@ public final class RepositoryDescription {
     this.gateway = null;
   }
 
+  /**
+   * Creates instance of 'repository description' section.
+   * @param rightsManifest rights manifest (mandatory)
+   */
   public RepositoryDescription(RightsManifest rightsManifest) {
     Validate.notNull(rightsManifest, "Missing rightsManifest.");
     this.oaiIdentifier = null;
@@ -49,6 +63,10 @@ public final class RepositoryDescription {
     this.gateway = null;
   }
 
+  /**
+   * Creates instance of 'repository description' section.
+   * @param eprints eprints (mandatory)
+   */
   public RepositoryDescription(EPrints eprints) {
     Validate.notNull(eprints, "Missing eprints.");
     this.oaiIdentifier = null;
@@ -59,6 +77,10 @@ public final class RepositoryDescription {
     this.gateway = null;
   }
 
+  /**
+   * Creates instance of 'repository description' section.
+   * @param friends friends (mandatory)
+   */
   public RepositoryDescription(Friends friends) {
     Validate.notNull(friends, "Missing friends.");
     this.oaiIdentifier = null;
@@ -69,6 +91,10 @@ public final class RepositoryDescription {
     this.gateway = null;
   }
 
+  /**
+   * Creates instance of 'repository description' section.
+   * @param branding branding (mandatory)
+   */
   public RepositoryDescription(Branding branding) {
     Validate.notNull(branding, "Missing branding.");
     this.oaiIdentifier = null;
@@ -79,6 +105,10 @@ public final class RepositoryDescription {
     this.gateway = null;
   }
 
+  /**
+   * Creates instance of 'repository description' section.
+   * @param gateway gateway (mandatory)
+   */
   public RepositoryDescription(Gateway gateway) {
     Validate.notNull(gateway, "Missing gateway.");
     this.oaiIdentifier = null;
@@ -89,8 +119,17 @@ public final class RepositoryDescription {
     this.gateway = gateway;
   }
   
+  /**
+   * Creates XML document.
+   * @return document
+   */
   public Document createDocument() {
     // TODO: generate description document.
     return null;
+  }
+
+  @Override
+  public String toString() {
+    return "RepositoryDescription{" + "oaiIdentifier=" + oaiIdentifier + ", rightsManifest=" + rightsManifest + ", eprints=" + eprints + ", friends=" + friends + ", branding=" + branding + ", gateway=" + gateway + '}';
   }
 }

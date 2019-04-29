@@ -22,12 +22,25 @@ import org.apache.commons.lang3.Validate;
  * CollectionIcon.
  */
 public final class CollectionIcon {
+  /** URL */
   public final URL url;
+  /** link */
   public final URL link;
+  /** title */
   public final String title;
+  /** width */
   public final Integer width;
+  /** height */
   public final Integer Height;
 
+  /**
+   * Creates instance of the collection icon.
+   * @param url URL (mandatory)
+   * @param link link (optional)
+   * @param title title (optional)
+   * @param width with (optional)
+   * @param Height height (optional)
+   */
   public CollectionIcon(URL url, URL link, String title, Integer width, Integer Height) {
     Validate.notNull(url, "Missing url.");
     this.url = url;
@@ -36,4 +49,11 @@ public final class CollectionIcon {
     this.width = width;
     this.Height = Height;
   }
+
+  @Override
+  public String toString() {
+    return "CollectionIcon{" + "url=" + url + ", link=" + link + ", title=" + title + ", width=" + width + ", Height=" + Height + '}';
+  }
+  
+  
 }

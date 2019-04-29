@@ -23,9 +23,19 @@ import java.util.List;
  * Friends.
  */
 public final class Friends {
+  /** list of friends */
   public final List<URL> friends;
 
+  /**
+   * Creates instance of the friends.
+   * @param friends list of friends
+   */
   public Friends(List<URL> friends) {
     this.friends = friends!=null? Collections.unmodifiableList(friends): Collections.emptyList();
+  }
+
+  @Override
+  public String toString() {
+    return "Friends{" + "friends=" + friends + '}';
   }
 }

@@ -22,9 +22,19 @@ import java.util.List;
  * Rights manifest.
  */
 public final class RightsManifest {
+  /** list of rights */
   public final List<Rights> rights;
 
+  /**
+   * Creates instance of 'rights manifest' section.
+   * @param rights list of rights
+   */
   public RightsManifest(List<Rights> rights) {
     this.rights = rights!=null? Collections.unmodifiableList(rights): Collections.emptyList();
+  }
+
+  @Override
+  public String toString() {
+    return "RightsManifest{" + "rights=" + rights + '}';
   }
 }

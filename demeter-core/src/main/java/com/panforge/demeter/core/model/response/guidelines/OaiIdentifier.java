@@ -22,27 +22,35 @@ import org.apache.commons.lang3.Validate;
  * OAI identifier.
  */
 public final class OaiIdentifier {
+  /** scheme */
   public final String scheme;
+  /** repository identifier */
   public final URI repositoryIdentifier;
+  /** delimiter */
   public final String delimiter;
+  /** sample implementation */
   public final URI sampleIdentifier;
 
   /**
    * Creates instance of the OAI identifier.
-   * @param scheme scheme
-   * @param repositoryIdentifier repository identifier
-   * @param delimiter delimiter
-   * @param sampleIdentifier  sample identifier
+   * @param scheme scheme (mandatory)
+   * @param repositoryIdentifier repository identifier (mandatory)
+   * @param delimiter delimiter (mandatory)
+   * @param sampleIdentifier  sample identifier (mandatory)
    */
   public OaiIdentifier(String scheme, URI repositoryIdentifier, String delimiter, URI sampleIdentifier) {
     Validate.notBlank(scheme, "Missing scheme");
     Validate.notNull(repositoryIdentifier, "Missiing repository identifier");
     Validate.notBlank(delimiter, "Missing delimiter");
-    Validate.isTrue(delimiter.length()==1, "Invalid length of delimiter");
     Validate.notNull(sampleIdentifier, "Missing sample identifier.");
     this.scheme = scheme;
     this.repositoryIdentifier = repositoryIdentifier;
     this.delimiter = delimiter;
     this.sampleIdentifier = sampleIdentifier;
+  }
+
+  @Override
+  public String toString() {
+    return "OaiIdentifier{" + "scheme=" + scheme + ", repositoryIdentifier=" + repositoryIdentifier + ", delimiter=" + delimiter + ", sampleIdentifier=" + sampleIdentifier + '}';
   }
 }

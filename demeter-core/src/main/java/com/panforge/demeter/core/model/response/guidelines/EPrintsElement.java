@@ -22,10 +22,20 @@ import org.apache.commons.lang3.Validate;
  * EPrints element.
  */
 public final class EPrintsElement {
+  /** text or URL */
   public final List<TextOrURL> textOrUrl;
 
+  /**
+   * Creates instance of EPrint element.
+   * @param textOrUrl text or URL (mandatory)
+   */
   public EPrintsElement(List<TextOrURL> textOrUrl) {
     Validate.notEmpty(textOrUrl, "Missing text or URL.");
     this.textOrUrl = textOrUrl;
+  }
+
+  @Override
+  public String toString() {
+    return "EPrintsElement{" + "textOrUrl=" + textOrUrl + '}';
   }
 }

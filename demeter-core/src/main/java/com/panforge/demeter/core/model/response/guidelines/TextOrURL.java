@@ -22,18 +22,33 @@ import org.apache.commons.lang3.Validate;
  * Text or URL.
  */
 public final class TextOrURL {
+  /** text */
   public final String text;
+  /** URL */
   public final URL url;
 
+  /**
+   * Creates text or URL element.
+   * @param text text (mandatory)
+   */
   public TextOrURL(String text) {
     Validate.notBlank(text, "Missing text.");
     this.text = text;
     this.url = null;
   }
   
+  /**
+   * Creates text or URL element.
+   * @param url URL
+   */
   public TextOrURL(URL url) {
     Validate.notNull(url, "Missing URL.");
     this.text = null;
     this.url = url;
+  }
+
+  @Override
+  public String toString() {
+    return "TextOrURL{" + "text=" + text + ", url=" + url + '}';
   }
 }

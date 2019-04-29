@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.core.model.response.guidelines;
 
+import com.panforge.demeter.core.utils.XmlUtils;
 import java.net.URL;
 import org.apache.commons.lang3.Validate;
 import org.w3c.dom.Document;
@@ -23,19 +24,34 @@ import org.w3c.dom.Document;
  * Rights.
  */
 public final class Rights {
+  /** rights definition */
   public final Document rightsDefinition;
+  /** rights reference */
   public final URL rightsReference;
 
+  /**
+   * Creates instance of 'rights' section.
+   * @param rightsDefinition rights definition (mandatory)
+   */
   public Rights(Document rightsDefinition) {
     Validate.notNull(rightsDefinition, "Missing rights definition");
     this.rightsDefinition = rightsDefinition;
     this.rightsReference = null;
   }
 
+  /**
+   * Creates instance of 'rights' section.
+   * @param rightsReference rights reference (mandatory)
+   */
   public Rights(URL rightsReference) {
     Validate.notNull(rightsReference, "Missing rights reference");
     this.rightsDefinition = null;
     this.rightsReference = rightsReference;
+  }
+
+  @Override
+  public String toString() {
+    return "Rights{" + "rightsDefinition=" + (rightsDefinition!=null? XmlUtils.formatToString(rightsDefinition): null) + ", rightsReference=" + rightsReference + '}';
   }
   
 }

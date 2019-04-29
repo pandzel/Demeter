@@ -24,12 +24,25 @@ import org.apache.commons.lang3.Validate;
  * Gateway.
  */
 public final class Gateway {
+  /** source */
   public final String source;
+  /** gateway description */
   public final URL gatewayDescription;
+  /** list of admins emails */
   public final List<String> gatewayAdmin;
+  /** gateway URL */
   public final URL gatewayURL;
+  /** gateway notes */
   public final URL gatewayNotes;
 
+  /**
+   * Creates instance of the 'gateway' section.
+   * @param source source (mandatory)
+   * @param gatewayDescription gateway description (mandatory)
+   * @param gatewayAdmin admin emails (at least one)
+   * @param gatewayURL gateway URL (optional)
+   * @param gatewayNotes gateway notes (optional)
+   */
   public Gateway(String source, URL gatewayDescription, List<String> gatewayAdmin, URL gatewayURL, URL gatewayNotes) {
     Validate.notBlank(source, "Missing source.");
     Validate.notNull(gatewayDescription, "Missing gateway description.");
@@ -39,5 +52,10 @@ public final class Gateway {
     this.gatewayAdmin = Collections.unmodifiableList(gatewayAdmin);
     this.gatewayURL = gatewayURL;
     this.gatewayNotes = gatewayNotes;
+  }
+
+  @Override
+  public String toString() {
+    return "Gateway{" + "source=" + source + ", gatewayDescription=" + gatewayDescription + ", gatewayAdmin=" + gatewayAdmin + ", gatewayURL=" + gatewayURL + ", gatewayNotes=" + gatewayNotes + '}';
   }
 }

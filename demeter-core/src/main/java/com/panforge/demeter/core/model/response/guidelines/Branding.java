@@ -17,16 +17,29 @@ package com.panforge.demeter.core.model.response.guidelines;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Branding.
  */
 public class Branding {
+  /** collection icon */
   public final CollectionIcon collectionIcon;
+  /** metadata rendering */
   public final List<MetadataRendering> metadataRendering;
 
+  /**
+   * Creates instance of 'branding' section.
+   * @param collectionIcon collection icon (optional)
+   * @param metadataRendering metadata rendering (may be empty or null)
+   */
   public Branding(CollectionIcon collectionIcon, List<MetadataRendering> metadataRendering) {
     this.collectionIcon = collectionIcon;
     this.metadataRendering = metadataRendering!=null? Collections.unmodifiableList(metadataRendering): Collections.emptyList();
+  }
+
+  @Override
+  public String toString() {
+    return "Branding{" + "collectionIcon=" + collectionIcon + ", metadataRendering=" + metadataRendering + '}';
   }
 }
