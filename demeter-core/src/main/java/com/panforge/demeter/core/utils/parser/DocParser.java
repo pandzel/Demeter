@@ -33,6 +33,7 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -289,22 +290,19 @@ public class DocParser {
       }
     }
 
-    Document [] about = null;
-    // TODO: parse about information
-    /*
-    Document about = null;
-    Node ndAbout = (Node)evaluate("oai:about", node, XPathConstants.NODE);
-    if (ndAbout!=null) {
-      Node aboutDocumentNode = stream(ndAbout.getChildNodes()).filter(n->n.getNodeType()==1).findFirst().orElse(null);
+    List<Document> about = new ArrayList<>();
+    NodeList ndAbout = (NodeList)evaluate("oai:about", node, XPathConstants.NODESET);
+    NodeIterable.stream(ndAbout).forEach(nd->{
+      Node aboutDocumentNode = stream(nd.getChildNodes()).filter(n->n.getNodeType()==1).findFirst().orElse(null);
       if (aboutDocumentNode!=null) {
-        about = BUILDER.newDocument();
-        Node adopted = about.adoptNode(aboutDocumentNode);
-        about.appendChild(adopted);
+        Document aboutDoc = BUILDER.newDocument();
+        Node adopted = aboutDoc.adoptNode(aboutDocumentNode);
+        aboutDoc.appendChild(adopted);
+        about.add(aboutDoc);
       }
-    }
-    */
+    });
 
-    return new Record(header, metadata, about);
+    return new Record(header, metadata, about.toArray(new Document[about.size()]));
   }
 
   /**

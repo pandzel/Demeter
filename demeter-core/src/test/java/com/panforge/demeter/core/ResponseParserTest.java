@@ -118,6 +118,11 @@ public class ResponseParserTest {
     
     assertNotNull("No parsed response", parsed);
     assertNotNull("No record", parsed.record);
+    
+    assertNotNull("No header", parsed.record.header);
+    assertNotNull("No metadata", parsed.record.metadata);
+    assertNotNull("No about", parsed.record.about);
+    assertTrue("No about", parsed.record.about.length > 0);
   }
   
   @Test
@@ -160,8 +165,8 @@ public class ResponseParserTest {
     assertTrue("No records", parsed.records.length > 0);
     assertNotNull("No header", parsed.records[0].header);
     assertNotNull("No metadata", parsed.records[0].metadata);
-    // TODO: provide record identify test
-    // assertNotNull("No about", parsed.records[0].about);
+    assertNotNull("No about", parsed.records[0].about);
+    assertTrue("No about", parsed.records[0].about.length > 0);
   }
   
   @Test
