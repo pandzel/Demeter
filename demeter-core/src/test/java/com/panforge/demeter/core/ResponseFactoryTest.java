@@ -234,7 +234,7 @@ public class ResponseFactoryTest {
     assertTrue("No deletedRecord node", test(doc, "count(//OAI-PMH/Identify/deletedRecord)=1"));
     assertTrue("No granularity node", test(doc, "count(//OAI-PMH/Identify/granularity)=1"));
     assertTrue("No compression node", test(doc, "count(//OAI-PMH/Identify/compression)>0"));
-    // TODO: provide Idetify description test
+    // TODO: provide Identify description test
     // assertTrue("No description node", test(doc, "count(//OAI-PMH/Identify/description)>0"));
   }
   
