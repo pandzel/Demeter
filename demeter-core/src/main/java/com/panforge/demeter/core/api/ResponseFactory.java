@@ -95,15 +95,13 @@ public class ResponseFactory {
             .child("identifier").value(header.identifier.toASCIIString()).done()
             .child("datestamp").value(header.datestamp.format(DateTimeFormatter.ISO_DATE)).done()
             .forEach(Stream.of(header.set != null ? header.set : new String[]{}), (hnd, set) -> {
-              hnd.child("setSpec").value(set);
+              hnd.child("setSpec").value(set).done();
             })
             .done()
-            .child("metadata", () -> record.metadata != null && record.metadata.getFirstChild() != null)
-            .addDocument(record.metadata)
-            .done()
-            // TODO: produce about information
-            // .child("about", () -> record.about != null && record.about.getFirstChild() != null)
-            // .addDocument((record.about))
+            .child("metadata", () -> record.metadata != null && record.metadata.getFirstChild() != null).addDocument(record.metadata).done()
+            .forEach(Stream.of(record.about != null ? record.about : new Document[]{}), (hnd, about) -> {
+              hnd.child("about").addDocument(about).done();
+            })
             .done()
             .done()
             .end();
@@ -126,15 +124,13 @@ public class ResponseFactory {
                       .child("identifier").value(header.identifier.toASCIIString()).done()
                       .child("datestamp").value(header.datestamp.format(DateTimeFormatter.ISO_DATE)).done()
                       .forEach(Stream.of(header.set != null ? header.set : new String[]{}), (hnd, set) -> {
-                        hnd.child("setSpec").value(set);
+                        hnd.child("setSpec").value(set).done();
                       })
                       .done()
-                      .child("metadata", () -> record.metadata != null && record.metadata.getFirstChild() != null)
-                      .addDocument(record.metadata)
-                      .done()
-                      // TODO: produce about information
-                      // .child("about", () -> record.about != null && record.about.getFirstChild() != null)
-                      // .addDocument((record.about))
+                      .child("metadata", () -> record.metadata != null && record.metadata.getFirstChild() != null).addDocument(record.metadata).done()
+                      .forEach(Stream.of(record.about != null ? record.about : new Document[]{}), (hnd, about) -> {
+                        hnd.child("about").addDocument(about).done();
+                      })
                       .done()
                       .done()
                       .done();
