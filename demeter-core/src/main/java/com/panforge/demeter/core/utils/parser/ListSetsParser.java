@@ -23,9 +23,13 @@ import com.panforge.demeter.core.model.response.ErrorResponse;
 import com.panforge.demeter.core.model.response.ListSetsResponse;
 import com.panforge.demeter.core.model.response.Response;
 import com.panforge.demeter.core.model.response.elements.Set;
+import com.panforge.demeter.core.utils.nodeiter.NodeIterable;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.nodes;
+import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.stream;
+import static com.panforge.demeter.core.utils.parser.DocParser.BUILDER;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.xpath.XPathConstants;
 import org.apache.commons.lang3.ArrayUtils;
@@ -66,9 +70,23 @@ class ListSetsParser extends DocParser {
     return new Set(
             (String) evaluate("oai:setSpec", node, XPathConstants.STRING),
             (String) evaluate("oai:setName", node, XPathConstants.STRING),
-            // TODO: add parsing set descriptions
-            null
+            readSetDescriptions(node)
     );
+  }
+  
+  private Document [] readSetDescriptions(Node root) {
+    List<Document> setDescriptions = new ArrayList<>();
+    NodeList ndAbout = (NodeList)evaluate("oai:setDescription", root, XPathConstants.NODESET);
+    NodeIterable.stream(ndAbout).forEach(nd->{
+      Node setDescriptionNode = stream(nd.getChildNodes()).filter(n->n.getNodeType()==1).findFirst().orElse(null);
+      if (setDescriptionNode!=null) {
+        Document setDescriptionDoc = BUILDER.newDocument();
+        Node adopted = setDescriptionDoc.adoptNode(setDescriptionNode);
+        setDescriptionDoc.appendChild(adopted);
+        setDescriptions.add(setDescriptionDoc);
+      }
+    });
+    return setDescriptions.toArray(new Document[setDescriptions.size()]);
   }
   
   private Map<String,String[]> extractRequest() {

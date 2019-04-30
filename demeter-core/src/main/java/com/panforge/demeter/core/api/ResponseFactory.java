@@ -72,7 +72,7 @@ public class ResponseFactory {
             .child("responseDate").value(responseDate.format(DateTimeFormatter.ISO_DATE_TIME)).done()
             .child("request").attr("verb", ()->verb!=null? verb.name(): null, ()->verb!=null).forEach(reqParams != null ? QueryUtils.paramsToList(reqParams).stream() : null, (n, e) -> n.attr(e[0], e[1])).value(CTX.config.baseURL).done()
             .forEach(Arrays.stream(errors!=null? errors: new ErrorInfo[0]), (nd,error)->{
-              nd.child("error", () -> error != null).attr("code", error != null ? error.errorCode.name() : "").value(error != null ? error.message : "");
+              nd.child("error", () -> error != null).attr("code", error != null ? error.errorCode.name() : "").value(error != null ? error.message : "").done();
             })
             .end();
   }
@@ -154,7 +154,7 @@ public class ResponseFactory {
                       .child("identifier").value(header.identifier.toASCIIString()).done()
                       .child("datestamp").value(header.datestamp.format(DateTimeFormatter.ISO_DATE)).done()
                       .forEach(Stream.of(header.set != null ? header.set : new String[]{}), (hnd, set) -> {
-                        hnd.child("setSpec").value(set);
+                        hnd.child("setSpec").value(set).done();
                       })
                       .done()
                       .done();
@@ -201,7 +201,9 @@ public class ResponseFactory {
                 .child("set")
                 .child("setSpec").value(set.setSpec).done()
                 .child("setName").value(set.setName).done()
-                // TODO: generate set descriptions node
+                .forEach(Stream.of(set.descriptions != null ? set.descriptions : new Document[]{}).filter(doc->doc!=null), (nd, doc) -> {
+                  nd.child("setDescription").addDocument(doc).done();
+                })
                 .done()
                 .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionToken(nd, resumptionToken, response.getParameter("resumptionToken") == null));
             }).done()

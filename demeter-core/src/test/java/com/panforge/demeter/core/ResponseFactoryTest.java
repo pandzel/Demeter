@@ -89,7 +89,15 @@ public class ResponseFactoryTest {
 
   @Test
   public void testCreateListSetsResponse() throws Exception {
-    Set set = new Set("music", "Music (set)", null);
+    Document setDescription = parse(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
+                    + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
+                    + "<dc:publisher>Simple set description</dc:publisher>"
+                    + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
+                    + "</oai_dc:dc>"
+    );
+    
+    Set set = new Set("music", "Music (set)", new Document[]{ setDescription });
     
     ListSetsRequest request = new ListSetsRequest();
     
@@ -124,7 +132,15 @@ public class ResponseFactoryTest {
 
   @Test
   public void testCreateListSetsResponseWithResumptionToken() throws Exception {
-    Set set = new Set("music", "Music (set)", null);
+    Document setDescription = parse(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
+                    + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
+                    + "<dc:publisher>Simple set description</dc:publisher>"
+                    + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
+                    + "</oai_dc:dc>"
+    );
+    
+    Set set = new Set("music", "Music (set)", new Document[]{ setDescription });
     
     ListSetsRequest request = ListSetsRequest.resume("token");
     
