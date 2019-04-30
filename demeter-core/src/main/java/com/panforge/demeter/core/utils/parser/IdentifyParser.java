@@ -99,18 +99,10 @@ class IdentifyParser extends DocParser {
         Document descDoc = BUILDER.newDocument();
         Node adopted = descDoc.adoptNode(descriptionNode);
         descDoc.appendChild(adopted);
-        Document description = createDescription(doc);
-        if (description!=null) {
-          descriptions.add(description);
-        }
+        descriptions.add(doc);
       }
     }
     return descriptions.toArray(new Document[descriptions.size()]);
-  }
-  
-  private Document createDescription(Document doc) {
-    // TODO: create description from document
-    return null;
   }
   
   private Map<String,String[]> extractRequest() {
