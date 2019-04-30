@@ -336,7 +336,6 @@ public class ResponseFactoryTest {
     assertTrue("No header node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/header)=1"));
     assertTrue("No metadata node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata)=1"));
     assertTrue("No metadata content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata/rfc1807)=1"));
-    // TODO: provide record about test
     assertTrue("No about node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about)=1"));
     assertTrue("No about content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about/dc)=1"));
     
@@ -395,9 +394,8 @@ public class ResponseFactoryTest {
     assertTrue("No header node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/header)=1"));
     assertTrue("No metadata node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata)=1"));
     assertTrue("No metadata content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata/rfc1807)=1"));
-    // TODO: provide record about test
-    // assertTrue("No about node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about)=1"));
-    // assertTrue("No about content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about/dc)=1"));
+    assertTrue("No about node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about)=1"));
+    assertTrue("No about content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about/dc)=1"));
     
     assertTrue("No resumptionToken", test(doc, "count(//OAI-PMH/ListRecords/resumptionToken)=1"));
     assertTrue("Invalid resumptionToken", test(doc, "//OAI-PMH/ListRecords/resumptionToken=''"));
