@@ -32,12 +32,9 @@ import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.ListMetadataFormatsResponse;
 import com.panforge.demeter.core.model.response.ListRecordsResponse;
 import com.panforge.demeter.core.model.response.ListSetsResponse;
-import com.panforge.demeter.core.model.response.guidelines.RepositoryDescription;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
-import com.panforge.demeter.core.model.response.guidelines.OaiIdentifier;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.elements.Set;
-import com.panforge.demeter.core.model.response.guidelines.About;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -197,7 +194,7 @@ public class ResponseFactoryTest {
   @Test
   public void testIdentifyResponse() throws Exception {
     IdentifyRequest request = new IdentifyRequest();
-    RepositoryDescription [] descriptions = new RepositoryDescription[] { new RepositoryDescription(new OaiIdentifier("oai_dc", URI.create("0001"), ",", URI.create("identifier")))};
+    Document [] descriptions = new Document[] {};
     
     IdentifyResponse response = IdentifyResponse.createFromConfig(request.getParameters(), OffsetDateTime.now(), config, descriptions);
     
@@ -221,7 +218,7 @@ public class ResponseFactoryTest {
     assertTrue("No deletedRecord node", test(doc, "count(//OAI-PMH/Identify/deletedRecord)=1"));
     assertTrue("No granularity node", test(doc, "count(//OAI-PMH/Identify/granularity)=1"));
     assertTrue("No compression node", test(doc, "count(//OAI-PMH/Identify/compression)>0"));
-    // TODO: uncomment after creating description is implemented
+    // TODO: provide Idetify description test
     // assertTrue("No description node", test(doc, "count(//OAI-PMH/Identify/description)>0"));
   }
   
@@ -298,9 +295,6 @@ public class ResponseFactoryTest {
     
     Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[] { "music" }, false);
     
-    // TODO: provide about information for testing
-    About [] about = null;
-    /*
     Document about = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
                     + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
@@ -308,7 +302,6 @@ public class ResponseFactoryTest {
                     + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
                     + "</oai_dc:dc>"
     );
-    */
     
     Document metadata = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
@@ -322,7 +315,7 @@ public class ResponseFactoryTest {
                     + "</rfc1807>"
     );
     
-    Record record = new Record(header, metadata, about);
+    Record record = new Record(header, metadata, new Document[]{about});
     
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
@@ -343,7 +336,7 @@ public class ResponseFactoryTest {
     assertTrue("No header node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/header)=1"));
     assertTrue("No metadata node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata)=1"));
     assertTrue("No metadata content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata/rfc1807)=1"));
-    // TODO: provide about test
+    // TODO: provide record about test
     // assertTrue("No about node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about)=1"));
     // assertTrue("No about content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about/dc)=1"));
     
@@ -360,9 +353,6 @@ public class ResponseFactoryTest {
     
     Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[] { "music" }, false);
     
-    // TODO: provide about information for testing
-    About [] about = null;
-    /*
     Document about = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
                     + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
@@ -370,7 +360,6 @@ public class ResponseFactoryTest {
                     + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
                     + "</oai_dc:dc>"
     );
-    */
     
     Document metadata = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
@@ -384,7 +373,7 @@ public class ResponseFactoryTest {
                     + "</rfc1807>"
     );
     
-    Record record = new Record(header, metadata, about);
+    Record record = new Record(header, metadata, new Document[]{about});
     
     
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
@@ -406,7 +395,7 @@ public class ResponseFactoryTest {
     assertTrue("No header node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/header)=1"));
     assertTrue("No metadata node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata)=1"));
     assertTrue("No metadata content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata/rfc1807)=1"));
-    // TODO: provide about test
+    // TODO: provide record about test
     // assertTrue("No about node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about)=1"));
     // assertTrue("No about content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about/dc)=1"));
     
@@ -423,9 +412,6 @@ public class ResponseFactoryTest {
     
     Header header = new Header(request.getIdentifier(), OffsetDateTime.now(), new String[] { "music" }, false);
     
-    // TODO: provide about information for testing
-    About [] about = null;
-    /*
     Document about = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
                     + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
@@ -433,7 +419,6 @@ public class ResponseFactoryTest {
                     + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
                     + "</oai_dc:dc>"
     );
-    */
     
     Document metadata = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
@@ -447,7 +432,7 @@ public class ResponseFactoryTest {
                     + "</rfc1807>"
     );
     
-    Record record = new Record(header, metadata, about);
+    Record record = new Record(header, metadata, new Document[]{about});
     
     GetRecordResponse response = new GetRecordResponse(request.getParameters(), OffsetDateTime.now(), record);
     
@@ -465,7 +450,7 @@ public class ResponseFactoryTest {
     assertTrue("No header node", test(doc, "count(//OAI-PMH/GetRecord/record/header)=1"));
     assertTrue("No metadata node", test(doc, "count(//OAI-PMH/GetRecord/record/metadata)=1"));
     assertTrue("No metadata content", test(doc, "count(//OAI-PMH/GetRecord/record/metadata/rfc1807)=1"));
-    // TODO: provide about test
+    // TODO: provide record about node
     // assertTrue("No about node", test(doc, "count(//OAI-PMH/GetRecord/record/about)=1"));
     // assertTrue("No about content", test(doc, "count(//OAI-PMH/GetRecord/record/about/dc)=1"));
 }

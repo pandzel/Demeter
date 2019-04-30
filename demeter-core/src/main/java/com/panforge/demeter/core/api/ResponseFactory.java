@@ -31,7 +31,6 @@ import com.panforge.demeter.core.model.response.ListRecordsResponse;
 import com.panforge.demeter.core.model.response.ListSetsResponse;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.Response;
-import com.panforge.demeter.core.model.response.guidelines.RepositoryDescription;
 import com.panforge.demeter.core.utils.QueryUtils;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -189,7 +188,7 @@ public class ResponseFactory {
             .forEach(Stream.of(response.compression != null ? response.compression : new Compression[]{}), (nd, v) -> {
               nd.child("compression").value(v.name()).done();
             })
-            .forEach(Stream.of(response.descriptions != null ? response.descriptions : new RepositoryDescription[]{}).map(rd->createDocument(rd)).filter(doc->doc!=null), (nd, doc) -> nd.child("description").addDocument(doc))
+            .forEach(Stream.of(response.descriptions != null ? response.descriptions : new Document[]{}).filter(doc->doc!=null), (nd, doc) -> nd.child("description").addDocument(doc))
             .end();
   }
 
@@ -244,10 +243,5 @@ public class ResponseFactory {
             .attr("completeListSize", Long.toString(resumptionToken.completeListSize))
             .attr("cursor", Long.toString(resumptionToken.cursor))
             .value(printValue ? resumptionToken.value : null).done();
-  }
-  
-  private Document createDocument(RepositoryDescription rd) {
-    // TODO: generate repository description document.
-    return null;
   }
 }

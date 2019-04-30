@@ -15,9 +15,9 @@
  */
 package com.panforge.demeter.core.model.response.elements;
 
-import com.panforge.demeter.core.model.response.guidelines.SetDescription;
 import java.util.Objects;
 import org.apache.commons.lang3.Validate;
+import org.w3c.dom.Document;
 
 /**
  * Set.
@@ -29,14 +29,14 @@ public final class Set {
   /** set name */
   public final String setName;
   /** set descriptions */
-  public final SetDescription [] descriptions;
+  public final Document [] descriptions;
 
   /**
    * Creates instance of the set.
    * @param setSpec set specification
    * @param setName set name
    */
-  public Set(String setSpec, String setName, SetDescription [] descriptions) {
+  public Set(String setSpec, String setName, Document [] descriptions) {
     Validate.notBlank(setSpec, "Missing set specification");
     Validate.notBlank(setName, "Missing set name");
     this.setSpec = setSpec;

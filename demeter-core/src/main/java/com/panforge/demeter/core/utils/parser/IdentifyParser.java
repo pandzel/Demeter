@@ -24,7 +24,6 @@ import com.panforge.demeter.core.model.request.Request;
 import com.panforge.demeter.core.model.response.ErrorResponse;
 import com.panforge.demeter.core.model.response.IdentifyResponse;
 import com.panforge.demeter.core.model.response.Response;
-import com.panforge.demeter.core.model.response.guidelines.RepositoryDescription;
 import static com.panforge.demeter.core.utils.DateTimeUtils.parseTimestamp;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.nodes;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.stream;
@@ -70,7 +69,7 @@ class IdentifyParser extends DocParser {
     String granularity = (String) evaluate("//oai:OAI-PMH/oai:Identify/oai:granularity", doc, XPathConstants.STRING);
     Compression [] compression = readCompression();
 
-    RepositoryDescription[] descriptions = readDescriptions((NodeList) evaluate("//oai:OAI-PMH/oai:Identify/oai:description", doc, XPathConstants.NODESET));
+    Document[] descriptions = readDescriptions((NodeList) evaluate("//oai:OAI-PMH/oai:Identify/oai:description", doc, XPathConstants.NODESET));
 
     return new IdentifyResponse(extractRequest(), readResponseDate(doc), repositoryName, baseURL, protocolVersion, edminEmails, earliestDatestamp, deletedRecord, granularity, compression, descriptions);
   }
@@ -92,24 +91,24 @@ class IdentifyParser extends DocParser {
     return adminEmails.toArray(new String[adminEmails.size()]);
   }
 
-  private RepositoryDescription[] readDescriptions(NodeList nodeList) {
-    ArrayList<RepositoryDescription> descriptions = new ArrayList<>();
+  private Document[] readDescriptions(NodeList nodeList) {
+    ArrayList<Document> descriptions = new ArrayList<>();
     for (Node node : nodes(nodeList)) {
       Node descriptionNode = stream(node.getChildNodes()).filter(n -> n.getNodeType() == 1).findFirst().orElse(null);
       if (descriptionNode != null) {
         Document descDoc = BUILDER.newDocument();
         Node adopted = descDoc.adoptNode(descriptionNode);
         descDoc.appendChild(adopted);
-        RepositoryDescription description = createDescription(doc);
+        Document description = createDescription(doc);
         if (description!=null) {
           descriptions.add(description);
         }
       }
     }
-    return descriptions.toArray(new RepositoryDescription[descriptions.size()]);
+    return descriptions.toArray(new Document[descriptions.size()]);
   }
   
-  private RepositoryDescription createDescription(Document doc) {
+  private Document createDescription(Document doc) {
     // TODO: create description from document
     return null;
   }

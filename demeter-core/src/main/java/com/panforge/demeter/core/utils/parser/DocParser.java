@@ -25,7 +25,6 @@ import com.panforge.demeter.core.model.request.Request;
 import com.panforge.demeter.core.model.response.Response;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.elements.Record;
-import com.panforge.demeter.core.model.response.guidelines.About;
 import com.panforge.demeter.core.utils.DateTimeUtils;
 import com.panforge.demeter.core.utils.nodeiter.NodeIterable;
 import static com.panforge.demeter.core.utils.nodeiter.NodeIterable.nodes;
@@ -290,7 +289,7 @@ public class DocParser {
       }
     }
 
-    About [] about = null;
+    Document [] about = null;
     // TODO: parse about information
     /*
     Document about = null;
