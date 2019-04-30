@@ -178,8 +178,8 @@ public class ResponseFactory {
             .forEach(Stream.of(response.adminEmail != null ? response.adminEmail : new String[]{}), (nd, v) -> {
               nd.child("adminEmail").value(v).done();
             })
-            .child("earliestDatestamp").value(response.earliestDatestamp != null ? response.earliestDatestamp.format(DateTimeFormatter.ISO_DATE_TIME) : "").done()
-            .child("deletedRecord").value(response.deletedRecord != null ? response.deletedRecord.name() : "").done()
+            .child("earliestDatestamp").value(response.earliestDatestamp != null ? response.earliestDatestamp.format(DateTimeFormatter.ISO_DATE_TIME) : OffsetDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)).done()
+            .child("deletedRecord").value(response.deletedRecord != null ? response.deletedRecord.name().toLowerCase() : "").done()
             .child("granularity").value(response.granularity).done()
             .forEach(Stream.of(response.compression != null ? response.compression : new Compression[]{}), (nd, v) -> {
               nd.child("compression").value(v.name()).done();
