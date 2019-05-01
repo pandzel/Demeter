@@ -117,6 +117,7 @@ public class ResponseFactoryTest {
     System.out.println(String.format("%s", rsp));
 
     assertNotNull("Null response", rsp);
+    // assertTrue("Invalid response by schema", validate(rsp));
 
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
@@ -197,6 +198,7 @@ public class ResponseFactoryTest {
     System.out.println(String.format("%s", rsp));
 
     assertNotNull("Null response", rsp);
+    assertTrue("Invalid response by schema", validate(rsp));
 
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
