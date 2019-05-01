@@ -39,11 +39,17 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -58,31 +64,32 @@ import org.xml.sax.SAXException;
  * ResponseFactory test
  */
 public class ResponseFactoryTest {
+
   private static Config config;
   private static Context ctx;
   private static ResponseFactory f;
   private static DocumentBuilder builder;
   private static XPath xpath;
-  
+
   @BeforeClass
   public static void initClass() throws ParserConfigurationException {
     config = new Config();
     config.repositoryName = "Sample";
     config.baseURL = "http://localhost/oaipmh";
     config.protocolVersion = "2.0";
-    config.adminEmail = new String[] { "somebody@company.com", "anubody@company.com" };
-    config.deletedRecord = Config.Deletion.Permanent;
+    config.adminEmail = new String[]{"somebody@company.com", "anubody@company.com"};
+    config.deletedRecord = Config.Deletion.Persistent;
     config.granularity = "YYYY-MM-DDThh:mm:ssZ";
     config.earliestDatestamp = OffsetDateTime.now();
     config.compression = Config.Compression.values();
-    
+
     ctx = new Context(config);
     f = new ResponseFactory(ctx);
-    
+
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setNamespaceAware(false);
     builder = factory.newDocumentBuilder();
-    
+
     XPathFactory xfactory = XPathFactory.newInstance();
     xpath = xfactory.newXPath();
   }
@@ -91,26 +98,26 @@ public class ResponseFactoryTest {
   public void testCreateListSetsResponse() throws Exception {
     Document setDescription = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-                    + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
-                    + "<dc:publisher>Simple set description</dc:publisher>"
-                    + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-                    + "</oai_dc:dc>"
+            + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
+            + "<dc:publisher>Simple set description</dc:publisher>"
+            + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
+            + "</oai_dc:dc>"
     );
-    
-    Set set = new Set("music", "Music (set)", new Document[]{ setDescription });
-    
+
+    Set set = new Set("music", "Music (set)", new Document[]{setDescription});
+
     ListSetsRequest request = new ListSetsRequest();
-    
+
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
-    
+
     ListSetsResponse response = new ListSetsResponse(request.getParameters(), OffsetDateTime.now(), new Set[]{set}, resumptionToken);
-    
+
     String rsp = f.createListSetsResponse(response);
-    
+
     System.out.println(String.format("%s", rsp));
-    
+
     assertNotNull("Null response", rsp);
-    
+
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
     assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
@@ -125,7 +132,7 @@ public class ResponseFactoryTest {
     assertTrue("Invalid setName value", test(doc, "//OAI-PMH/ListSets/set[1]/setName='Music (set)'"));
     assertTrue("No resumptionToken", test(doc, "count(//OAI-PMH/ListSets/resumptionToken)=1"));
     assertTrue("Invalid resumptionToken", test(doc, "//OAI-PMH/ListSets/resumptionToken='token'"));
-    assertTrue("Invalid resumptionToken expiration date", test(doc, "//OAI-PMH/ListSets/resumptionToken/@expirationDate='" +response.resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME)+ "'"));
+    assertTrue("Invalid resumptionToken expiration date", test(doc, "//OAI-PMH/ListSets/resumptionToken/@expirationDate='" + response.resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME) + "'"));
     assertTrue("Invalid cursor value", test(doc, "//OAI-PMH/ListSets/resumptionToken/@cursor='0'"));
     assertTrue("Invalid completeListSize value", test(doc, "//OAI-PMH/ListSets/resumptionToken/@completeListSize='300'"));
   }
@@ -134,26 +141,26 @@ public class ResponseFactoryTest {
   public void testCreateListSetsResponseWithResumptionToken() throws Exception {
     Document setDescription = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-                    + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
-                    + "<dc:publisher>Simple set description</dc:publisher>"
-                    + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-                    + "</oai_dc:dc>"
+            + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
+            + "<dc:publisher>Simple set description</dc:publisher>"
+            + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
+            + "</oai_dc:dc>"
     );
-    
-    Set set = new Set("music", "Music (set)", new Document[]{ setDescription });
-    
+
+    Set set = new Set("music", "Music (set)", new Document[]{setDescription});
+
     ListSetsRequest request = ListSetsRequest.resume("token");
-    
+
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
-    
+
     ListSetsResponse response = new ListSetsResponse(request.getParameters(), OffsetDateTime.now(), new Set[]{set}, resumptionToken);
-    
+
     String rsp = f.createListSetsResponse(response);
-    
+
     System.out.println(String.format("%s", rsp));
-    
+
     assertNotNull("Null response", rsp);
-    
+
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
     assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
@@ -169,28 +176,28 @@ public class ResponseFactoryTest {
     assertTrue("Invalid setName value", test(doc, "//OAI-PMH/ListSets/set[1]/setName='Music (set)'"));
     assertTrue("No resumptionToken", test(doc, "count(//OAI-PMH/ListSets/resumptionToken)=1"));
     assertTrue("Invalid resumptionToken", test(doc, "//OAI-PMH/ListSets/resumptionToken=''"));
-    assertTrue("Invalid resumptionToken expiration date", test(doc, "//OAI-PMH/ListSets/resumptionToken/@expirationDate='" +response.resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME)+ "'"));
+    assertTrue("Invalid resumptionToken expiration date", test(doc, "//OAI-PMH/ListSets/resumptionToken/@expirationDate='" + response.resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME) + "'"));
     assertTrue("Invalid cursor value", test(doc, "//OAI-PMH/ListSets/resumptionToken/@cursor='0'"));
     assertTrue("Invalid completeListSize value", test(doc, "//OAI-PMH/ListSets/resumptionToken/@completeListSize='300'"));
   }
-  
+
   @Test
   public void testCreateListMetadataFormatsResponse() throws Exception {
     ListMetadataFormatsRequest request = new ListMetadataFormatsRequest(null);
-    
+
     MetadataFormat fmt = new MetadataFormat(
             "oai_dc",
             "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
             "http://www.openarchives.org/OAI/2.0/oai_dc/"
     );
-    
+
     ListMetadataFormatsResponse response = new ListMetadataFormatsResponse(request.getParameters(), OffsetDateTime.now(), new MetadataFormat[]{fmt});
-    
+
     String rsp = f.createListMetadataFormatsResponse(response);
     System.out.println(String.format("%s", rsp));
-    
+
     assertNotNull("Null response", rsp);
-    
+
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
     assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
@@ -206,19 +213,20 @@ public class ResponseFactoryTest {
     assertTrue("Invalid schema value", test(doc, "//OAI-PMH/ListMetadataFormats/metadataFormat[1]/schema='http://www.openarchives.org/OAI/2.0/oai_dc.xsd'"));
     assertTrue("Invalid metadataNamespace value", test(doc, "//OAI-PMH/ListMetadataFormats/metadataFormat[1]/metadataNamespace='http://www.openarchives.org/OAI/2.0/oai_dc/'"));
   }
-  
+
   @Test
   public void testIdentifyResponse() throws Exception {
     IdentifyRequest request = new IdentifyRequest();
-    Document [] descriptions = new Document[] {};
-    
+    Document[] descriptions = new Document[]{};
+
     IdentifyResponse response = IdentifyResponse.createFromConfig(request.getParameters(), OffsetDateTime.now(), config, descriptions);
-    
+
     String rsp = f.createIdentifyResponse(response);
     System.out.println(String.format("%s", rsp));
-    
+
     assertNotNull("Null response", rsp);
-    
+    assertTrue("Invalid response by schema", validate(rsp));
+
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
     assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
@@ -237,20 +245,20 @@ public class ResponseFactoryTest {
     // TODO: provide Identify description test
     // assertTrue("No description node", test(doc, "count(//OAI-PMH/Identify/description)>0"));
   }
-  
+
   @Test
   public void testListIdentifiersResponse() throws Exception {
     ListIdentifiersRequest request = new ListIdentifiersRequest("oai", null, null, null);
-    
-    Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[] { "music" }, false);
-    
+
+    Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[]{"music"}, false);
+
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
-    
-    ListIdentifiersResponse response = new ListIdentifiersResponse(request.getParameters(), OffsetDateTime.now(), new Header[] { header }, resumptionToken);
-    
+
+    ListIdentifiersResponse response = new ListIdentifiersResponse(request.getParameters(), OffsetDateTime.now(), new Header[]{header}, resumptionToken);
+
     String rsp = f.createListIdentifiersResponse(response);
     System.out.println(String.format("%s", rsp));
-    
+
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
     assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
@@ -266,24 +274,24 @@ public class ResponseFactoryTest {
     assertTrue("Invalid setSpec value", test(doc, "//OAI-PMH/ListIdentifiers/header[1]/setSpec='music'"));
     assertTrue("No resumptionToken", test(doc, "count(//OAI-PMH/ListIdentifiers/resumptionToken)=1"));
     assertTrue("Invalid resumptionToken", test(doc, "//OAI-PMH/ListIdentifiers/resumptionToken='token'"));
-    assertTrue("Invalid resumptionToken expiration date", test(doc, "//OAI-PMH/ListIdentifiers/resumptionToken/@expirationDate='" +response.resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME)+ "'"));
+    assertTrue("Invalid resumptionToken expiration date", test(doc, "//OAI-PMH/ListIdentifiers/resumptionToken/@expirationDate='" + response.resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME) + "'"));
     assertTrue("Invalid cursor value", test(doc, "//OAI-PMH/ListIdentifiers/resumptionToken/@cursor='0'"));
     assertTrue("Invalid completeListSize value", test(doc, "//OAI-PMH/ListIdentifiers/resumptionToken/@completeListSize='300'"));
   }
-  
+
   @Test
   public void testListIdentifiersResponseWithResumptionToken() throws Exception {
     ListIdentifiersRequest request = ListIdentifiersRequest.resume("token");
-    
-    Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[] { "music" }, false);
-    
+
+    Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[]{"music"}, false);
+
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
-    
-    ListIdentifiersResponse response = new ListIdentifiersResponse(request.getParameters(), OffsetDateTime.now(), new Header[] { header }, resumptionToken);
-    
+
+    ListIdentifiersResponse response = new ListIdentifiersResponse(request.getParameters(), OffsetDateTime.now(), new Header[]{header}, resumptionToken);
+
     String rsp = f.createListIdentifiersResponse(response);
     System.out.println(String.format("%s", rsp));
-    
+
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
     assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
@@ -300,47 +308,46 @@ public class ResponseFactoryTest {
     assertTrue("Invalid setSpec value", test(doc, "//OAI-PMH/ListIdentifiers/header[1]/setSpec='music'"));
     assertTrue("No resumptionToken", test(doc, "count(//OAI-PMH/ListIdentifiers/resumptionToken)=1"));
     assertTrue("Invalid resumptionToken", test(doc, "//OAI-PMH/ListIdentifiers/resumptionToken=''"));
-    assertTrue("Invalid resumptionToken expiration date", test(doc, "//OAI-PMH/ListIdentifiers/resumptionToken/@expirationDate='" +response.resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME)+ "'"));
+    assertTrue("Invalid resumptionToken expiration date", test(doc, "//OAI-PMH/ListIdentifiers/resumptionToken/@expirationDate='" + response.resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME) + "'"));
     assertTrue("Invalid cursor value", test(doc, "//OAI-PMH/ListIdentifiers/resumptionToken/@cursor='0'"));
     assertTrue("Invalid completeListSize value", test(doc, "//OAI-PMH/ListIdentifiers/resumptionToken/@completeListSize='300'"));
   }
-  
+
   @Test
   public void testListRecordsResponse() throws Exception {
     ListRecordsRequest request = new ListRecordsRequest("oai", null, null, null);
-    
-    Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[] { "music" }, false);
-    
+
+    Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[]{"music"}, false);
+
     Document about = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-                    + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
-                    + "<dc:publisher>Los Alamos arXiv</dc:publisher>"
-                    + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-                    + "</oai_dc:dc>"
+            + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
+            + "<dc:publisher>Los Alamos arXiv</dc:publisher>"
+            + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
+            + "</oai_dc:dc>"
     );
-    
+
     Document metadata = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-                    + "<rfc1807 xmlns=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt http://www.openarchives.org/OAI/1.1/rfc1807.xsd\">"
-                    + "<bib-version>v2</bib-version>"
-                    + "<id>hep-th/9901001</id>"
-                    + "<entry>January 1, 1999</entry>"
-                    + "<title>Investigations of Radioactivity</title>"
-                    + "<author>Ernest Rutherford</author>"
-                    + "<date>March 30, 1999</date>"
-                    + "</rfc1807>"
+            + "<rfc1807 xmlns=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt http://www.openarchives.org/OAI/1.1/rfc1807.xsd\">"
+            + "<bib-version>v2</bib-version>"
+            + "<id>hep-th/9901001</id>"
+            + "<entry>January 1, 1999</entry>"
+            + "<title>Investigations of Radioactivity</title>"
+            + "<author>Ernest Rutherford</author>"
+            + "<date>March 30, 1999</date>"
+            + "</rfc1807>"
     );
-    
+
     Record record = new Record(header, metadata, new Document[]{about});
-    
-    
+
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
-    
-    ListRecordsResponse response = new ListRecordsResponse(request.getParameters(), OffsetDateTime.now(), new Record[] { record }, resumptionToken);
-    
+
+    ListRecordsResponse response = new ListRecordsResponse(request.getParameters(), OffsetDateTime.now(), new Record[]{record}, resumptionToken);
+
     String rsp = f.createListRecordsResponse(response);
     System.out.println(String.format("%s", rsp));
-    
+
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
     assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
@@ -354,50 +361,49 @@ public class ResponseFactoryTest {
     assertTrue("No metadata content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata/rfc1807)=1"));
     assertTrue("No about node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about)=1"));
     assertTrue("No about content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about/dc)=1"));
-    
+
     assertTrue("No resumptionToken", test(doc, "count(//OAI-PMH/ListRecords/resumptionToken)=1"));
     assertTrue("Invalid resumptionToken", test(doc, "//OAI-PMH/ListRecords/resumptionToken='token'"));
-    assertTrue("Invalid resumptionToken expiration date", test(doc, "//OAI-PMH/ListRecords/resumptionToken/@expirationDate='" +response.resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME)+ "'"));
+    assertTrue("Invalid resumptionToken expiration date", test(doc, "//OAI-PMH/ListRecords/resumptionToken/@expirationDate='" + response.resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME) + "'"));
     assertTrue("Invalid cursor value", test(doc, "//OAI-PMH/ListRecords/resumptionToken/@cursor='0'"));
     assertTrue("Invalid completeListSize value", test(doc, "//OAI-PMH/ListRecords/resumptionToken/@completeListSize='300'"));
   }
-  
+
   @Test
   public void testListRecordsResponseWithResumptionToken() throws Exception {
     ListRecordsRequest request = ListRecordsRequest.resume("token");
-    
-    Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[] { "music" }, false);
-    
+
+    Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[]{"music"}, false);
+
     Document about = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-                    + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
-                    + "<dc:publisher>Los Alamos arXiv</dc:publisher>"
-                    + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-                    + "</oai_dc:dc>"
+            + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
+            + "<dc:publisher>Los Alamos arXiv</dc:publisher>"
+            + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
+            + "</oai_dc:dc>"
     );
-    
+
     Document metadata = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-                    + "<rfc1807 xmlns=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt http://www.openarchives.org/OAI/1.1/rfc1807.xsd\">"
-                    + "<bib-version>v2</bib-version>"
-                    + "<id>hep-th/9901001</id>"
-                    + "<entry>January 1, 1999</entry>"
-                    + "<title>Investigations of Radioactivity</title>"
-                    + "<author>Ernest Rutherford</author>"
-                    + "<date>March 30, 1999</date>"
-                    + "</rfc1807>"
+            + "<rfc1807 xmlns=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt http://www.openarchives.org/OAI/1.1/rfc1807.xsd\">"
+            + "<bib-version>v2</bib-version>"
+            + "<id>hep-th/9901001</id>"
+            + "<entry>January 1, 1999</entry>"
+            + "<title>Investigations of Radioactivity</title>"
+            + "<author>Ernest Rutherford</author>"
+            + "<date>March 30, 1999</date>"
+            + "</rfc1807>"
     );
-    
+
     Record record = new Record(header, metadata, new Document[]{about});
-    
-    
+
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
-    
-    ListRecordsResponse response = new ListRecordsResponse(request.getParameters(), OffsetDateTime.now(), new Record[] { record }, resumptionToken);
-    
+
+    ListRecordsResponse response = new ListRecordsResponse(request.getParameters(), OffsetDateTime.now(), new Record[]{record}, resumptionToken);
+
     String rsp = f.createListRecordsResponse(response);
     System.out.println(String.format("%s", rsp));
-    
+
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
     assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
@@ -412,47 +418,47 @@ public class ResponseFactoryTest {
     assertTrue("No metadata content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata/rfc1807)=1"));
     assertTrue("No about node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about)=1"));
     assertTrue("No about content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about/dc)=1"));
-    
+
     assertTrue("No resumptionToken", test(doc, "count(//OAI-PMH/ListRecords/resumptionToken)=1"));
     assertTrue("Invalid resumptionToken", test(doc, "//OAI-PMH/ListRecords/resumptionToken=''"));
-    assertTrue("Invalid resumptionToken expiration date", test(doc, "//OAI-PMH/ListRecords/resumptionToken/@expirationDate='" +response.resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME)+ "'"));
+    assertTrue("Invalid resumptionToken expiration date", test(doc, "//OAI-PMH/ListRecords/resumptionToken/@expirationDate='" + response.resumptionToken.expirationDate.format(DateTimeFormatter.ISO_DATE_TIME) + "'"));
     assertTrue("Invalid cursor value", test(doc, "//OAI-PMH/ListRecords/resumptionToken/@cursor='0'"));
     assertTrue("Invalid completeListSize value", test(doc, "//OAI-PMH/ListRecords/resumptionToken/@completeListSize='300'"));
   }
-  
+
   @Test
   public void testGetRecordResponse() throws Exception {
     GetRecordRequest request = new GetRecordRequest(URI.create("identifier"), "oai");
-    
-    Header header = new Header(request.getIdentifier(), OffsetDateTime.now(), new String[] { "music" }, false);
-    
+
+    Header header = new Header(request.getIdentifier(), OffsetDateTime.now(), new String[]{"music"}, false);
+
     Document about = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-                    + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
-                    + "<dc:publisher>Los Alamos arXiv</dc:publisher>"
-                    + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-                    + "</oai_dc:dc>"
+            + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
+            + "<dc:publisher>Los Alamos arXiv</dc:publisher>"
+            + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
+            + "</oai_dc:dc>"
     );
-    
+
     Document metadata = parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-                    + "<rfc1807 xmlns=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt http://www.openarchives.org/OAI/1.1/rfc1807.xsd\">"
-                    + "<bib-version>v2</bib-version>"
-                    + "<id>hep-th/9901001</id>"
-                    + "<entry>January 1, 1999</entry>"
-                    + "<title>Investigations of Radioactivity</title>"
-                    + "<author>Ernest Rutherford</author>"
-                    + "<date>March 30, 1999</date>"
-                    + "</rfc1807>"
+            + "<rfc1807 xmlns=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt http://www.openarchives.org/OAI/1.1/rfc1807.xsd\">"
+            + "<bib-version>v2</bib-version>"
+            + "<id>hep-th/9901001</id>"
+            + "<entry>January 1, 1999</entry>"
+            + "<title>Investigations of Radioactivity</title>"
+            + "<author>Ernest Rutherford</author>"
+            + "<date>March 30, 1999</date>"
+            + "</rfc1807>"
     );
-    
+
     Record record = new Record(header, metadata, new Document[]{about});
-    
+
     GetRecordResponse response = new GetRecordResponse(request.getParameters(), OffsetDateTime.now(), record);
-    
+
     String rsp = f.createGetRecordResponse(response);
     System.out.println(String.format("%s", rsp));
-    
+
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
     assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
@@ -466,15 +472,30 @@ public class ResponseFactoryTest {
     assertTrue("No metadata content", test(doc, "count(//OAI-PMH/GetRecord/record/metadata/rfc1807)=1"));
     assertTrue("No about node", test(doc, "count(//OAI-PMH/GetRecord/record/about)=1"));
     assertTrue("No about content", test(doc, "count(//OAI-PMH/GetRecord/record/about/dc)=1"));
-}
-  
+  }
+
   private Document parse(String xml) throws IOException, SAXException {
     try (InputStream xmlStream = new ByteArrayInputStream(xml.getBytes("UTF-8"))) {
       return builder.parse(xmlStream);
     }
   }
-  
+
   private boolean test(Document doc, String expr) throws XPathExpressionException {
-    return (Boolean)xpath.evaluate(expr, doc, XPathConstants.BOOLEAN);
+    return (Boolean) xpath.evaluate(expr, doc, XPathConstants.BOOLEAN);
+  }
+
+  private boolean validate(String xml) {
+    SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    try {
+      Schema schema = schemaFactory.newSchema(new URL("http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"));
+
+      Validator validator = schema.newValidator();
+      validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
+      
+      return true;
+    } catch (SAXException | IOException e) {
+      e.printStackTrace();
+      return false;
+    }
   }
 }

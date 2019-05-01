@@ -49,7 +49,7 @@ public class Config {
     /** only information about the fact of deletion is being stored */
     Transient,
     /** full information about deletion, including record content itself, is being stored */
-    Permanent;       
+    Persistent;       
     
     /**
      * Parses deletion.

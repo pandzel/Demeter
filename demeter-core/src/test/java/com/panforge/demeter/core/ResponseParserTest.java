@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -68,7 +69,7 @@ public class ResponseParserTest {
     config.baseURL = "http://localhost/oaipmh";
     config.protocolVersion = "2.0";
     config.adminEmail = new String[] { "somebody@company.com", "anubody@company.com" };
-    config.deletedRecord = Config.Deletion.Permanent;
+    config.deletedRecord = Config.Deletion.Persistent;
     config.granularity = "YYYY-MM-DDThh:mm:ssZ";
     config.earliestDatestamp = OffsetDateTime.now();
     config.compression = Config.Compression.values();
@@ -185,7 +186,7 @@ public class ResponseParserTest {
     assertEquals("Different protocolVersion", parsed.protocolVersion, response.protocolVersion);
     assertArrayEquals("Different compression", parsed.compression, response.compression);
     assertEquals("Different deletedRecord", parsed.deletedRecord, response.deletedRecord);
-    assertEquals("Different earliestDatestamp", parsed.earliestDatestamp, response.earliestDatestamp);
+    assertEquals("Different earliestDatestamp", parsed.earliestDatestamp.format(DateTimeFormatter.ISO_DATE), response.earliestDatestamp.format(DateTimeFormatter.ISO_DATE));
     assertEquals("Different granularity", parsed.granularity, response.granularity);
     assertTrue("Different adminEmail", Arrays.deepEquals(parsed.adminEmail, response.adminEmail));
     assertNotNull("No descriptions", parsed.descriptions);
