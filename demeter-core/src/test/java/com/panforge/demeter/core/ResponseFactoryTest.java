@@ -38,6 +38,7 @@ import com.panforge.demeter.core.model.response.elements.Set;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.time.OffsetDateTime;
@@ -46,6 +47,7 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -70,9 +72,10 @@ public class ResponseFactoryTest {
   private static ResponseFactory f;
   private static DocumentBuilder builder;
   private static XPath xpath;
+  private static Validator validator;
 
   @BeforeClass
-  public static void initClass() throws ParserConfigurationException {
+  public static void initClass() throws ParserConfigurationException, SAXException, IOException {
     config = new Config();
     config.repositoryName = "Sample";
     config.baseURL = "http://localhost/oaipmh";
@@ -92,6 +95,16 @@ public class ResponseFactoryTest {
 
     XPathFactory xfactory = XPathFactory.newInstance();
     xpath = xfactory.newXPath();
+
+    SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    Schema schema = schemaFactory.newSchema(new Source[]{
+      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd").openStream()),
+      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/oai_dc.xsd").openStream()),
+      new StreamSource(new URL("http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd").openStream()),
+      new StreamSource(new URL("http://www.openarchives.org/OAI/1.1/rfc1807.xsd").openStream()),
+    });
+
+    validator = schema.newValidator();
   }
 
   @Test
@@ -117,7 +130,7 @@ public class ResponseFactoryTest {
     System.out.println(String.format("%s", rsp));
 
     assertNotNull("Null response", rsp);
-    // assertTrue("Invalid response by schema", validate(rsp));
+    assertTrue("Invalid response by schema", validate(rsp));
 
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
@@ -161,6 +174,7 @@ public class ResponseFactoryTest {
     System.out.println(String.format("%s", rsp));
 
     assertNotNull("Null response", rsp);
+    assertTrue("Invalid response by schema", validate(rsp));
 
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
@@ -261,6 +275,9 @@ public class ResponseFactoryTest {
     String rsp = f.createListIdentifiersResponse(response);
     System.out.println(String.format("%s", rsp));
 
+    assertNotNull("Null response", rsp);
+    assertTrue("Invalid response by schema", validate(rsp));
+
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
     assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
@@ -293,6 +310,9 @@ public class ResponseFactoryTest {
 
     String rsp = f.createListIdentifiersResponse(response);
     System.out.println(String.format("%s", rsp));
+
+    assertNotNull("Null response", rsp);
+    assertTrue("Invalid response by schema", validate(rsp));
 
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
@@ -350,6 +370,9 @@ public class ResponseFactoryTest {
     String rsp = f.createListRecordsResponse(response);
     System.out.println(String.format("%s", rsp));
 
+    assertNotNull("Null response", rsp);
+    assertTrue("Invalid response by schema", validate(rsp));
+
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
     assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
@@ -405,6 +428,9 @@ public class ResponseFactoryTest {
 
     String rsp = f.createListRecordsResponse(response);
     System.out.println(String.format("%s", rsp));
+
+    assertNotNull("Null response", rsp);
+    assertTrue("Invalid response by schema", validate(rsp));
 
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
@@ -487,13 +513,9 @@ public class ResponseFactoryTest {
   }
 
   private boolean validate(String xml) {
-    SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
     try {
-      Schema schema = schemaFactory.newSchema(new URL("http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"));
-
-      Validator validator = schema.newValidator();
       validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
-      
+
       return true;
     } catch (SAXException | IOException e) {
       e.printStackTrace();
