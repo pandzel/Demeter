@@ -42,21 +42,5 @@
   {
     "namespace": "http://www.openarchives.org/OAI/2.0/gateway/",
     "schema": "http://www.openarchives.org/OAI/2.0/gateway.xsd"
-  },
-  {
-     "namespace": "http://purl.org/dc/elements/1.1/",
-     "schema": "http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd"
-  },
-  {
-    "namespace": "http://purl.org/dc/terms/",
-    "schema": "http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd"
-  },
-  {
-    "namespace": "http://purl.org/dc/dcmitype/",
-    "schema": "http://www.dublincore.org/schemas/xmls/qdc/2008/02/11/dcmitype.xsd"
-  },
-  {
-    "namespace": "http://www.opengis.net/ows",
-    "schema": "http://schemas.opengis.net/ows/1.0.0/owsAll.xsd"
   }
 ]
