@@ -27,8 +27,6 @@ import java.io.File;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,12 +35,10 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,7 +156,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
   
   private void sanitize(Node nd) {
     List<Node> nodesToRemove = NodeIterable.stream(nd.getChildNodes())
-            .filter(n->n.getNodeType()==1)
+            .filter(n->n.getNodeType()==Node.ELEMENT_NODE)
             .filter(n->!Namespaces.NSMAP.containsKey(n.getNamespaceURI()))
             .collect(Collectors.toList());
     
