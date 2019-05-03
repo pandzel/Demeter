@@ -154,11 +154,26 @@ public class OaiDcProcessorBean implements MetaProcessor {
         oaiDc.appendChild(nd);
       });
       
+      sanitize(document.getDocumentElement());
+      
       return document;
       
     } catch (ParserConfigurationException|DOMException|XPathExpressionException ex) {
       return null;
     }
+  }
+  
+  private void sanitize(Node nd) {
+    List<Node> nodesToRemove = NodeIterable.stream(nd.getChildNodes())
+            .filter(n->n.getNodeType()==1)
+            .filter(n->{
+              return !WellKnownNamespaces.INSTANCE.NSMAP.containsKey(n.getNamespaceURI()); 
+            })
+            .collect(Collectors.toList());
+    nodesToRemove.forEach(n->nd.removeChild(n));
+    NodeIterable.stream(nd.getChildNodes())
+            .filter(n->n.getNodeType()==1)
+            .forEach(n->sanitize(n));
   }
   
   private String buildSchemaLocation(String...namesOrSchemas) {
