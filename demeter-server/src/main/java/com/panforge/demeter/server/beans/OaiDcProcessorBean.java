@@ -18,6 +18,7 @@ package com.panforge.demeter.server.beans;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.utils.nodeiter.NodeIterable;
 import com.panforge.demeter.core.utils.SimpleNamespaceContext;
+import com.panforge.demeter.core.utils.XmlUtils;
 import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessor;
 import com.panforge.demeter.service.Namespace;
@@ -118,47 +119,41 @@ public class OaiDcProcessorBean implements MetaProcessor {
   @Override
   public Document adopt(File file, Document doc) {
     try {
-      // get parent node for identifier and list all its children
       Node descNode = (Node)XPATH.evaluate("//dc:identifier", doc, XPathConstants.NODE);
+      
       NodeList dcNodes = (NodeList)XPATH.evaluate("*", descNode.getParentNode(), XPathConstants.NODESET);
       
-      // collect all namespaces and prefixes
-      HashMap<String,String> ndUris = new HashMap<>();
-      NodeIterable.stream(dcNodes).forEach(nd->{
-        ndUris.putAll(collectNamespaces(nd));
-      });
+      Map<String, String> ndUris = NodeIterable.stream(dcNodes)
+              .flatMap(nd->collectNamespaces(nd).entrySet().stream())
+              .distinct()
+              .collect(Collectors.toMap( e -> e.getKey(), e -> e.getValue()));
       ndUris.put(OAI_DC.metadataPrefix, OAI_DC.metadataNamespace);
       
-      // create new document
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      factory.setNamespaceAware(true);
-      javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
-      Document document = builder.newDocument();
+      String schemaLocation = ndUris.values().stream()
+              .map(uri->Namespaces.NSMAP.get(uri))
+              .filter(ns->ns!=null && !StringUtils.isBlank(ns.namespace) && !StringUtils.isBlank(ns.schema))
+              .map(Namespace::toSchemaLocation)
+              .collect(Collectors.joining(" "));
       
-      // create top-level element
+      Document document = XmlUtils.newDocument();
+      
       Element oaiDc = document.createElement(String.format("%s:dc", OAI_DC.metadataPrefix));
-      ndUris.entrySet().forEach(e->{
-        oaiDc.setAttribute("xmlns:"+e.getKey(), e.getValue());
-      });
+      ndUris.entrySet().forEach(e->oaiDc.setAttribute("xmlns:"+e.getKey(), e.getValue()));
       oaiDc.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-      String mergedSchemaLocations = mergeSchemaLocations(
-              StringUtils.trimToEmpty(oaiDc.getAttribute("xsi:schemaLocation")), 
-              buildSchemaLocation(ndUris.values().toArray(new String[ndUris.size()]))
-      );
-      oaiDc.setAttribute("xsi:schemaLocation", mergedSchemaLocations);
+      oaiDc.setAttribute("xsi:schemaLocation", schemaLocation);
+      
       document.appendChild(oaiDc);
-
-      // addopt all relevant nodes from the input document to the new document
+      
       NodeIterable.stream(dcNodes).forEach(nd->{
         nd = document.adoptNode(nd);
         oaiDc.appendChild(nd);
       });
       
-      sanitize(document.getDocumentElement());
+      sanitize(document.getDocumentElement());      
       
       return document;
       
-    } catch (ParserConfigurationException|DOMException|XPathExpressionException ex) {
+    } catch (DOMException|XPathExpressionException ex) {
       return null;
     }
   }
@@ -166,46 +161,20 @@ public class OaiDcProcessorBean implements MetaProcessor {
   private void sanitize(Node nd) {
     List<Node> nodesToRemove = NodeIterable.stream(nd.getChildNodes())
             .filter(n->n.getNodeType()==1)
-            .filter(n->{
-              return !Namespaces.NSMAP.containsKey(n.getNamespaceURI()); 
-            })
+            .filter(n->!Namespaces.NSMAP.containsKey(n.getNamespaceURI()))
             .collect(Collectors.toList());
+    
     nodesToRemove.forEach(n->nd.removeChild(n));
+    
     NodeIterable.stream(nd.getChildNodes())
             .filter(n->n.getNodeType()==1)
             .forEach(n->sanitize(n));
   }
-  
-  private String buildSchemaLocation(String...namesOrSchemas) {
-    return Arrays.stream(namesOrSchemas)
-            .map(nameOrSchema->Namespaces.NSMAP.get(nameOrSchema))
-            .filter(ObjectUtils::allNotNull)
-            .distinct()
-            .map(Namespace::toSchemaLocation)
-            .collect(Collectors.joining(" "));
-  }
-
-  private String mergeSchemaLocations(String...locations) {
-    Map<String,String> locationsMap = new HashMap<>();
-    List<String> locationsList = Arrays.asList(locations);
-    // reverse list so first element will overwrite second, hence it will appear with higher priority
-    Collections.reverse(locationsList);
-    locationsList.forEach(schemaLocation->locationsMap.putAll(parseSchemaLocation(schemaLocation)));
-    return locationsMap.entrySet().stream().map(e->String.format("%s %s", e.getKey(), e.getValue())).collect(Collectors.joining(" "));
-  }
-  
-  private Map<String,String> parseSchemaLocation(String schemaLocation) {
-    Map<String,String> locationsMap = new HashMap<>();
-    String [] sl = StringUtils.trimToEmpty(schemaLocation).split(" ");
-    for (int i=0; i+1<sl.length; i+=2) {
-      locationsMap.put(StringUtils.trimToEmpty(sl[i]), StringUtils.trimToEmpty(sl[i+1]));
-    }
-    return locationsMap;
-  }
 
   private Map<String,String> collectNamespaces(Node nd) {
     HashMap<String,String> ndUris = new HashMap<>();
-    if (!StringUtils.isBlank(nd.getPrefix())) {
+    
+    if (!StringUtils.isBlank(nd.getPrefix()) && Namespaces.NSMAP.containsKey(nd.getNamespaceURI())) {
       ndUris.put(nd.getPrefix(), nd.getNamespaceURI());
     }
     
