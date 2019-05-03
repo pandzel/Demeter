@@ -42,5 +42,9 @@
   {
     "namespace": "http://www.openarchives.org/OAI/2.0/gateway/",
     "schema": "http://www.openarchives.org/OAI/2.0/gateway.xsd"
+  },
+  {
+    "namespace": "http://purl.org/dc/elements/1.1/",
+    "schema": null
   }
 ]

@@ -20,14 +20,19 @@ import com.panforge.demeter.core.utils.nodeiter.NodeIterable;
 import com.panforge.demeter.core.utils.SimpleNamespaceContext;
 import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessor;
+import com.panforge.demeter.service.Namespace;
 import com.panforge.demeter.service.WellKnownNamespaces;
 import java.io.File;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,6 +41,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,9 +141,9 @@ public class OaiDcProcessorBean implements MetaProcessor {
         oaiDc.setAttribute("xmlns:"+e.getKey(), e.getValue());
       });
       oaiDc.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-      String mergedSchemaLocations = WellKnownNamespaces.INSTANCE.mergeSchemaLocations(
+      String mergedSchemaLocations = mergeSchemaLocations(
               StringUtils.trimToEmpty(oaiDc.getAttribute("xsi:schemaLocation")), 
-              WellKnownNamespaces.INSTANCE.buildSchemaLocation(ndUris.values().toArray(new String[ndUris.size()]))
+              buildSchemaLocation(ndUris.values().toArray(new String[ndUris.size()]))
       );
       oaiDc.setAttribute("xsi:schemaLocation", mergedSchemaLocations);
       document.appendChild(oaiDc);
@@ -153,6 +159,33 @@ public class OaiDcProcessorBean implements MetaProcessor {
     } catch (ParserConfigurationException|DOMException|XPathExpressionException ex) {
       return null;
     }
+  }
+  
+  private String buildSchemaLocation(String...namesOrSchemas) {
+    return Arrays.stream(namesOrSchemas)
+            .map(nameOrSchema->WellKnownNamespaces.INSTANCE.NSMAP.get(nameOrSchema))
+            .filter(ObjectUtils::allNotNull)
+            .distinct()
+            .map(Namespace::toSchemaLocation)
+            .collect(Collectors.joining(" "));
+  }
+
+  private String mergeSchemaLocations(String...locations) {
+    Map<String,String> locationsMap = new HashMap<>();
+    List<String> locationsList = Arrays.asList(locations);
+    // reverse list so first element will overwrite second, hence it will appear with higher priority
+    Collections.reverse(locationsList);
+    locationsList.forEach(schemaLocation->locationsMap.putAll(parseSchemaLocation(schemaLocation)));
+    return locationsMap.entrySet().stream().map(e->String.format("%s %s", e.getKey(), e.getValue())).collect(Collectors.joining(" "));
+  }
+  
+  private Map<String,String> parseSchemaLocation(String schemaLocation) {
+    Map<String,String> locationsMap = new HashMap<>();
+    String [] sl = StringUtils.trimToEmpty(schemaLocation).split(" ");
+    for (int i=0; i+1<sl.length; i+=2) {
+      locationsMap.put(StringUtils.trimToEmpty(sl[i]), StringUtils.trimToEmpty(sl[i+1]));
+    }
+    return locationsMap;
   }
 
   private Map<String,String> collectNamespaces(Node nd) {

@@ -17,13 +17,12 @@ package com.panforge.demeter.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,80 +34,31 @@ public class WellKnownNamespaces {
   private static final Logger LOGGER = LoggerFactory.getLogger(WellKnownNamespaces.class);
   private static final ObjectMapper MAPPER = new ObjectMapper();
   public static final WellKnownNamespaces INSTANCE = new WellKnownNamespaces();
-  static {
-    try {
-      INSTANCE.load();
-    } catch (IOException ex) {
-      LOGGER.error(String.format("Error reading well known namespaces."), ex);
-    }
-  }
-  
-  private Map<String, Namespace> namespaces = Collections.emptyMap();
-  
-  /**
-   * Find name space by name or schema.
-   * @param nameOrSchema
-   * @return name space or <code>null</code>
-   */
-  public Namespace find(String nameOrSchema) {
-    return namespaces.get(nameOrSchema);
-  }
-  
-  /**
-   * Builds schema location string for given names or schemas
-   * @param namesOrSchemas names or schemas
-   * @return schema location string
-   */
-  public String buildSchemaLocation(String...namesOrSchemas) {
-    return Arrays.stream(namesOrSchemas)
-            .map(nameOrSchema->find(nameOrSchema))
-            .filter(ObjectUtils::allNotNull)
-            .distinct()
-            .map(Namespace::toSchemaLocation)
-            .collect(Collectors.joining(" "));
-  }
-  
-  /**
-   * Merges schema locations.
-   * @param locations schema locations
-   * @return 
-   */
-  public String mergeSchemaLocations(String...locations) {
-    Map<String,String> locationsMap = new HashMap<>();
-    List<String> locationsList = Arrays.asList(locations);
-    // reverse list so first element will overwrite second, hence it will appear with higher priority
-    Collections.reverse(locationsList);
-    locationsList.forEach(schemaLocation->locationsMap.putAll(parseSchemaLocation(schemaLocation)));
-    return locationsMap.entrySet().stream().map(e->String.format("%s %s", e.getKey(), e.getValue())).collect(Collectors.joining(" "));
-  }
-  
-  /**
-   * Parses schema location.
-   * @param schemaLocation schema locations
-   * @return parsed schema location
-   */
-  private Map<String,String> parseSchemaLocation(String schemaLocation) {
-    Map<String,String> locationsMap = new HashMap<>();
-    String [] sl = StringUtils.trimToEmpty(schemaLocation).split(" ");
-    for (int i=0; i+1<sl.length; i+=2) {
-      locationsMap.put(StringUtils.trimToEmpty(sl[i]), StringUtils.trimToEmpty(sl[i+1]));
-    }
-    return locationsMap;
-  }
+
+  public final List<Namespace> NSLIST;
+  public final Map<String, Namespace> NSMAP;
 
   /**
-   * Loads name spaces from 'well-known-namespaces.json'
-   * @throws java.io.IOException if unable to load definition file
+   * Creates instance of the well known namespaces.
    */
-  public void load() throws IOException {
-    Map<String, Namespace> buffer = new HashMap<>();
+  public WellKnownNamespaces() {
     try (InputStream inp = Thread.currentThread().getContextClassLoader().getResourceAsStream("well-known-namespaces.json");) {
       NSArray nsa = MAPPER.readValue(inp, NSArray.class);
-      nsa.stream().map(NS::toNamespace).forEach(n->{
-        buffer.put(n.namespace, n);
-        buffer.put(n.schema, n);
+      NSLIST = Collections.unmodifiableList(nsa.stream().map(NS::toNamespace).collect(Collectors.toList()));
+      
+      HashMap<String, Namespace> nsmap = new HashMap<>();
+      NSLIST.stream().forEach(ns->{
+        if (!StringUtils.isBlank(ns.namespace)) {
+          nsmap.put(ns.namespace, ns);
+        }
+        if (!StringUtils.isBlank(ns.schema)) {
+          nsmap.put(ns.schema, ns);
+        }
       });
+      
+      NSMAP = Collections.unmodifiableMap(nsmap);
+    } catch (IOException ex) {
+      throw new UncheckedIOException(ex);
     }
-    namespaces = Collections.unmodifiableMap(buffer);
   }
 }

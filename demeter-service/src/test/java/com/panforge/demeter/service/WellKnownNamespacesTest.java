@@ -32,10 +32,5 @@ public class WellKnownNamespacesTest {
   public static void setUpClass() {
     wkns = new WellKnownNamespaces();
   }
-
-  @Test
-  public void testLoad() throws IOException {
-    wkns.load();
-  }
   
 }
