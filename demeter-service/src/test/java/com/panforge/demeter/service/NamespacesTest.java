@@ -22,15 +22,15 @@ import org.junit.Test;
 /**
  * Well known namespace test.
  */
-public class WellKnownNamespacesTest {
-  private static WellKnownNamespaces wkns;
+public class NamespacesTest {
+  private static Namespaces wkns;
   
-  public WellKnownNamespacesTest() {
+  public NamespacesTest() {
   }
   
   @BeforeClass
   public static void setUpClass() {
-    wkns = new WellKnownNamespaces();
+    wkns = new Namespaces();
   }
   
 }

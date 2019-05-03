@@ -24,24 +24,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Well known names paces.
  */
-public class WellKnownNamespaces {
-  private static final Logger LOGGER = LoggerFactory.getLogger(WellKnownNamespaces.class);
+public class Namespaces {
   private static final ObjectMapper MAPPER = new ObjectMapper();
-  public static final WellKnownNamespaces INSTANCE = new WellKnownNamespaces();
 
-  public final List<Namespace> NSLIST;
-  public final Map<String, Namespace> NSMAP;
-
-  /**
-   * Creates instance of the well known namespaces.
-   */
-  public WellKnownNamespaces() {
+  public static final List<Namespace> NSLIST;
+  public static final Map<String, Namespace> NSMAP;
+  
+  static {
     try (InputStream inp = Thread.currentThread().getContextClassLoader().getResourceAsStream("well-known-namespaces.json");) {
       NSArray nsa = MAPPER.readValue(inp, NSArray.class);
       NSLIST = Collections.unmodifiableList(nsa.stream().map(NS::toNamespace).collect(Collectors.toList()));

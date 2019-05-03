@@ -21,7 +21,7 @@ import com.panforge.demeter.core.utils.SimpleNamespaceContext;
 import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessor;
 import com.panforge.demeter.service.Namespace;
-import com.panforge.demeter.service.WellKnownNamespaces;
+import com.panforge.demeter.service.Namespaces;
 import java.io.File;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -167,7 +167,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
     List<Node> nodesToRemove = NodeIterable.stream(nd.getChildNodes())
             .filter(n->n.getNodeType()==1)
             .filter(n->{
-              return !WellKnownNamespaces.INSTANCE.NSMAP.containsKey(n.getNamespaceURI()); 
+              return !Namespaces.NSMAP.containsKey(n.getNamespaceURI()); 
             })
             .collect(Collectors.toList());
     nodesToRemove.forEach(n->nd.removeChild(n));
@@ -178,7 +178,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
   
   private String buildSchemaLocation(String...namesOrSchemas) {
     return Arrays.stream(namesOrSchemas)
-            .map(nameOrSchema->WellKnownNamespaces.INSTANCE.NSMAP.get(nameOrSchema))
+            .map(nameOrSchema->Namespaces.NSMAP.get(nameOrSchema))
             .filter(ObjectUtils::allNotNull)
             .distinct()
             .map(Namespace::toSchemaLocation)
