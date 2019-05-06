@@ -22,6 +22,7 @@ import com.panforge.demeter.core.utils.XmlUtils;
 import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessor;
 import com.panforge.demeter.service.Namespace;
+import com.panforge.demeter.service.NamespaceUtils;
 import com.panforge.demeter.service.Namespaces;
 import java.io.File;
 import java.net.URI;
@@ -125,19 +126,15 @@ public class OaiDcProcessorBean implements MetaProcessor {
       NodeList dcNodes = (NodeList)XPATH.evaluate("*", descNode.getParentNode(), XPathConstants.NODESET);
       
       // collect all legitimate namespaces for each sibling node of 'identifier' node; include OAI_DC
-      Map<String, String> ndUris = NodeIterable.stream(dcNodes)
-              .flatMap(nd->collectNamespaces(nd).entrySet().stream())
-              .distinct()
+      Map<String, String> ndUris = NamespaceUtils.collectNamespaces(NodeIterable.stream(dcNodes))
+              .entrySet().stream()
+              .filter(e->Namespaces.NSMAP.containsKey(e.getValue()))
               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
       ndUris.put(OAI_DC.metadataPrefix, OAI_DC.metadataNamespace);
       
       
       // find all schema locations for the legitimate URIs
-      String schemaLocation = ndUris.values().stream()
-              .map(uri->Namespaces.NSMAP.get(uri))
-              .filter(ns->ns!=null && !StringUtils.isBlank(ns.namespace) && !StringUtils.isBlank(ns.schema))
-              .map(Namespace::toSchemaLocation)
-              .collect(Collectors.joining(" "));
+      String schemaLocation = NamespaceUtils.generateSchemaLocation(ndUris.values());
       
       // create new document
       Document document = XmlUtils.newDocument();
@@ -156,37 +153,12 @@ public class OaiDcProcessorBean implements MetaProcessor {
       });
       
       // remove nodes which are not withing legitimate namespaces
-      sanitize(document.getDocumentElement());      
+      NamespaceUtils.sanitize(document.getDocumentElement());      
       
       return document;
       
     } catch (DOMException|XPathExpressionException ex) {
       return null;
     }
-  }
-  
-  private void sanitize(Node nd) {
-    List<Node> nodesToRemove = NodeIterable.stream(nd.getChildNodes())
-            .filter(n->n.getNodeType()==Node.ELEMENT_NODE)
-            .filter(n->!Namespaces.NSMAP.containsKey(n.getNamespaceURI()))
-            .collect(Collectors.toList());
-    
-    nodesToRemove.forEach(n->nd.removeChild(n));
-    
-    NodeIterable.stream(nd.getChildNodes())
-            .filter(n->n.getNodeType()==1)
-            .forEach(n->sanitize(n));
-  }
-
-  private Map<String,String> collectNamespaces(Node nd) {
-    HashMap<String,String> ndUris = new HashMap<>();
-    
-    if (!StringUtils.isBlank(nd.getPrefix()) && Namespaces.NSMAP.containsKey(nd.getNamespaceURI())) {
-      ndUris.put(nd.getPrefix(), nd.getNamespaceURI());
-    }
-    
-    NodeIterable.stream(nd.getChildNodes()).forEach(chNd->ndUris.putAll(collectNamespaces(chNd)));
-    
-    return ndUris;
   }
 }
