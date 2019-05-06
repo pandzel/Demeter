@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.panforge.demeter.service;
-
-import com.panforge.demeter.core.utils.namespace.Namespaces;
-import java.io.IOException;
-import org.junit.BeforeClass;
-import org.junit.Test;
+package com.panforge.demeter.core.utils.namespace;
 
 /**
- * Well known namespace test.
+ * Name space parsing structure
  */
-public class NamespacesTest {
-  private static Namespaces wkns;
+class NS {
+  /** name space */
+  public String namespace;
+  /** schema name */
+  public String schema;
   
-  public NamespacesTest() {
+  /**
+   * Converts to namespace.
+   * @return namespace
+   */
+  public Namespace toNamespace() {
+    return new Namespace(namespace, schema);
   }
-  
-  @BeforeClass
-  public static void setUpClass() {
-    wkns = new Namespaces();
-  }
-  
 }

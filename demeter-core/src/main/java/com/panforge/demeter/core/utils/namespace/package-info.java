@@ -13,22 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.panforge.demeter.service;
-
 /**
- * Name space parsing structure
+ * Namespace utility classes.
  */
-class NS {
-  /** name space */
-  public String namespace;
-  /** schema name */
-  public String schema;
-  
-  /**
-   * Converts to namespace.
-   * @return namespace
-   */
-  public Namespace toNamespace() {
-    return new Namespace(namespace, schema);
-  }
-}
+package com.panforge.demeter.core.utils.namespace;

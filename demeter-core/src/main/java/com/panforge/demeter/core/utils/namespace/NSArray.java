@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.panforge.demeter.service;
+package com.panforge.demeter.core.utils.namespace;
 
 import java.util.ArrayList;
 
