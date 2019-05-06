@@ -16,6 +16,7 @@
 package com.panforge.demeter.core.utils.builder;
 
 import com.panforge.demeter.core.utils.XmlUtils;
+import com.panforge.demeter.core.utils.namespace.NamespaceUtils;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
@@ -195,7 +196,9 @@ public class DocNode {
    */
   public DocNode addDocument(Document doc) {
     if (doc.getFirstChild() != null) {
-      element.appendChild(doc().adoptNode(doc.getFirstChild()));
+      Node docElement = doc.getDocumentElement();
+      NamespaceUtils.sanitize(docElement);
+      element.appendChild(doc().adoptNode(docElement));
     }
     return this;
   }

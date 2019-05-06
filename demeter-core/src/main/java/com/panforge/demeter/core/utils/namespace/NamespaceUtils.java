@@ -37,9 +37,10 @@ public class NamespaceUtils {
    * @param nd node to sanitize
    */
   public static void sanitize(Node nd) {
+    boolean defaultNamespaceValid = checkDefaultNamespaceUri(nd);
     List<Node> nodesToRemove = NodeIterable.stream(nd.getChildNodes())
             .filter(n->n.getNodeType()==Node.ELEMENT_NODE)
-            .filter(n->!Namespaces.NSMAP.containsKey(n.getNamespaceURI()))
+            .filter(n->!(n.getNamespaceURI()!=null? Namespaces.NSMAP.containsKey(n.getNamespaceURI()): defaultNamespaceValid))
             .collect(Collectors.toList());
     
     nodesToRemove.forEach(n->nd.removeChild(n));
@@ -99,5 +100,14 @@ public class NamespaceUtils {
 
     return ndUris;
   }
-
+  
+  private static boolean checkDefaultNamespaceUri(Node nd) {
+    boolean defaultNamespaceValid = false;
+    Node defaultNamespaceNode = nd.getAttributes().getNamedItem("xmlns");
+    if (defaultNamespaceNode!=null) {
+      String defaultNamespace = defaultNamespaceNode.getNodeValue();
+      defaultNamespaceValid = Namespaces.NSMAP.containsKey(defaultNamespace);
+    }
+    return defaultNamespaceValid;
+  }
 }
