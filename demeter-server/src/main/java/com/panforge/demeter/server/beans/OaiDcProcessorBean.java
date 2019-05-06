@@ -115,36 +115,47 @@ public class OaiDcProcessorBean implements MetaProcessor {
   @Override
   public Document adopt(File file, Document doc) {
     try {
+      // get 'identifier' node; it must be one because 'interrogate()' has already deceted it
       Node descNode = (Node)XPATH.evaluate("//dc:identifier", doc, XPathConstants.NODE);
+      if (descNode==null) {
+        throw new IllegalStateException(String.format("Expected identifier missing."));
+      }
       
+      // get all child nodes of the parent of the 'identifier' node (including 'identifier' node)
       NodeList dcNodes = (NodeList)XPATH.evaluate("*", descNode.getParentNode(), XPathConstants.NODESET);
       
+      // collect all legitimate namespaces for each sibling node of 'identifier' node; include OAI_DC
       Map<String, String> ndUris = NodeIterable.stream(dcNodes)
               .flatMap(nd->collectNamespaces(nd).entrySet().stream())
               .distinct()
-              .collect(Collectors.toMap( e -> e.getKey(), e -> e.getValue()));
+              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
       ndUris.put(OAI_DC.metadataPrefix, OAI_DC.metadataNamespace);
       
+      
+      // find all schema locations for the legitimate URIs
       String schemaLocation = ndUris.values().stream()
               .map(uri->Namespaces.NSMAP.get(uri))
               .filter(ns->ns!=null && !StringUtils.isBlank(ns.namespace) && !StringUtils.isBlank(ns.schema))
               .map(Namespace::toSchemaLocation)
               .collect(Collectors.joining(" "));
       
+      // create new document
       Document document = XmlUtils.newDocument();
       
+      // create document element
       Element oaiDc = document.createElement(String.format("%s:dc", OAI_DC.metadataPrefix));
       ndUris.entrySet().forEach(e->oaiDc.setAttribute("xmlns:"+e.getKey(), e.getValue()));
       oaiDc.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
       oaiDc.setAttribute("xsi:schemaLocation", schemaLocation);
-      
       document.appendChild(oaiDc);
-      
+
+      // adopt each node from the input document to the new document
       NodeIterable.stream(dcNodes).forEach(nd->{
         nd = document.adoptNode(nd);
         oaiDc.appendChild(nd);
       });
       
+      // remove nodes which are not withing legitimate namespaces
       sanitize(document.getDocumentElement());      
       
       return document;
