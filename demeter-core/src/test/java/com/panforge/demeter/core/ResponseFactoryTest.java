@@ -35,6 +35,7 @@ import com.panforge.demeter.core.model.response.ListSetsResponse;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.elements.Set;
+import static com.panforge.demeter.core.DocumentSamples.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,7 +71,6 @@ public class ResponseFactoryTest {
   private static Context ctx;
   private static ResponseFactory f;
   private static DocumentBuilder builder;
-  private static DocumentBuilder builderAware;
   private static XPath xpath;
   private static Validator validator;
 
@@ -89,17 +89,9 @@ public class ResponseFactoryTest {
     ctx = new Context(config);
     f = new ResponseFactory(ctx);
 
-    {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      factory.setNamespaceAware(false);
-      builder = factory.newDocumentBuilder();
-    }
-    
-    {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      factory.setNamespaceAware(true);
-      builderAware = factory.newDocumentBuilder();
-    }
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    factory.setNamespaceAware(false);
+    builder = factory.newDocumentBuilder();
 
     XPathFactory xfactory = XPathFactory.newInstance();
     xpath = xfactory.newXPath();
@@ -117,15 +109,8 @@ public class ResponseFactoryTest {
 
   @Test
   public void testCreateListSetsResponse() throws Exception {
-    Document setDescription = parse(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-            + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
-            + "<dc:publisher>Simple set description</dc:publisher>"
-            + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-            + "</oai_dc:dc>", true
-    );
 
-    Set set = new Set("music", "Music (set)", new Document[]{setDescription});
+    Set set = new Set("music", "Music (set)", new Document[]{oai_dc()});
 
     ListSetsRequest request = new ListSetsRequest();
 
@@ -161,15 +146,8 @@ public class ResponseFactoryTest {
 
   @Test
   public void testCreateListSetsResponseWithResumptionToken() throws Exception {
-    Document setDescription = parse(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-            + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
-            + "<dc:publisher>Simple set description</dc:publisher>"
-            + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-            + "</oai_dc:dc>", true
-    );
 
-    Set set = new Set("music", "Music (set)", new Document[]{setDescription});
+    Set set = new Set("music", "Music (set)", new Document[]{oai_dc()});
 
     ListSetsRequest request = ListSetsRequest.resume("token");
 
@@ -349,27 +327,7 @@ public class ResponseFactoryTest {
 
     Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[]{"music"}, false);
 
-    Document about = parse(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-            + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
-            + "<dc:publisher>Los Alamos arXiv</dc:publisher>"
-            + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-            + "</oai_dc:dc>", true
-    );
-
-    Document metadata = parse(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-            + "<rfc1807 xmlns=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt http://www.openarchives.org/OAI/1.1/rfc1807.xsd\">"
-            + "<bib-version>v2</bib-version>"
-            + "<id>hep-th/9901001</id>"
-            + "<entry>January 1, 1999</entry>"
-            + "<title>Investigations of Radioactivity</title>"
-            + "<author>Ernest Rutherford</author>"
-            + "<date>March 30, 1999</date>"
-            + "</rfc1807>", true
-    );
-
-    Record record = new Record(header, metadata, new Document[]{about});
+    Record record = new Record(header, oai_dc(), new Document[]{rfc_1807()});
 
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
 
@@ -391,9 +349,9 @@ public class ResponseFactoryTest {
     assertTrue("No record nodes", test(doc, "count(//OAI-PMH/ListRecords/record)>0"));
     assertTrue("No header node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/header)=1"));
     assertTrue("No metadata node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata)=1"));
-    assertTrue("No metadata content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata/rfc1807)=1"));
+    assertTrue("No metadata content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata/dc)=1"));
     assertTrue("No about node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about)=1"));
-    assertTrue("No about content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about/dc)=1"));
+    assertTrue("No about content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about/rfc1807)=1"));
 
     assertTrue("No resumptionToken", test(doc, "count(//OAI-PMH/ListRecords/resumptionToken)=1"));
     assertTrue("Invalid resumptionToken", test(doc, "//OAI-PMH/ListRecords/resumptionToken='token'"));
@@ -408,27 +366,7 @@ public class ResponseFactoryTest {
 
     Header header = new Header(URI.create("identifier"), OffsetDateTime.now(), new String[]{"music"}, false);
 
-    Document about = parse(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-            + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
-            + "<dc:publisher>Los Alamos arXiv</dc:publisher>"
-            + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-            + "</oai_dc:dc>", true
-    );
-
-    Document metadata = parse(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-            + "<rfc1807 xmlns=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt http://www.openarchives.org/OAI/1.1/rfc1807.xsd\">"
-            + "<bib-version>v2</bib-version>"
-            + "<id>hep-th/9901001</id>"
-            + "<entry>January 1, 1999</entry>"
-            + "<title>Investigations of Radioactivity</title>"
-            + "<author>Ernest Rutherford</author>"
-            + "<date>March 30, 1999</date>"
-            + "</rfc1807>", true
-    );
-
-    Record record = new Record(header, metadata, new Document[]{about});
+    Record record = new Record(header, oai_dc(), new Document[]{rfc_1807()});
 
     ResumptionToken resumptionToken = new ResumptionToken("token", OffsetDateTime.now(), 300L, 0L);
 
@@ -451,9 +389,9 @@ public class ResponseFactoryTest {
     assertTrue("No record nodes", test(doc, "count(//OAI-PMH/ListRecords/record)>0"));
     assertTrue("No header node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/header)=1"));
     assertTrue("No metadata node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata)=1"));
-    assertTrue("No metadata content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata/rfc1807)=1"));
+    assertTrue("No metadata content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/metadata/dc)=1"));
     assertTrue("No about node", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about)=1"));
-    assertTrue("No about content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about/dc)=1"));
+    assertTrue("No about content", test(doc, "count(//OAI-PMH/ListRecords/record[1]/about/rfc1807)=1"));
 
     assertTrue("No resumptionToken", test(doc, "count(//OAI-PMH/ListRecords/resumptionToken)=1"));
     assertTrue("Invalid resumptionToken", test(doc, "//OAI-PMH/ListRecords/resumptionToken=''"));
@@ -468,27 +406,7 @@ public class ResponseFactoryTest {
 
     Header header = new Header(request.getIdentifier(), OffsetDateTime.now(), new String[]{"music"}, false);
 
-    Document about = parse(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-            + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
-            + "<dc:publisher>Los Alamos arXiv</dc:publisher>"
-            + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-            + "</oai_dc:dc>", true
-    );
-
-    Document metadata = parse(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-            + "<rfc1807 xmlns=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt http://www.openarchives.org/OAI/1.1/rfc1807.xsd\">"
-            + "<bib-version>v2</bib-version>"
-            + "<id>hep-th/9901001</id>"
-            + "<entry>January 1, 1999</entry>"
-            + "<title>Investigations of Radioactivity</title>"
-            + "<author>Ernest Rutherford</author>"
-            + "<date>March 30, 1999</date>"
-            + "</rfc1807>", true
-    );
-
-    Record record = new Record(header, metadata, new Document[]{about});
+    Record record = new Record(header, oai_dc(), new Document[]{rfc_1807()});
 
     GetRecordResponse response = new GetRecordResponse(request.getParameters(), OffsetDateTime.now(), record);
 
@@ -505,18 +423,14 @@ public class ResponseFactoryTest {
     assertTrue("No record nodes", test(doc, "count(//OAI-PMH/GetRecord/record)=1"));
     assertTrue("No header node", test(doc, "count(//OAI-PMH/GetRecord/record/header)=1"));
     assertTrue("No metadata node", test(doc, "count(//OAI-PMH/GetRecord/record/metadata)=1"));
-    assertTrue("No metadata content", test(doc, "count(//OAI-PMH/GetRecord/record/metadata/rfc1807)=1"));
+    assertTrue("No metadata content", test(doc, "count(//OAI-PMH/GetRecord/record/metadata/dc)=1"));
     assertTrue("No about node", test(doc, "count(//OAI-PMH/GetRecord/record/about)=1"));
-    assertTrue("No about content", test(doc, "count(//OAI-PMH/GetRecord/record/about/dc)=1"));
-  }
-  
-  private Document parse(String xml) throws IOException, SAXException {
-    return parse(xml, false);
+    assertTrue("No about content", test(doc, "count(//OAI-PMH/GetRecord/record/about/rfc1807)=1"));
   }
 
-  private Document parse(String xml, boolean namespaceAware) throws IOException, SAXException {
+  private Document parse(String xml) throws IOException, SAXException {
     try (InputStream xmlStream = new ByteArrayInputStream(xml.getBytes("UTF-8"))) {
-      return (namespaceAware? builderAware: builder).parse(xmlStream);
+      return builder.parse(xmlStream);
     }
   }
 

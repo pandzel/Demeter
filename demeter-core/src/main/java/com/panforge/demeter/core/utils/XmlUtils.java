@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -40,22 +41,23 @@ import org.xml.sax.SAXException;
  * XML utilities.
  */
 public class XmlUtils {
+  private static final DocumentBuilder builder;
+  static {
+    try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      factory.setNamespaceAware(true);
+      builder = factory.newDocumentBuilder();
+    } catch (ParserConfigurationException ex) {
+      throw new FactoryConfigurationError(ex);
+    }
+  }
   
   /**
    * Creates new document.
    * @return document
    */
   public static Document newDocument() {
-    try {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      factory.setNamespaceAware(true);
-      javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
-      Document document = builder.newDocument();
-      
-      return document;
-    } catch (ParserConfigurationException ex) {
-      throw new RuntimeException("Error building document.", ex);
-    }
+    return builder.newDocument();
   }
   
   /**
@@ -95,12 +97,7 @@ public class XmlUtils {
    */
   public static Document parseToXml(InputStream xmlStream) throws IOException, SAXException {
     try (InputStream data = new UnicodeBOMInputStream(xmlStream)) {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      factory.setNamespaceAware(true);
-      DocumentBuilder builder = factory.newDocumentBuilder();
       return builder.parse(data);
-    } catch (ParserConfigurationException ex) {
-      throw new Error("Error obtaining XML parser.", ex);
     }
   }
   
@@ -128,8 +125,8 @@ public class XmlUtils {
       xml = traverser.update(xml);
       
       return xml;
-    } catch (TransformerException|TransformerFactoryConfigurationError ex) {
-      throw new RuntimeException("Error building document.", ex);
+    } catch (TransformerException ex) {
+      throw new TransformerFactoryConfigurationError(ex);
     }
   }
 }
