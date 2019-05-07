@@ -102,6 +102,17 @@ public class ResponseFactoryTest {
       new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/oai_dc.xsd").openStream()),
       new StreamSource(new URL("http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd").openStream()),
       new StreamSource(new URL("http://www.openarchives.org/OAI/1.1/rfc1807.xsd").openStream()),
+      new StreamSource(new URL("http://www.openarchives.org/OAI/1.1/oai_marc.xsd").openStream()),
+      new StreamSource(new URL("http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd").openStream()),
+      
+      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/oai-identifier.xsd").openStream()),
+      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/rightsManifest.xsd").openStream()),
+      new StreamSource(new URL("http://www.openarchives.org/OAI/1.1/eprints.xsd").openStream()),
+      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/friends.xsd").openStream()),
+      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/branding.xsd").openStream()),
+      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/gateway.xsd").openStream()),
+      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/provenance.xsd").openStream()),
+      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/rights.xsd").openStream()),
     });
 
     validator = schema.newValidator();
@@ -110,7 +121,7 @@ public class ResponseFactoryTest {
   @Test
   public void testCreateListSetsResponse() throws Exception {
 
-    Set set = new Set("music", "Music (set)", new Document[]{oai_dc()});
+    Set set = new Set("music", "Music (set)", new Document[]{branding(), rightsManifest()});
 
     ListSetsRequest request = new ListSetsRequest();
 
@@ -219,7 +230,7 @@ public class ResponseFactoryTest {
   @Test
   public void testIdentifyResponse() throws Exception {
     IdentifyRequest request = new IdentifyRequest();
-    Document[] descriptions = new Document[]{};
+    Document[] descriptions = new Document[]{oai_identifier(), rightsManifest(), eprints(), friends(), branding(), gateway()};
 
     IdentifyResponse response = IdentifyResponse.createFromConfig(request.getParameters(), OffsetDateTime.now(), config, descriptions);
 
@@ -406,12 +417,15 @@ public class ResponseFactoryTest {
 
     Header header = new Header(request.getIdentifier(), OffsetDateTime.now(), new String[]{"music"}, false);
 
-    Record record = new Record(header, oai_dc(), new Document[]{rfc_1807()});
+    Record record = new Record(header, oai_dc(), new Document[]{provenance(), rights()});
 
     GetRecordResponse response = new GetRecordResponse(request.getParameters(), OffsetDateTime.now(), record);
 
     String rsp = f.createGetRecordResponse(response);
     System.out.println(String.format("%s", rsp));
+
+    assertNotNull("Null response", rsp);
+    assertTrue("Invalid response by schema", validate(rsp));
 
     Document doc = parse(rsp);
     assertNotNull("Null document", doc);
@@ -424,8 +438,7 @@ public class ResponseFactoryTest {
     assertTrue("No header node", test(doc, "count(//OAI-PMH/GetRecord/record/header)=1"));
     assertTrue("No metadata node", test(doc, "count(//OAI-PMH/GetRecord/record/metadata)=1"));
     assertTrue("No metadata content", test(doc, "count(//OAI-PMH/GetRecord/record/metadata/dc)=1"));
-    assertTrue("No about node", test(doc, "count(//OAI-PMH/GetRecord/record/about)=1"));
-    assertTrue("No about content", test(doc, "count(//OAI-PMH/GetRecord/record/about/rfc1807)=1"));
+    assertTrue("No about node", test(doc, "count(//OAI-PMH/GetRecord/record/about)>0"));
   }
 
   private Document parse(String xml) throws IOException, SAXException {

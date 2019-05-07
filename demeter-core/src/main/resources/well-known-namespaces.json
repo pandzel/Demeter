@@ -20,6 +20,10 @@
     "schema": "http://www.openarchives.org/OAI/1.1/oai_marc.xsd"
   },
   {
+    "namespace": "http://www.openarchives.org/OAI/2.0/oai-identifier",
+    "schema": "http://www.openarchives.org/OAI/2.0/oai-identifier.xsd"
+  },
+  {
     "namespace": "http://www.openarchives.org/OAI/2.0/rights/",
     "schema": "http://www.openarchives.org/OAI/2.0/rightsManifest.xsd"
   },
