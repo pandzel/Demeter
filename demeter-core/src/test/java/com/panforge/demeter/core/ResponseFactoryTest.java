@@ -412,8 +412,8 @@ public class ResponseFactoryTest {
   }
 
   @Test
-  public void testGetRecordResponse() throws Exception {
-    GetRecordRequest request = new GetRecordRequest(URI.create("identifier"), "oai");
+  public void testGetRecordResponseAsOaiDc() throws Exception {
+    GetRecordRequest request = new GetRecordRequest(URI.create("identifier"), "oai_dc");
 
     Header header = new Header(request.getIdentifier(), OffsetDateTime.now(), new String[]{"music"}, false);
 
@@ -438,6 +438,36 @@ public class ResponseFactoryTest {
     assertTrue("No header node", test(doc, "count(//OAI-PMH/GetRecord/record/header)=1"));
     assertTrue("No metadata node", test(doc, "count(//OAI-PMH/GetRecord/record/metadata)=1"));
     assertTrue("No metadata content", test(doc, "count(//OAI-PMH/GetRecord/record/metadata/dc)=1"));
+    assertTrue("No about node", test(doc, "count(//OAI-PMH/GetRecord/record/about)>0"));
+  }
+
+  @Test
+  public void testGetRecordResponseAsRfc1807() throws Exception {
+    GetRecordRequest request = new GetRecordRequest(URI.create("identifier"), "rfc1807");
+
+    Header header = new Header(request.getIdentifier(), OffsetDateTime.now(), new String[]{"music"}, false);
+
+    Record record = new Record(header, rfc_1807(), new Document[]{provenance(), rights()});
+
+    GetRecordResponse response = new GetRecordResponse(request.getParameters(), OffsetDateTime.now(), record);
+
+    String rsp = f.createGetRecordResponse(response);
+    System.out.println(String.format("%s", rsp));
+
+    assertNotNull("Null response", rsp);
+    assertTrue("Invalid response by schema", validate(rsp));
+
+    Document doc = parse(rsp);
+    assertNotNull("Null document", doc);
+    assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
+    assertTrue("No response date", test(doc, "count(//OAI-PMH/responseDate)=1"));
+    assertTrue("No request", test(doc, "count(//OAI-PMH/request)=1"));
+    assertTrue("Invalid verb", test(doc, "//OAI-PMH/request/@verb='GetRecord'"));
+    assertTrue("No GetRecord node", test(doc, "count(//OAI-PMH/GetRecord)=1"));
+    assertTrue("No record nodes", test(doc, "count(//OAI-PMH/GetRecord/record)=1"));
+    assertTrue("No header node", test(doc, "count(//OAI-PMH/GetRecord/record/header)=1"));
+    assertTrue("No metadata node", test(doc, "count(//OAI-PMH/GetRecord/record/metadata)=1"));
+    assertTrue("No metadata content", test(doc, "count(//OAI-PMH/GetRecord/record/metadata/rfc1807)=1"));
     assertTrue("No about node", test(doc, "count(//OAI-PMH/GetRecord/record/about)>0"));
   }
 
