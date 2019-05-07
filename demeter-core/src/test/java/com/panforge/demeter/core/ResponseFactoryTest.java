@@ -70,6 +70,7 @@ public class ResponseFactoryTest {
   private static Context ctx;
   private static ResponseFactory f;
   private static DocumentBuilder builder;
+  private static DocumentBuilder builderAware;
   private static XPath xpath;
   private static Validator validator;
 
@@ -88,9 +89,17 @@ public class ResponseFactoryTest {
     ctx = new Context(config);
     f = new ResponseFactory(ctx);
 
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    factory.setNamespaceAware(false);
-    builder = factory.newDocumentBuilder();
+    {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      factory.setNamespaceAware(false);
+      builder = factory.newDocumentBuilder();
+    }
+    
+    {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      factory.setNamespaceAware(true);
+      builderAware = factory.newDocumentBuilder();
+    }
 
     XPathFactory xfactory = XPathFactory.newInstance();
     xpath = xfactory.newXPath();
@@ -113,7 +122,7 @@ public class ResponseFactoryTest {
             + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
             + "<dc:publisher>Simple set description</dc:publisher>"
             + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-            + "</oai_dc:dc>"
+            + "</oai_dc:dc>", true
     );
 
     Set set = new Set("music", "Music (set)", new Document[]{setDescription});
@@ -157,7 +166,7 @@ public class ResponseFactoryTest {
             + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
             + "<dc:publisher>Simple set description</dc:publisher>"
             + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-            + "</oai_dc:dc>"
+            + "</oai_dc:dc>", true
     );
 
     Set set = new Set("music", "Music (set)", new Document[]{setDescription});
@@ -345,7 +354,7 @@ public class ResponseFactoryTest {
             + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
             + "<dc:publisher>Los Alamos arXiv</dc:publisher>"
             + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-            + "</oai_dc:dc>"
+            + "</oai_dc:dc>", true
     );
 
     Document metadata = parse(
@@ -357,7 +366,7 @@ public class ResponseFactoryTest {
             + "<title>Investigations of Radioactivity</title>"
             + "<author>Ernest Rutherford</author>"
             + "<date>March 30, 1999</date>"
-            + "</rfc1807>"
+            + "</rfc1807>", true
     );
 
     Record record = new Record(header, metadata, new Document[]{about});
@@ -404,7 +413,7 @@ public class ResponseFactoryTest {
             + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
             + "<dc:publisher>Los Alamos arXiv</dc:publisher>"
             + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-            + "</oai_dc:dc>"
+            + "</oai_dc:dc>", true
     );
 
     Document metadata = parse(
@@ -416,7 +425,7 @@ public class ResponseFactoryTest {
             + "<title>Investigations of Radioactivity</title>"
             + "<author>Ernest Rutherford</author>"
             + "<date>March 30, 1999</date>"
-            + "</rfc1807>"
+            + "</rfc1807>", true
     );
 
     Record record = new Record(header, metadata, new Document[]{about});
@@ -464,7 +473,7 @@ public class ResponseFactoryTest {
             + "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">"
             + "<dc:publisher>Los Alamos arXiv</dc:publisher>"
             + "<dc:rights>Metadata may be used without restrictions as long as the oai identifier remains attached to it.</dc:rights>"
-            + "</oai_dc:dc>"
+            + "</oai_dc:dc>", true
     );
 
     Document metadata = parse(
@@ -476,7 +485,7 @@ public class ResponseFactoryTest {
             + "<title>Investigations of Radioactivity</title>"
             + "<author>Ernest Rutherford</author>"
             + "<date>March 30, 1999</date>"
-            + "</rfc1807>"
+            + "</rfc1807>", true
     );
 
     Record record = new Record(header, metadata, new Document[]{about});
@@ -500,10 +509,14 @@ public class ResponseFactoryTest {
     assertTrue("No about node", test(doc, "count(//OAI-PMH/GetRecord/record/about)=1"));
     assertTrue("No about content", test(doc, "count(//OAI-PMH/GetRecord/record/about/dc)=1"));
   }
-
+  
   private Document parse(String xml) throws IOException, SAXException {
+    return parse(xml, false);
+  }
+
+  private Document parse(String xml, boolean namespaceAware) throws IOException, SAXException {
     try (InputStream xmlStream = new ByteArrayInputStream(xml.getBytes("UTF-8"))) {
-      return builder.parse(xmlStream);
+      return (namespaceAware? builderAware: builder).parse(xmlStream);
     }
   }
 
