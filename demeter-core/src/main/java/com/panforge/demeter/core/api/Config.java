@@ -22,16 +22,18 @@ import java.util.Arrays;
  * Repository configuration/identification.
  */
 public class Config {
-  /** repository name */
-  public String repositoryName;
-  /** base URL */
-  public String baseURL;
+  /** repository name (default: prompt)*/
+  public String repositoryName = "<Your repository name>";
+  /** base URL (default: prompt)*/
+  public String baseURL = "<Your repository base URL>";
   /** protocol version (default: 2.0) */
   public String protocolVersion = "2.0";
-  /** administrators emails (default: empty array)*/
-  public String[] adminEmail = new String[]{};
-  /** earliest date stamp */
-  public OffsetDateTime earliestDatestamp;
+  /** administrators emails (default: a single sample email)*/
+  public String[] adminEmail = new String[]{
+    "admin@your.org"
+  };
+  /** earliest date stamp (default: now) */
+  public OffsetDateTime earliestDatestamp = OffsetDateTime.now();
   /** determines how information is stored about deleted records (default: no)*/
   public Deletion deletedRecord = Deletion.No;
   /** granularity (default: YYYY-MM-DDThh:mm:ssZ)*/
