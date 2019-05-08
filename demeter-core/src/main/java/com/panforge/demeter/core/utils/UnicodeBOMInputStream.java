@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 
+/**
+ * A stream removing BOM.
+ */
 public class UnicodeBOMInputStream extends InputStream
 {
   /**

@@ -30,8 +30,8 @@ public class Namespace {
 
   /**
    * Creates instance of the name space.
-   * @param namespace
-   * @param schema 
+   * @param namespace namespace
+   * @param schema schema
    */
   public Namespace(String namespace, String schema) {
     Validate.notBlank(namespace, "Missing namespace");

@@ -35,6 +35,7 @@ public final class Set {
    * Creates instance of the set.
    * @param setSpec set specification
    * @param setName set name
+   * @param descriptions set descriptions (optional)
    */
   public Set(String setSpec, String setName, Document [] descriptions) {
     Validate.notBlank(setSpec, "Missing set specification");
