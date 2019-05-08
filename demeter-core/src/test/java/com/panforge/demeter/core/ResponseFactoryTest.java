@@ -36,13 +36,17 @@ import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.elements.Set;
 import static com.panforge.demeter.core.DocumentSamples.*;
+import com.panforge.demeter.core.utils.namespace.Namespaces;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -56,6 +60,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
@@ -97,23 +102,18 @@ public class ResponseFactoryTest {
     xpath = xfactory.newXPath();
 
     SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-    Schema schema = schemaFactory.newSchema(new Source[]{
-      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd").openStream()),
-      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/oai_dc.xsd").openStream()),
-      new StreamSource(new URL("http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd").openStream()),
-      new StreamSource(new URL("http://www.openarchives.org/OAI/1.1/rfc1807.xsd").openStream()),
-      new StreamSource(new URL("http://www.openarchives.org/OAI/1.1/oai_marc.xsd").openStream()),
-      new StreamSource(new URL("http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd").openStream()),
-      
-      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/oai-identifier.xsd").openStream()),
-      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/rightsManifest.xsd").openStream()),
-      new StreamSource(new URL("http://www.openarchives.org/OAI/1.1/eprints.xsd").openStream()),
-      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/friends.xsd").openStream()),
-      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/branding.xsd").openStream()),
-      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/gateway.xsd").openStream()),
-      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/provenance.xsd").openStream()),
-      new StreamSource(new URL("http://www.openarchives.org/OAI/2.0/rights.xsd").openStream()),
-    });
+    List<StreamSource> sources = Namespaces.NSLIST.stream()
+            .filter(ns->!StringUtils.isBlank(ns.schema))
+            .map(ns->{
+              try {
+                return new StreamSource(new URL(ns.schema).openStream());
+              } catch (IOException ex) {
+                return null;
+              }
+            })
+            .filter(src->src!=null)
+            .collect(Collectors.toList());
+    Schema schema = schemaFactory.newSchema(sources.toArray(new Source[sources.size()]));
 
     validator = schema.newValidator();
   }
