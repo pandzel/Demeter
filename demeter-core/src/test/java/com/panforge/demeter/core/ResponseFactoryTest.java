@@ -471,6 +471,66 @@ public class ResponseFactoryTest {
     assertTrue("No about node", test(doc, "count(//OAI-PMH/GetRecord/record/about)>0"));
   }
 
+  @Test
+  public void testGetRecordResponseAsMarc21() throws Exception {
+    GetRecordRequest request = new GetRecordRequest(URI.create("identifier"), "rfc1807");
+
+    Header header = new Header(request.getIdentifier(), OffsetDateTime.now(), new String[]{"music"}, false);
+
+    Record record = new Record(header, marc21(), new Document[]{provenance(), rights()});
+
+    GetRecordResponse response = new GetRecordResponse(request.getParameters(), OffsetDateTime.now(), record);
+
+    String rsp = f.createGetRecordResponse(response);
+    System.out.println(String.format("%s", rsp));
+
+    assertNotNull("Null response", rsp);
+    assertTrue("Invalid response by schema", validate(rsp));
+
+    Document doc = parse(rsp);
+    assertNotNull("Null document", doc);
+    assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
+    assertTrue("No response date", test(doc, "count(//OAI-PMH/responseDate)=1"));
+    assertTrue("No request", test(doc, "count(//OAI-PMH/request)=1"));
+    assertTrue("Invalid verb", test(doc, "//OAI-PMH/request/@verb='GetRecord'"));
+    assertTrue("No GetRecord node", test(doc, "count(//OAI-PMH/GetRecord)=1"));
+    assertTrue("No record nodes", test(doc, "count(//OAI-PMH/GetRecord/record)=1"));
+    assertTrue("No header node", test(doc, "count(//OAI-PMH/GetRecord/record/header)=1"));
+    assertTrue("No metadata node", test(doc, "count(//OAI-PMH/GetRecord/record/metadata)=1"));
+    assertTrue("No metadata content", test(doc, "count(//OAI-PMH/GetRecord/record/metadata/record)=1"));
+    assertTrue("No about node", test(doc, "count(//OAI-PMH/GetRecord/record/about)>0"));
+  }
+
+  @Test
+  public void testGetRecordResponseAsOaiMarc() throws Exception {
+    GetRecordRequest request = new GetRecordRequest(URI.create("identifier"), "rfc1807");
+
+    Header header = new Header(request.getIdentifier(), OffsetDateTime.now(), new String[]{"music"}, false);
+
+    Record record = new Record(header, oai_marc(), new Document[]{provenance(), rights()});
+
+    GetRecordResponse response = new GetRecordResponse(request.getParameters(), OffsetDateTime.now(), record);
+
+    String rsp = f.createGetRecordResponse(response);
+    System.out.println(String.format("%s", rsp));
+
+    assertNotNull("Null response", rsp);
+    assertTrue("Invalid response by schema", validate(rsp));
+
+    Document doc = parse(rsp);
+    assertNotNull("Null document", doc);
+    assertTrue("No root element", test(doc, "count(//OAI-PMH)=1"));
+    assertTrue("No response date", test(doc, "count(//OAI-PMH/responseDate)=1"));
+    assertTrue("No request", test(doc, "count(//OAI-PMH/request)=1"));
+    assertTrue("Invalid verb", test(doc, "//OAI-PMH/request/@verb='GetRecord'"));
+    assertTrue("No GetRecord node", test(doc, "count(//OAI-PMH/GetRecord)=1"));
+    assertTrue("No record nodes", test(doc, "count(//OAI-PMH/GetRecord/record)=1"));
+    assertTrue("No header node", test(doc, "count(//OAI-PMH/GetRecord/record/header)=1"));
+    assertTrue("No metadata node", test(doc, "count(//OAI-PMH/GetRecord/record/metadata)=1"));
+    assertTrue("No metadata content", test(doc, "count(//OAI-PMH/GetRecord/record/metadata/oai_marc)=1"));
+    assertTrue("No about node", test(doc, "count(//OAI-PMH/GetRecord/record/about)>0"));
+  }
+
   private Document parse(String xml) throws IOException, SAXException {
     try (InputStream xmlStream = new ByteArrayInputStream(xml.getBytes("UTF-8"))) {
       return builder.parse(xmlStream);
