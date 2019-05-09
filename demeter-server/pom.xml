@@ -4,12 +4,12 @@
   <parent>
     <artifactId>demeter-parent</artifactId>
     <groupId>com.panforge.demeter</groupId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
 
   <groupId>com.panforge.demeter</groupId>
   <artifactId>demeter-server</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>war</packaging>
 
   <name>Demeter OAI-PMH generic server.</name>
