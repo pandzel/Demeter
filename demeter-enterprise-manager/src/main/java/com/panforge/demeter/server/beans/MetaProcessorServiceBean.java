@@ -1,0 +1,68 @@
+/*
+ * Copyright 2019 Piotr Andzel.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.panforge.demeter.server.beans;
+
+import com.panforge.demeter.core.model.response.elements.MetadataFormat;
+import com.panforge.demeter.server.MetaDescriptor;
+import com.panforge.demeter.server.MetaProcessor;
+import com.panforge.demeter.server.MetaProcessorService;
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+
+/**
+ * Meta processor service bean.
+ */
+@Service
+public class MetaProcessorServiceBean implements MetaProcessorService {
+  private static final Logger LOG = LoggerFactory.getLogger(MetaProcessorServiceBean.class);
+  
+  @Autowired(required = false)
+  private List<MetaProcessor> metadataProcessors;
+  
+  @PostConstruct
+  public void construct() {
+    LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
+  }
+  
+  @PreDestroy
+  public void destroy() {
+    LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
+  }
+  
+  @Override
+  public MetaDescriptor describe(File file, Document doc) {
+    return metadataProcessors.stream()
+            .filter(mp -> mp.interrogate(file, doc))
+            .findFirst()
+            .map(mp -> mp.descriptor(file, doc))
+            .orElse(null);
+  }
+
+  @Override
+  public Set<MetadataFormat> listMetadataFormats() {
+    return metadataProcessors.stream().map(mp->mp.format()).collect(Collectors.toSet());
+  }
+  
+}

@@ -36,6 +36,8 @@
     <module>demeter-http-client</module>
     <module>demeter-service</module>
     <module>demeter-server</module>
+    <module>demeter-enterprise-server</module>
+    <module>demeter-enterprise-manager</module>
   </modules>
   
   <properties>
