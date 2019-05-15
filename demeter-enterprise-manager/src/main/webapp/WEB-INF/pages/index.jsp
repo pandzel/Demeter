@@ -2,40 +2,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Demeter Enterprise Server Manager</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <style>
-          .stage {
-            width: 100%;
-            margin-left: auto;
-            margin-right: auto;          
-          }
-          .stage > div {
-            margin-bottom: 20px;
-          }
-          .stage .info {
-            background-color: lightcyan;
-            font-family: monospace;
-          }
-          .stage .explanation {
-            
-          }
-          .stage h3 {
-            background-color: lightblue;
-          }
-          .stage .index {
-            
-          }
-        </style>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Demeter Enterprise Manager</title>
+      <script type="text/javascript" src="js/app.js"></script>
     </head>
     <body>
-      <div class="stage">
-        <div>
-          <h1>Welcome to Demeter Enterprise Server Manager</h1>
-        </div>
-        <div>
-          This is a manager for Demeter Enterprise content.
-        </div>
-      </div>
+      <div id="root"></div>
+      <script type="text/javascript" src="js/app.js"></script>
     </body>
 </html>
