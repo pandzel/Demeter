@@ -8,11 +8,17 @@ module.exports = {
         path: path.join(__dirname, '../js')
     },
     module:{
-        rules:[{
+        rules:[
+          {
             exclude: /node_modules/,
-            test: /\.js$/,
+            test: /\.(js|jsx)$/,
             loader: 'babel-loader'
-        }]
+          },
+          {
+            test: /\.css$/,
+            use: ["style-loader", "css-loader"]
+          }
+      ]
     },
     plugins:[
         new hwp({template:path.join(__dirname, '/src/index.html')})
