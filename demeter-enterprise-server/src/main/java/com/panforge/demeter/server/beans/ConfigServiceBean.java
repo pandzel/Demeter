@@ -27,26 +27,13 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.core.utils.DateTimeUtils;
-import com.panforge.demeter.server.RootFolderService;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -64,35 +51,11 @@ public class ConfigServiceBean implements ConfigService {
     module.addDeserializer(OffsetDateTime.class, new OffsetDateTimeDeserializer());
     MAPPER.registerModule(module);
   }
-  
-  @Autowired
-  private RootFolderService rootFolder;
-  
-  private File configFile;
   private Config config = new Config();
   
   @PostConstruct
   public void construct() {
-    configFile = new File(rootFolder.getRootFolder(), "identify.yaml");
-    if (configFile.exists()) {
-      // read configuration if exists
-      try (InputStream configStream = new FileInputStream(configFile);
-              Reader configReader = new BufferedReader(new InputStreamReader(configStream, "UTF-8"))) {
-        config = MAPPER.readValue(configReader, Config.class);
-        LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
-      } catch (IOException ex) {
-        LOG.error(String.format("Error reading configuration from: '%s'", configFile), ex);
-      }
-    } else {
-      // write template configuration if doesn't exist
-      try (OutputStream configStream = new FileOutputStream(configFile);
-              Writer configWritter = new BufferedWriter(new OutputStreamWriter(configStream, "UTF-8"))) {
-        MAPPER.writeValue(configWritter, config);
-        LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
-      } catch (IOException ex) {
-        LOG.error(String.format("Error writing configuration into: '%s'", configFile), ex);
-      }
-    }
+    LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
   }
   
   @PreDestroy
@@ -104,11 +67,6 @@ public class ConfigServiceBean implements ConfigService {
   public Config getConfig() {
     return config;
   }
-  
-  public File getConfigFile() {
-    return configFile;
-  }
-
   
   /**
    * OffsetDateTime serializer.

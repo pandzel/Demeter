@@ -22,12 +22,6 @@ import java.io.File;
  * Configuration service.
  */
 public interface ConfigService {
-
-  /**
-   * Gets configuration file path.
-   * @return configuration file path
-   */
-  File getConfigFile();
   
   /**
    * Gets configuration.

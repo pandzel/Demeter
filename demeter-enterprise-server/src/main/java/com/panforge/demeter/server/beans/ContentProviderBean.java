@@ -33,8 +33,6 @@ import com.panforge.demeter.core.content.Cursor;
 import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.panforge.demeter.server.RootFolderService;
-import com.panforge.demeter.server.ScanningService;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -58,20 +56,12 @@ public class ContentProviderBean implements ContentProvider {
   private static final Logger LOG = LoggerFactory.getLogger(ContentProviderBean.class);
   
   @Autowired
-  private RootFolderService rootFolderServise;
-  
-  @Autowired
-  private ScanningService scanningService;
-  
-  @Autowired
   private MetaProcessorService metadataProcessorService;
   
   private final Map<URI, Map<String,MetaDescriptor>> descriptors = Collections.synchronizedMap(new HashMap<>());
   
   @PostConstruct
   public void construct() {
-    new Thread(()->scanningService.scan(rootFolderServise.getRootFolder(), md->storeDescriptor(md)))
-            .start();
     LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
   }
   
