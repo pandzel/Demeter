@@ -15,6 +15,9 @@
  */
 package com.panforge.demeter.server.beans;
 
+import com.datastax.oss.driver.api.core.CqlIdentifier;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.panforge.demeter.core.api.exception.CannotDisseminateFormatException;
 import com.panforge.demeter.core.api.exception.IdDoesNotExistException;
 import com.panforge.demeter.core.api.exception.NoMetadataFormatsException;
@@ -81,7 +84,15 @@ public class ContentProviderBean implements ContentProvider {
 
   @Override
   public Cursor<Set> listSets() throws NoSetHierarchyException {
-    throw new NoSetHierarchyException("This repository does not support set hierarchy.");
+    try (CqlSession session = CqlSession.builder().withKeyspace(CqlIdentifier.fromCql("demeter")).build()) {
+      ResultSet rs = session.execute("select * from sets");
+      int total = rs.getAvailableWithoutFetching();
+      return Cursor.of(StreamSupport.stream(rs.spliterator(), false).map(row -> { 
+        String setSpec = row.get("setSpec", String.class); 
+        String setName = row.get("setName", String.class); 
+        return new Set(setSpec, setName, null); 
+      }), total);
+    }
   }
 
   @Override
