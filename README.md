@@ -15,10 +15,13 @@ Demeter's aim is to provide solution for building and consuming OAI-PMH reposito
 
 ## Requirements
 
+### for running
 - Java JDK 8 (or later)
 - Apache Tomcat 9.x.x
-- NodeJS 10.15.3 (or later) (for build only)
-- Apache Maven 3.6.1 (or later) (for build only)
+
+### for build only
+- NodeJS 10.15.3 (or later)
+- Apache Maven 3.6.1 (or later)
 
 ## Quick start
 ```
