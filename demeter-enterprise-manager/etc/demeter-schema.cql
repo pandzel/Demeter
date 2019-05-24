@@ -14,13 +14,34 @@ CREATE TABLE sets (
 
 CREATE TABLE records (
    id UUID PRIMARY KEY,
-   identifier TEXT,
    title TEXT,
-   description TEXT,
    creator TEXT,
+   subject TEXT,
+   description TEXT,
+   publisher TEXT,
+   contributor TEXT,
    date DATE,
-   type TEXT
+   type TEXT,
+   format TEXT,
+   identifier TEXT,
+   source TEXT,
+   language TEXT,
+   relation TEXT,
+   coverage TEXT,
+   rights TEXT
 );
 
 CREATE INDEX identifierIndex ON records(identifier);
 CREATE INDEX dateIndex ON records(date);
+
+CREATE TABLE records_sets (
+  recordId UUID,
+  setId UUID,
+  PRIMARY KEY (recordId, setId)
+);
+
+CREATE TABLE sets_records (
+  setId UUID,
+  recordId UUID,
+  PRIMARY KEY (setId, recordId)
+);

@@ -1,13 +1,20 @@
 USE demeter;
 
 INSERT INTO sets (id, setSpec, setName)
-  VALUES (uuid(), 'catalog', 'Main catalog of data');
+  VALUES (10000000-0000-0000-0000-000000000001, 'catalog', 'Main catalog of data');
 INSERT INTO sets (id, setSpec, setName)
-  VALUES (uuid(), 'arch', 'Archived data');
+  VALUES (10000000-0000-0000-0000-000000000002, 'arch', 'Archived data');
 INSERT INTO sets (id, setSpec, setName)
-  VALUES (uuid(), 'attic', 'Not yet approved data');
+  VALUES (10000000-0000-0000-0000-000000000003, 'attic', 'Not yet approved data');
 
 INSERT INTO records (id, identifier, title, description, creator, date, type)
-  VALUES (uuid(), 'http://arXiv.org/abs/cs/0112017', 'Digital Libraries',
+  VALUES (20000000-0000-0000-0000-000000000001, 'http://arXiv.org/abs/cs/0112017', 'Digital Libraries',
           'With the increasing technical sophistication of both information consumers and providers',
           'Dushay, Naomi', '2001-12-14', 'e-print');
+
+INSERT INTO records_sets (recordId, setId)
+  VALUES (20000000-0000-0000-0000-000000000001, 10000000-0000-0000-0000-000000000001);
+
+
+INSERT INTO sets_records (setId, recordId)
+  VALUES (10000000-0000-0000-0000-000000000001, 20000000-0000-0000-0000-000000000001);
