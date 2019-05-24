@@ -18,6 +18,7 @@ package com.panforge.demeter.server.beans;
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.core.api.exception.CannotDisseminateFormatException;
 import com.panforge.demeter.core.api.exception.IdDoesNotExistException;
 import com.panforge.demeter.core.api.exception.NoMetadataFormatsException;
@@ -45,6 +46,7 @@ import java.util.UUID;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 /**
  * Repository bean.
@@ -132,6 +134,22 @@ public class ContentProviderBean implements ContentProvider {
 
   @Override
   public Record readRecord(URI identifier, String metadataPrefix) throws IdDoesNotExistException, CannotDisseminateFormatException {
-    throw new IdDoesNotExistException(identifier.toString());
+    ResultSet rs = session.execute("select * from records where identifier = '"+identifier+"'");
+    Row row = rs.one();
+    if (row==null) {
+      throw new IdDoesNotExistException(identifier.toString());
+    }
+    Document doc = metadataProcessorService.adopt(row);
+    if (doc==null) {
+      throw new CannotDisseminateFormatException(identifier.toString());
+    }
+    LocalDate localDate = row.getLocalDate("date");
+    UUID id = row.getUuid("id");
+    List<String> sets = listSetsFor(id.toString()).createStream().map(s->s.setSpec).collect(Collectors.toList());
+    String [] setsArray = !sets.isEmpty()? sets.toArray(new String[sets.size()]): null;
+    Header header = new Header(identifier, OffsetDateTime.ofInstant(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault()), setsArray, false);
+    Record record = new Record(header, doc, null);
+    
+    return record;
   }
 }
