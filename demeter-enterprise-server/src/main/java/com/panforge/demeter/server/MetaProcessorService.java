@@ -15,8 +15,8 @@
  */
 package com.panforge.demeter.server;
 
+import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
-import java.io.File;
 import java.util.Set;
 import org.w3c.dom.Document;
 
@@ -26,11 +26,10 @@ import org.w3c.dom.Document;
 public interface MetaProcessorService {
   /**
    * Describes given document.
-   * @param file file
-   * @param doc document
+   * @param row row of data
    * @return descriptor
    */
-  MetaDescriptor describe(File file, Document doc);
+  Document adopt(Row row);
   
   /**
    * Lists metadata formats.

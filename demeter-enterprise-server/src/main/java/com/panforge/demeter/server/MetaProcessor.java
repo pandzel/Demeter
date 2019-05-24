@@ -15,8 +15,8 @@
  */
 package com.panforge.demeter.server;
 
+import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
-import java.io.File;
 import org.w3c.dom.Document;
 
 /**
@@ -26,27 +26,17 @@ public interface MetaProcessor {
 
   /**
    * Interrogates document if can be processed by the processor.
-   * @param file file
-   * @param doc document
+   * @param row row of data
    * @return <code>true</code> if can be processed by the processor
    */
-  boolean interrogate(File file, Document doc);
-  
-  /**
-   * Extracts metadata descriptor.
-   * @param file file
-   * @param doc document
-   * @return metadata descriptor
-   */
-  MetaDescriptor descriptor(File file, Document doc);
+  boolean interrogate(Row row);
   
   /**
    * Adopts document.
-   * @param file file
-   * @param doc document
+   * @param row row of data
    * @return adopted document
    */
-  Document adopt(File file, Document doc);
+  Document adopt(Row row);
   
   /**
    * Gets supported metadata format.

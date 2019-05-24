@@ -15,11 +15,10 @@
  */
 package com.panforge.demeter.server.beans;
 
+import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
-import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessor;
 import com.panforge.demeter.server.MetaProcessorService;
-import java.io.File;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -50,19 +49,16 @@ public class MetaProcessorServiceBean implements MetaProcessorService {
   public void destroy() {
     LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
   }
-  
-  @Override
-  public MetaDescriptor describe(File file, Document doc) {
-    return metadataProcessors.stream()
-            .filter(mp -> mp.interrogate(file, doc))
-            .findFirst()
-            .map(mp -> mp.descriptor(file, doc))
-            .orElse(null);
-  }
 
   @Override
   public Set<MetadataFormat> listMetadataFormats() {
     return metadataProcessors.stream().map(mp->mp.format()).collect(Collectors.toSet());
+  }
+
+  @Override
+  public Document adopt(Row row) {
+    MetaProcessor processor = metadataProcessors.stream().filter(mp->mp.interrogate(row)).findFirst().orElse(null);
+    return processor!=null? processor.adopt(row): null;
   }
   
 }

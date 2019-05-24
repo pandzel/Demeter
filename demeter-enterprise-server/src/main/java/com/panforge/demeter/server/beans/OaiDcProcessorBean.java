@@ -15,42 +15,31 @@
  */
 package com.panforge.demeter.server.beans;
 
+import com.datastax.oss.driver.api.core.CqlIdentifier;
+import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
-import com.panforge.demeter.core.utils.nodeiter.NodeIterable;
 import com.panforge.demeter.core.utils.SimpleNamespaceContext;
 import com.panforge.demeter.core.utils.XmlUtils;
-import com.panforge.demeter.server.MetaDescriptor;
-import com.panforge.demeter.server.MetaProcessor;
-import com.panforge.demeter.core.utils.namespace.NamespaceUtils;
 import com.panforge.demeter.core.utils.namespace.Namespaces;
-import java.io.File;
-import java.net.URI;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.panforge.demeter.server.MetaProcessor;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * OAI-DC processor bean
  */
 @Service
 public class OaiDcProcessorBean implements MetaProcessor {
+
   private static final Logger LOG = LoggerFactory.getLogger(OaiDcProcessorBean.class);
 
   private final static XPathFactory XPATH_FACTORY = XPathFactory.newInstance();
@@ -90,6 +79,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
     return OAI_DC;
   }
 
+  /*
   @Override
   public boolean interrogate(File file, Document doc) {
     try {
@@ -156,5 +146,33 @@ public class OaiDcProcessorBean implements MetaProcessor {
     } catch (DOMException|XPathExpressionException ex) {
       return null;
     }
+  }
+   */
+  @Override
+  public boolean interrogate(Row row) {
+    return !StringUtils.isBlank(row.getString("identifier")) && !StringUtils.isBlank(row.getString("title"));
+  }
+
+  @Override
+  public Document adopt(Row row) {
+
+    // create new document
+    final Document document = XmlUtils.newDocument();
+
+    // create document element
+    final Element oaiDc = document.createElement(String.format("%s:dc", OAI_DC.metadataPrefix));
+    row.getColumnDefinitions().forEach(cd->{
+      String name = cd.getName().asCql(true);
+      Object value = row.getObject(name);
+      if (value!=null) {
+        Element dcElement = document.createElement(String.format("%s:%s", OAI_DC.metadataPrefix, name));
+        dcElement.setNodeValue(value.toString());
+        oaiDc.appendChild(dcElement);
+      }
+    });
+    
+    document.appendChild(oaiDc);
+    
+    return document;
   }
 }
