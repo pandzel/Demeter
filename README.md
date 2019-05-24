@@ -8,7 +8,8 @@ Demeter's aim is to provide solution for building and consuming OAI-PMH reposito
 - **http-client** - fully featured HTTP client [[details...](https://github.com/pandzel/Demeter/wiki/HTTP-client)],
 - **service** - fron-end request processing service [[details...](https://github.com/pandzel/Demeter/wiki/Service)],
 - **simple server** - generic implementation of the OAI-PMH server with limited functionality [[details...](https://github.com/pandzel/Demeter/wiki/Generic-server)],
-- **enterprise server** - OAI-PMH server with complete functionality [planning...].
+- **enterprise server** - OAI-PMH server with complete functionality [in progress...].
+- **enterprise server manager** - OAI-PMH server front end [in progress...].
 
 [more..](https://github.com/pandzel/Demeter/wiki/Home)
 
@@ -16,6 +17,8 @@ Demeter's aim is to provide solution for building and consuming OAI-PMH reposito
 
 - Java JDK 8 (or later)
 - Apache Tomcat 9.x.x
+- NodeJS 10.15.3 (or later) (for build only)
+- Apache Maven 3.6.1 (or later) (for build only)
 
 ## Quick start
 ```
