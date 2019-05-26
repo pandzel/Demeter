@@ -21,7 +21,6 @@ import com.panforge.demeter.core.utils.SimpleNamespaceContext;
 import com.panforge.demeter.core.utils.XmlUtils;
 import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessor;
-import com.panforge.demeter.core.utils.namespace.Namespace;
 import com.panforge.demeter.core.utils.namespace.NamespaceUtils;
 import com.panforge.demeter.core.utils.namespace.Namespaces;
 import java.io.File;
@@ -29,8 +28,6 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -40,7 +37,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -64,7 +60,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setNamespaceAware(true);
     XPATH.setNamespaceContext(new SimpleNamespaceContext()
-            .add("oai", "http://www.openarchives.org/OAI/2.0/")
+            .add("oai_dc", "http://www.openarchives.org/OAI/2.0/")
             .add("dc", "http://purl.org/dc/elements/1.1/")
             .add("dct", "http://purl.org/dc/terms/")
             .add("dcmiBox", "http://dublincore.org/documents/2000/07/11/dcmi-box/")

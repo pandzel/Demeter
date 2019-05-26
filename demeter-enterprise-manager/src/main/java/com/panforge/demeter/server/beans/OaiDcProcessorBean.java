@@ -60,7 +60,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setNamespaceAware(true);
     XPATH.setNamespaceContext(new SimpleNamespaceContext()
-            .add("oai", "http://www.openarchives.org/OAI/2.0/")
+            .add("oai_dc", "http://www.openarchives.org/OAI/2.0/")
             .add("dc", "http://purl.org/dc/elements/1.1/")
             .add("dct", "http://purl.org/dc/terms/")
             .add("dcmiBox", "http://dublincore.org/documents/2000/07/11/dcmi-box/")

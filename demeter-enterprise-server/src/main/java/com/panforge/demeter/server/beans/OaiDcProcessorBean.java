@@ -15,12 +15,11 @@
  */
 package com.panforge.demeter.server.beans;
 
-import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.utils.SimpleNamespaceContext;
 import com.panforge.demeter.core.utils.XmlUtils;
-import com.panforge.demeter.core.utils.namespace.Namespaces;
+import com.panforge.demeter.core.utils.namespace.NamespaceUtils;
 import com.panforge.demeter.server.MetaProcessor;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -49,7 +48,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setNamespaceAware(true);
     XPATH.setNamespaceContext(new SimpleNamespaceContext()
-            .add("oai", "http://www.openarchives.org/OAI/2.0/")
+            .add("oai_dc", "http://www.openarchives.org/OAI/2.0/")
             .add("dc", "http://purl.org/dc/elements/1.1/")
             .add("dct", "http://purl.org/dc/terms/")
             .add("dcmiBox", "http://dublincore.org/documents/2000/07/11/dcmi-box/")
@@ -78,76 +77,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
   public MetadataFormat format() {
     return OAI_DC;
   }
-
-  /*
-  @Override
-  public boolean interrogate(File file, Document doc) {
-    try {
-      return (Boolean) XPATH.evaluate("count(//dc:identifier)>0", doc, XPathConstants.BOOLEAN);
-    } catch (XPathExpressionException ex) {
-      return false;
-    }
-  }
-
-  @Override
-  public MetaDescriptor descriptor(File file, Document doc) {
-    try {
-      OffsetDateTime fileTimestamp = OffsetDateTime.ofInstant(new Date(file.lastModified()).toInstant(), ZoneId.systemDefault());
-      return new MetaDescriptor(this, file, URI.create((String) XPATH.evaluate("//dc:identifier", doc, XPathConstants.STRING)), OAI_DC, fileTimestamp);
-    } catch (XPathExpressionException ex) {
-      return null;
-    }
-  }
-
-  @Override
-  public Document adopt(File file, Document doc) {
-    try {
-      // get 'identifier' node; it must be one because 'interrogate()' has already deceted it
-      Node descNode = (Node)XPATH.evaluate("//dc:identifier", doc, XPathConstants.NODE);
-      if (descNode==null) {
-        throw new IllegalStateException(String.format("Expected identifier missing."));
-      }
-      
-      // get all child nodes of the parent of the 'identifier' node (including 'identifier' node)
-      NodeList dcNodes = (NodeList)XPATH.evaluate("*", descNode.getParentNode(), XPathConstants.NODESET);
-      
-      // collect all legitimate namespaces for each sibling node of 'identifier' node; include OAI_DC
-      Map<String, String> ndUris = NamespaceUtils.collectNamespaces(NodeIterable.stream(dcNodes))
-              .entrySet().stream()
-              .filter(e->Namespaces.NSMAP.containsKey(e.getValue()))
-              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-      ndUris.put(OAI_DC.metadataPrefix, OAI_DC.metadataNamespace);
-      
-      
-      // find all schema locations for the legitimate URIs
-      String schemaLocation = NamespaceUtils.generateSchemaLocation(ndUris.values());
-      
-      // create new document
-      Document document = XmlUtils.newDocument();
-      
-      // create document element
-      Element oaiDc = document.createElement(String.format("%s:dc", OAI_DC.metadataPrefix));
-      ndUris.entrySet().forEach(e->oaiDc.setAttribute("xmlns:"+e.getKey(), e.getValue()));
-      oaiDc.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-      oaiDc.setAttribute("xsi:schemaLocation", schemaLocation);
-      document.appendChild(oaiDc);
-
-      // adopt each node from the input document to the new document
-      NodeIterable.stream(dcNodes).forEach(nd->{
-        nd = document.adoptNode(nd);
-        oaiDc.appendChild(nd);
-      });
-      
-      // remove nodes which are not withing legitimate namespaces
-      NamespaceUtils.sanitize(document.getDocumentElement());      
-      
-      return document;
-      
-    } catch (DOMException|XPathExpressionException ex) {
-      return null;
-    }
-  }
-   */
+  
   @Override
   public boolean interrogate(Row row) {
     return !StringUtils.isBlank(row.getString("identifier")) && !StringUtils.isBlank(row.getString("title"));
@@ -160,18 +90,28 @@ public class OaiDcProcessorBean implements MetaProcessor {
     final Document document = XmlUtils.newDocument();
 
     // create document element
-    final Element oaiDc = document.createElement(String.format("%s:dc", OAI_DC.metadataPrefix));
+    final Element oaiDc = document.createElement("oai_dc:dc");
+    oaiDc.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+    oaiDc.setAttribute("xmlns:dc", "http://purl.org/dc/elements/1.1/");
+    oaiDc.setAttribute("xmlns:oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
+    oaiDc.setAttribute("xsi:schemaLocation", "http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd");
+    document.appendChild(oaiDc);
+    
     row.getColumnDefinitions().forEach(cd->{
       String name = cd.getName().asCql(true);
-      Object value = row.getObject(name);
-      if (value!=null) {
-        Element dcElement = document.createElement(String.format("%s:%s", OAI_DC.metadataPrefix, name));
-        dcElement.setNodeValue(value.toString());
-        oaiDc.appendChild(dcElement);
+      if (!name.endsWith("id")) {
+        Object value = row.getObject(name);
+        if (value!=null) {
+          Element dcElement = document.createElementNS("http://purl.org/dc/elements/1.1/", name);
+          dcElement.setPrefix("dc");
+          dcElement.setTextContent(value.toString());
+          oaiDc.appendChild(dcElement);
+        }
       }
     });
-    
-    document.appendChild(oaiDc);
+
+    // remove nodes which are not withing legitimate namespaces
+    NamespaceUtils.sanitize(document.getDocumentElement());      
     
     return document;
   }
