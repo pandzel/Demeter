@@ -1,8 +1,11 @@
-body {
-  margin: 0px !important;
+body, html, #root, .App {
+  height: 100%;
+  margin: 0px;
 }
 
 .App {
   font-family: Arial, Helvetica, sans-serif;
   background-color: darkgray;
+  display: table;
+  width: 100%;
 }

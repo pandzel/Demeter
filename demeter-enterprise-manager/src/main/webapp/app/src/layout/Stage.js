@@ -6,7 +6,7 @@ class Stage extends Component{
   render(){
     return(
       <div className="Stage">
-        <h1>Stage</h1>
+        <div>Stage</div>
       </div>
     );
   }
