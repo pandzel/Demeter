@@ -30,7 +30,7 @@ module.exports = {
     },
     plugins:[
       new MiniCssExtractPlugin({
-        filename: '../style/main.css'
+        filename: 'style/main.css'
       }),
       new hwp({template:path.join(__dirname, '/src/index.html')})
     ]
