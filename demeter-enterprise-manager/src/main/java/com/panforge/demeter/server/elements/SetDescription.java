@@ -13,34 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.panforge.demeter.server;
+package com.panforge.demeter.server.elements;
 
-import com.datastax.oss.driver.api.core.CqlSession;
-import com.panforge.demeter.server.elements.SetData;
-import com.panforge.demeter.server.elements.SetInfo;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.UUID;
 
 /**
- * DAO.
+ * Set description.
  */
-public interface Dao {
-  /**
-   * Gets CQL session.
-   * @return session
-   */
-  CqlSession getSession();
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class SetDescription {
+  public UUID id;
+  public Type type;
   
-  /**
-   * Sets all sets data.
-   * @return sets data
-   */
-  List<SetData> listSets();
-  
-  /**
-   * Reads set info.
-   * @param id set id
-   * @return set info
-   */
-  SetInfo readSet(UUID id);
+  public static enum Type {
+    dc, eprints
+  }
 }

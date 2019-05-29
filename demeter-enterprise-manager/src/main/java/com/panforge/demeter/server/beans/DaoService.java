@@ -18,8 +18,10 @@ package com.panforge.demeter.server.beans;
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.server.Dao;
 import com.panforge.demeter.server.elements.SetData;
+import com.panforge.demeter.server.elements.SetInfo;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -57,6 +59,7 @@ public class DaoService implements Dao {
     return session;
   }
   
+  @Override
   public List<SetData> listSets() {
     ResultSet rs = session.execute("select * from sets");
     return rs.all().stream()
@@ -70,5 +73,23 @@ public class DaoService implements Dao {
               return setData;
             })
             .collect(Collectors.toList());
+  }
+  
+  @Override
+  public SetInfo readSet(UUID id) {
+    ResultSet rs = session.execute("select * from sets where id = "+id.toString());
+    Row row = rs.one();
+    
+    if (row==null) return null;
+    
+    SetInfo setInfo = new SetInfo();
+    
+    setInfo.id = row.getUuid("id");
+    setInfo.setSpec = row.getString("setSpec");
+    setInfo.setName = row.getString("setName");
+    
+    // TODO: read set descriptions
+    
+    return setInfo;
   }
 }

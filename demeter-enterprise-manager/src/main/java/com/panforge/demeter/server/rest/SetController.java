@@ -17,7 +17,9 @@ package com.panforge.demeter.server.rest;
 
 import com.panforge.demeter.server.Dao;
 import com.panforge.demeter.server.elements.SetData;
+import com.panforge.demeter.server.elements.SetInfo;
 import java.util.List;
+import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,6 +64,17 @@ public class SetController {
     try {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
       return new ResponseEntity<>(dao.listSets(), HttpStatus.OK);
+    } catch (Exception ex) {
+      LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  
+  @RequestMapping(value = "/sets/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<SetInfo> list(HttpServletRequest request, @PathVariable UUID id) {
+    try {
+      LOG.debug(String.format("Received request '%s'", request.getQueryString()));
+      return new ResponseEntity<>(dao.readSet(id), HttpStatus.OK);
     } catch (Exception ex) {
       LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
