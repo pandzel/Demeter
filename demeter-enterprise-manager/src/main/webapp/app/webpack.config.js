@@ -1,5 +1,6 @@
-var path    = require('path');
-var hwp     = require('html-webpack-plugin');
+const path                 = require('path');
+const hwp                  = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
     entry: path.join(__dirname, '/src/index.js'),
@@ -12,19 +13,26 @@ module.exports = {
           {
             exclude: /node_modules/,
             test: /\.(js|jsx)$/,
-            loader: 'babel-loader'
+            use: [
+              {
+                loader: 'babel-loader',
+                options: {
+                  presets: [ 'es2017', 'react' ]
+                }
+              }
+            ]
           },
           {
             test: /\.scss$/,
-            use: [
-                "style-loader",
-                "css-loader",
-                "sass-loader"
-            ]
+            use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+            // use: ['style-loader', 'css-loader', 'sass-loader']
           }
       ]
     },
     plugins:[
-        new hwp({template:path.join(__dirname, '/src/index.html')})
+      new MiniCssExtractPlugin({
+        filename: '../style/main.css'
+      }),
+      new hwp({template:path.join(__dirname, '/src/index.html')})
     ]
 }

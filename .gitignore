@@ -30,6 +30,7 @@ hs_err_pid*
 /demeter-enterprise-server/target/
 /demeter-enterprise-manager/target/
 /demeter-enterprise-manager/src/main/webapp/js/
+/demeter-enterprise-manager/src/main/webapp/style/
 /demeter-enterprise-manager/src/main/webapp/app/dist/
 /demeter-enterprise-manager/src/main/webapp/app/node/
 /demeter-enterprise-manager/src/main/webapp/app/node_modules/
