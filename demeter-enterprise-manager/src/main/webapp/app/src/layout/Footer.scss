@@ -1,5 +1,9 @@
+@import '../colors.scss';
+
 .Footer {
-  background-color: lightcoral;
+  color: $ribbonText;
+  background-color: $ribbonBackground;
+
   height: 60px;
   width: 100%;
   display: table-row;

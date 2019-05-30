@@ -1,3 +1,5 @@
+@import './colors.scss';
+
 body, html, #root, .App {
   height: 100%;
   margin: 0px;
@@ -5,7 +7,6 @@ body, html, #root, .App {
 
 .App {
   font-family: Arial, Helvetica, sans-serif;
-  background-color: darkgray;
   display: table;
   width: 100%;
 }

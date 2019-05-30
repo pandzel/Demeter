@@ -6,7 +6,7 @@ class Header extends Component{
   render(){
     return(
       <div className="Header">
-        <div>Header</div>
+        <div><span className="Demeter">Demeter</span> Enterprise Server Manager ver. 1.0.0</div>
       </div>
     );
   }

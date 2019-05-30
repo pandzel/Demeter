@@ -1,5 +1,8 @@
+@import '../colors.scss';
+
 .Stage {
-  background-color: red;
+  color: $stageText;
+  background-color: $stageBackground;
   width: 100%;
   height: 100%;
   display: table-row;

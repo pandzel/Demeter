@@ -1,6 +1,21 @@
+@import '../colors.scss';
+
 .Header {
-  background-color: lightblue;
+  color: $ribbonText;
+  background-color: $ribbonBackground;
+
   height: 60px;
   width: 100%;
   display: table-row;
+
+  text-align: center;
+  font-size: xx-large;
+
+  div {
+    padding: 10px;
+  }
+
+  .Demeter {
+    
+  }
 }
