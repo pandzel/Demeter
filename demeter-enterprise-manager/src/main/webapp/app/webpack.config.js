@@ -2,7 +2,7 @@ const path                 = require('path');
 const hwp                  = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-module.exports = {
+module.exports = (env,argv) => ({
     entry: path.join(__dirname, '/src/index.js'),
     output: {
         filename: 'app.js',
@@ -32,7 +32,15 @@ module.exports = {
               {
                 loader: 'file-loader',
                 options: {
-                  outputPath: 'images'
+                  name: '[name].[ext]',
+                  outputPath: 'images',
+                  publicPath: (url, resourcePath, context) => {
+                    if (argv && argv.mode == 'production') {
+                      return `dist/images/${url}`;
+                    } else {
+                      return `images/${url}`;
+                    }
+                  }
                 }
               }
             ]
@@ -45,4 +53,4 @@ module.exports = {
       }),
       new hwp({template:path.join(__dirname, '/src/index.html')})
     ]
-}
+});
