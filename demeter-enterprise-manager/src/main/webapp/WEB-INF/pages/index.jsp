@@ -7,6 +7,11 @@
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
       <title>Demeter Enterprise Manager</title>
       <link href="dist/style/main.css" rel="stylesheet">
+      <script>
+        var config = {
+          context: ''
+        };
+      </script>
     </head>
     <body>
       <div id="root"></div>
