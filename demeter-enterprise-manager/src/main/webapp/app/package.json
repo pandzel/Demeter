@@ -4,7 +4,7 @@
   "description": "Demeter Enterprise Server Manager UI",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --mode development --open --hot",
+    "start": "webpack-dev-server --mode production --open --hot",
     "build": "webpack --mode production"
   },
   "repository": {

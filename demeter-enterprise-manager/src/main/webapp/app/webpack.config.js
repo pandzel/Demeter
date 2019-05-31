@@ -6,7 +6,7 @@ module.exports = {
     entry: path.join(__dirname, '/src/index.js'),
     output: {
         filename: 'app.js',
-        path: path.join(__dirname, '../js')
+        path: path.join(__dirname, '../dist')
     },
     module:{
         rules:[
@@ -29,7 +29,12 @@ module.exports = {
           {
             test: /\.(png|svg|jpg|gif)$/,
             use: [
-              'file-loader'
+              {
+                loader: 'file-loader',
+                options: {
+                  outputPath: 'images'
+                }
+              }
             ]
           }
       ]
