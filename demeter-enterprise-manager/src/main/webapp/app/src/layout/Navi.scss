@@ -9,6 +9,18 @@
   display: table-cell;
   
   img {
+    position: relative;
     margin: 20px;
+    cursor: pointer;
+    border: solid transparent 4px;
+    border-radius: 15px;
+  }
+  
+  img:hover {
+    left: 5px;
+  }
+  
+  .selected {
+    border: solid rgba(255, 165, 0, .4) 4px;
   }
 }

@@ -11,22 +11,38 @@ class Navi extends Component{
   
   constructor(props) {
     super(props);
+    this.state = { selected: 'home' };
     
     this.handleClick = this.handleClick.bind(this);
   };
   
   handleClick(e) {
+    this.setState({ selected: e });
     this.props.onNaviClick({content: e});
   };
   
   render(){
     return(
       <div className="Navi">
-        <img src={iconHome} width="80" height="80" title="Home" onClick={()=>this.handleClick('home')} />
-        <img src={iconSets} width="80" height="80" title="Sets" onClick={()=>this.handleClick('sets')} />
-        <img src={iconFiles} width="80" height="80" title="Data" onClick={()=>this.handleClick('data')} />
-        <img src={iconTools} width="80" height="80" title="Tools" onClick={()=>this.handleClick('tools')} />
-        <img src={iconSettings} width="80" height="80" title="Settings" onClick={()=>this.handleClick('settings')}/>
+        <img src={iconHome}     width="80" height="80" title="Home"
+            onClick={()=>this.handleClick('home')}
+            className={this.state.selected=='home'? 'selected': ''}/>
+            
+        <img src={iconSets}     width="80" height="80" title="Sets"
+            onClick={()=>this.handleClick('sets')}
+            className={this.state.selected=='sets'? 'selected': ''}/>
+            
+        <img src={iconFiles}    width="80" height="80" title="Data"
+            onClick={()=>this.handleClick('data')}
+            className={this.state.selected=='data'? 'selected': ''}/>
+            
+        <img src={iconTools}    width="80" height="80" title="Tools"
+            onClick={()=>this.handleClick('tools')}
+            className={this.state.selected=='tools'? 'selected': ''}/>
+            
+        <img src={iconSettings} width="80" height="80" title="Settings" 
+            onClick={()=>this.handleClick('settings')}
+            className={this.state.selected=='settings'? 'selected': ''}/>
       </div>
     );
   };
