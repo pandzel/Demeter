@@ -24,7 +24,7 @@ class Navi extends Component{
       <div className="Navi">
         <img src={iconHome} width="80" height="80" title="Home" onClick={()=>this.handleClick('home')} />
         <img src={iconSets} width="80" height="80" title="Sets" onClick={()=>this.handleClick('sets')} />
-        <img src={iconFiles} width="80" height="80" title="Data" onClick={()=>this.handleClick('files')} />
+        <img src={iconFiles} width="80" height="80" title="Data" onClick={()=>this.handleClick('data')} />
         <img src={iconTools} width="80" height="80" title="Tools" onClick={()=>this.handleClick('tools')} />
         <img src={iconSettings} width="80" height="80" title="Settings" onClick={()=>this.handleClick('settings')}/>
       </div>
