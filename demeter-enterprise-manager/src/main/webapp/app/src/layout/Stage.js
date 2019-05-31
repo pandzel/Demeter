@@ -14,9 +14,8 @@ class Stage extends Component{
     this.handleNaviClick = this.handleNaviClick.bind(this);
   };
   
-  handleNaviClick(content) {
-    this.setState({content: content});
-    console.log("Navi clicked.", content);
+  handleNaviClick(event) {
+    this.setState({content: event.content});
   };
   
   render(){

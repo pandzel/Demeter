@@ -16,7 +16,7 @@ class Navi extends Component{
   };
   
   handleClick(e) {
-    this.props.onNaviClick({choice: e});
+    this.props.onNaviClick({content: e});
   };
   
   render(){

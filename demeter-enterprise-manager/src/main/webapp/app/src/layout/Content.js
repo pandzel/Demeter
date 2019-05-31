@@ -8,18 +8,10 @@ class Content extends Component{
   }
   
   render(){
-    if (this.props.content==="home") {
-      return(
-        <div className="Content">
-          {this.props.content}
-        </div>
-      );
-    } else {
-      return(
-        <div className="Content">
-          {this.props.content}
-        </div>
-      );
-    }
+    return(
+      <div className="Content">
+        {this.props.content}
+      </div>
+    );
   }
 }
