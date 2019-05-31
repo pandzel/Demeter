@@ -1,11 +1,11 @@
 import React, { Component} from "react";
-import "./Settings.scss";
+import "./SettingsPane.scss";
 
 export default
-class Settings extends Component{
+class SettingsPane extends Component{
   render(){
     return(
-      <div className="Settings">
+      <div className="SettingsPane">
         <div>SETTINGS</div>
       </div>
     );

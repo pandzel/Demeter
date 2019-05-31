@@ -1,11 +1,11 @@
 import React, { Component} from "react";
-import "./Tools.scss";
+import "./ToolsPane.scss";
 
 export default
-class Tools extends Component{
+class ToolsPane extends Component{
   render(){
     return(
-      <div className="Tools">
+      <div className="ToolsPane">
         <div>TOOLS</div>
       </div>
     );

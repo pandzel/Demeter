@@ -1,11 +1,11 @@
 import React, { Component} from "react";
 import "./Content.scss";
 
-import Home from '../home/Home';
-import Sets from '../sets/Sets';
-import Data from '../data/Data';
-import Tools from '../tools/Tools';
-import Settings from '../settings/Settings';
+import HomePane     from '../home/HomePane';
+import SetsPane     from '../sets/SetsPane';
+import DataPane     from '../data/DataPane';
+import ToolsPane    from '../tools/ToolsPane';
+import SettingsPane from '../settings/SettingsPane';
 
 export default
 class Content extends Component{
@@ -14,25 +14,25 @@ class Content extends Component{
   }
   
   render(){
-    var contentPane = <Home/>;
+    var contentPane;
     switch (this.props.content) {
       case "home":
-        contentPane = <Home/>;
+        contentPane = <HomePane/>;
         break;
       case "sets":
-        contentPane = <Sets/>;
+        contentPane = <SetsPane/>;
         break;
       case "data":
-        contentPane = <Data/>;
+        contentPane = <DataPane/>;
         break;
       case "tools":
-        contentPane = <Tools/>;
+        contentPane = <ToolsPane/>;
         break;
       case "settings":
-        contentPane = <Settings/>;
+        contentPane = <SettingsPane/>;
         break;
       default:
-        contentPane = <Home/>;
+        contentPane = <HomePane/>;
         break;
     }
     return(

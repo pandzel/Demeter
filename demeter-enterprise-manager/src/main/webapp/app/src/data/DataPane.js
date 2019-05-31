@@ -1,11 +1,11 @@
 import React, { Component} from "react";
-import "./Data.scss";
+import "./DataPane.scss";
 
 export default
-class Data extends Component{
+class DataPane extends Component{
   render(){
     return(
-      <div className="Data">
+      <div className="DataPane">
         <div>DATA</div>
       </div>
     );

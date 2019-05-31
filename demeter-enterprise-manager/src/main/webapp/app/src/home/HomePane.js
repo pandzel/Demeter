@@ -1,11 +1,11 @@
 import React, { Component} from "react";
-import "./Home.scss";
+import "./HomePane.scss";
 
 export default
-class Home extends Component{
+class HomePane extends Component{
   render(){
     return(
-      <div className="Home">
+      <div className="HomePane">
         <div>HOME</div>
       </div>
     );
