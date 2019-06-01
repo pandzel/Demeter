@@ -11,7 +11,6 @@ class Stage extends Component{
     this.state = { 
       content: "home" 
     };
-    this.handleNaviClick = this.handleNaviClick.bind(this);
   };
   
   handleNaviClick(event) {
@@ -22,7 +21,7 @@ class Stage extends Component{
     return(
       <div className="Stage">
         <div className="Stage-table">
-          <Navi onNaviClick={this.handleNaviClick}/>
+          <Navi onNaviClick={(evt)=>this.handleNaviClick(evt)}/>
           <Content content={this.state.content}/>
         </div>
       </div>

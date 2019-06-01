@@ -12,8 +12,6 @@ class Navi extends Component{
   constructor(props) {
     super(props);
     this.state = { selected: 'home' };
-    
-    this.handleClick = this.handleClick.bind(this);
   };
   
   handleClick(e) {
@@ -28,13 +26,13 @@ class Navi extends Component{
             onClick={()=>this.handleClick('home')}
             className={this.state.selected=='home'? 'selected': ''}/>
             
-        <img src={iconSets}     width="80" height="80" title="Sets"
-            onClick={()=>this.handleClick('sets')}
-            className={this.state.selected=='sets'? 'selected': ''}/>
-            
         <img src={iconFiles}    width="80" height="80" title="Data"
             onClick={()=>this.handleClick('data')}
             className={this.state.selected=='data'? 'selected': ''}/>
+            
+        <img src={iconSets}     width="80" height="80" title="Sets"
+            onClick={()=>this.handleClick('sets')}
+            className={this.state.selected=='sets'? 'selected': ''}/>
             
         <img src={iconTools}    width="80" height="80" title="Tools"
             onClick={()=>this.handleClick('tools')}
