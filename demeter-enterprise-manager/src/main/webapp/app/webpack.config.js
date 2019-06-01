@@ -11,13 +11,13 @@ module.exports = (env,argv) => ({
     module:{
         rules:[
           {
-            exclude: /node_modules/,
             test: /\.(js|jsx)$/,
+            exclude: /node_modules/,
             use: [
               {
                 loader: 'babel-loader',
                 options: {
-                  presets: [ 'es2017', 'react' ]
+                  presets: [ '@babel/preset-env', '@babel/react' ]
                 }
               }
             ]
