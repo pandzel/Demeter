@@ -9,15 +9,15 @@
   display: table-cell;
   
   img {
-    position: relative;
     margin: 20px;
     cursor: pointer;
     border: solid transparent 4px;
     border-radius: 15px;
+    transition: 0.5s;
   }
   
   img:hover {
-    left: 5px;
+    transform: scale(1.2, 1.2);
   }
   
   .selected {
