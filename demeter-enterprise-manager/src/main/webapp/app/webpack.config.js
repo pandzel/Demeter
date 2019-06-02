@@ -23,11 +23,11 @@ module.exports = (env,argv) => ({
             ]
           },
           {
-            test: /\.scss$/,
+            test: /\.s?css$/,
             use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
           },
           {
-            test: /\.(png|svg|jpg|gif)$/,
+            test: /\.(ttf|woff|woff2|eot|png|svg|jpg|gif)$/,
             use: [
               {
                 loader: 'file-loader',

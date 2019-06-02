@@ -1,5 +1,8 @@
 import React, { Component} from "react";
 import "./App.scss";
+import 'primereact/resources/themes/nova-light/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 import Header from "../layout/Header";
 import Stage  from "../layout/Stage";
