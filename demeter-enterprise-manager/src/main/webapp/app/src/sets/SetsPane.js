@@ -22,6 +22,7 @@ class SetsPane extends Component{
   render(){
     return(
       <div className="SetsPane">
+        <div className="SetsTitle">Sets</div>
         <SetsTable data={this.state.data}/>
       </div>
     );
