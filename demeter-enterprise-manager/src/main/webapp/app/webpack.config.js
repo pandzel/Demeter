@@ -27,7 +27,7 @@ module.exports = (env,argv) => ({
             use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
           },
           {
-            test: /\.(ttf|woff|woff2|eot|png|svg|jpg|gif)$/,
+            test: /\.(png|svg|jpg|gif)$/,
             use: [
               {
                 loader: 'file-loader',
@@ -40,6 +40,20 @@ module.exports = (env,argv) => ({
                     } else {
                       return `images/${url}`;
                     }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            test: /\.(ttf|woff|woff2|eot)$/,
+            use: [
+              {
+                loader: 'file-loader',
+                options: {
+                  outputPath: 'style/images',
+                  publicPath: (url, resourcePath, context) => {
+                    return `images/${url}`;
                   }
                 }
               }
