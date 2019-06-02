@@ -1,5 +1,7 @@
 import React, {Component} from "react";
 import "./SetsPane.scss";
+import {DataTable} from 'primereact/datatable';
+import {Column} from 'primereact/column';
 
 export default
 class SetsTable extends Component{
@@ -13,9 +15,10 @@ class SetsTable extends Component{
     );
     return(
       <div className="SetsTable">
-        <ul>
-          {items}
-        </ul>
+        <DataTable value={this.props.data}>
+          <Column field="setSpec" header="Spec"/>
+          <Column field="setName" header="Name"/>
+        </DataTable>
       </div>
     );
   }
