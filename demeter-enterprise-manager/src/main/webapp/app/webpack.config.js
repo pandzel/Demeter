@@ -66,5 +66,8 @@ module.exports = (env,argv) => ({
         filename: 'style/main.css'
       }),
       new hwp({template:path.join(__dirname, '/src/index.html')})
-    ]
+    ],
+    devServer: {
+      port: 9000
+    }
 });

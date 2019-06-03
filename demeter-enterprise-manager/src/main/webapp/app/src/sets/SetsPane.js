@@ -23,7 +23,7 @@ class SetsPane extends Component{
     return(
       <div className="SetsPane">
         <div className="SetsTitle">Sets</div>
-        <SetsTable data={this.state.data}/>
+        {this.state.data && <SetsTable data={this.state.data}/>}
       </div>
     );
   }
