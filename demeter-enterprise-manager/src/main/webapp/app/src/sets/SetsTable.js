@@ -37,10 +37,11 @@ class SetsTable extends Component{
   }
   
   onDelete(props) {
-    // save state
     var api = new SetsApi();
     api.delete(props.id).then(result => {
       console.log("Delete", result);
+      let updatedItems = [...this.state.data];
+      this.setState({data: updatedItems.filter(rec => rec.id !=props.id)});
     });
   }
   
@@ -50,10 +51,12 @@ class SetsTable extends Component{
   }
   
   onAdd() {
-    // save state
     var api = new SetsApi();
     api.create().then(result => {
       console.log("Add", result);
+      let updatedItems = [...this.state.data];
+      updatedItems.push(result);
+      this.setState({data: updatedItems});
     });
   }
 
