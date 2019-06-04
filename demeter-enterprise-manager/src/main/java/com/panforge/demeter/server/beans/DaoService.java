@@ -17,6 +17,8 @@ package com.panforge.demeter.server.beans;
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.server.Dao;
@@ -27,6 +29,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -65,11 +68,7 @@ public class DaoService implements Dao {
     return rs.all().stream()
             .map(row -> {
               SetData setData = new SetData();
-              
-              setData.id = row.getUuid("id");
-              setData.setSpec = row.getString("setSpec");
-              setData.setName = row.getString("setName");
-              
+              readRow(setData, row);
               return setData;
             })
             .collect(Collectors.toList());
@@ -83,13 +82,38 @@ public class DaoService implements Dao {
     if (row==null) return null;
     
     SetInfo setInfo = new SetInfo();
-    
-    setInfo.id = row.getUuid("id");
-    setInfo.setSpec = row.getString("setSpec");
-    setInfo.setName = row.getString("setName");
+    readRow(setInfo, row);
     
     // TODO: read set descriptions
     
     return setInfo;
+  }
+
+  @Override
+  public SetData createSet(SetData setData) {
+
+    SetData fromDatabase = new SetData();
+    
+    fromDatabase.id = UUID.randomUUID();
+    fromDatabase.setSpec = StringUtils.trimToEmpty(setData.setSpec);
+    fromDatabase.setName = StringUtils.trimToEmpty(setData.setName);
+    
+    PreparedStatement stmt = session.prepare("insert into sets (id, setSpec, setName) values (?, ?, ?)");
+    BoundStatement bound = stmt.bind(fromDatabase.id, fromDatabase.setSpec, fromDatabase.setName);
+    ResultSet result = session.execute(bound);
+    return result!=null && result.getExecutionInfo().getErrors().isEmpty()? fromDatabase: null;
+  }
+
+  @Override
+  public void deleteSet(UUID id) {
+    PreparedStatement stmt = session.prepare("delete from sets where id = ?");
+    BoundStatement bound = stmt.bind(id);
+    session.execute(bound);
+  }
+  
+  private void readRow(SetData setData, Row row) {
+    setData.id = row.getUuid("id");
+    setData.setSpec = row.getString("setSpec");
+    setData.setName = row.getString("setName");
   }
 }

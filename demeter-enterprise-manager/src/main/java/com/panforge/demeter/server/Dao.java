@@ -43,4 +43,17 @@ public interface Dao {
    * @return set info
    */
   SetInfo readSet(UUID id);
+  
+  /**
+   * Creates new set.
+   * @param setData set data
+   * @return actual set data
+   */
+  SetData createSet(SetData setData);
+  
+  /**
+   * Deletes set.
+   * @param id set id
+   */
+  void deleteSet(UUID id);
 }

@@ -30,6 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -70,11 +71,34 @@ public class SetController {
     }
   }
   
+  @RequestMapping(value = "/sets", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<SetData> post(HttpServletRequest request, @RequestBody SetData setData) {
+    try {
+      LOG.debug(String.format("Received request '%s'", request.getQueryString()));
+      return new ResponseEntity<>(dao.createSet(setData), HttpStatus.OK);
+    } catch (Exception ex) {
+      LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  
   @RequestMapping(value = "/sets/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<SetInfo> list(HttpServletRequest request, @PathVariable UUID id) {
     try {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
       return new ResponseEntity<>(dao.readSet(id), HttpStatus.OK);
+    } catch (Exception ex) {
+      LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  
+  @RequestMapping(value = "/sets/{id}", method = RequestMethod.DELETE)
+  public ResponseEntity<String> delete(HttpServletRequest request, @PathVariable UUID id) {
+    try {
+      LOG.debug(String.format("Received request '%s'", request.getQueryString()));
+      dao.deleteSet(id);
+      return new ResponseEntity<>(HttpStatus.OK);
     } catch (Exception ex) {
       LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
