@@ -105,10 +105,11 @@ public class DaoService implements Dao {
   }
 
   @Override
-  public void deleteSet(UUID id) {
+  public boolean deleteSet(UUID id) {
     PreparedStatement stmt = session.prepare("delete from sets where id = ?");
     BoundStatement bound = stmt.bind(id);
-    session.execute(bound);
+    ResultSet result = session.execute(bound);
+    return result!=null && result.getExecutionInfo().getErrors().isEmpty();
   }
   
   private void readRow(SetData setData, Row row) {

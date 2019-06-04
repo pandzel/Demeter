@@ -55,5 +55,5 @@ public interface Dao {
    * Deletes set.
    * @param id set id
    */
-  void deleteSet(UUID id);
+  boolean deleteSet(UUID id);
 }

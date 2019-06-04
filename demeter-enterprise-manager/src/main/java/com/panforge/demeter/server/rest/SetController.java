@@ -16,6 +16,7 @@
 package com.panforge.demeter.server.rest;
 
 import com.panforge.demeter.server.Dao;
+import com.panforge.demeter.server.elements.OperationStatus;
 import com.panforge.demeter.server.elements.SetData;
 import com.panforge.demeter.server.elements.SetInfo;
 import java.util.List;
@@ -94,11 +95,12 @@ public class SetController {
   }
   
   @RequestMapping(value = "/sets/{id}", method = RequestMethod.DELETE)
-  public ResponseEntity<String> delete(HttpServletRequest request, @PathVariable UUID id) {
+  public ResponseEntity<OperationStatus> delete(HttpServletRequest request, @PathVariable UUID id) {
     try {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
-      dao.deleteSet(id);
-      return new ResponseEntity<>(HttpStatus.OK);
+      boolean success = dao.deleteSet(id);
+      OperationStatus opStat = success? new OperationStatus(id): new OperationStatus(id, "Error deleting record");
+      return new ResponseEntity<>(opStat, HttpStatus.OK);
     } catch (Exception ex) {
       LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
