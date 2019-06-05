@@ -12,6 +12,7 @@ class SetsTable extends Component{
   constructor(props) {
     super(props);
     this.state  = { data: this.props.data };
+    this.api = new SetsApi();
   }
   
   actionTemplate(rowData, column) {
@@ -37,8 +38,7 @@ class SetsTable extends Component{
   }
   
   onDelete(props) {
-    var api = new SetsApi();
-    api.delete(props.id).then(result => {
+    this.api.delete(props.id).then(result => {
       console.log("Delete", result);
       let updatedItems = [...this.state.data];
       this.setState({data: updatedItems.filter(rec => rec.id !=props.id)});
@@ -51,8 +51,7 @@ class SetsTable extends Component{
   }
   
   onAdd() {
-    var api = new SetsApi();
-    api.create().then(result => {
+    this.api.create().then(result => {
       console.log("Add", result);
       let updatedItems = [...this.state.data];
       updatedItems.push(result);
