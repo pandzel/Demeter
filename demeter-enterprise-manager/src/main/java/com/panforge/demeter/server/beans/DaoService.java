@@ -111,6 +111,26 @@ public class DaoService implements Dao {
     ResultSet result = session.execute(bound);
     return result!=null && result.getExecutionInfo().getErrors().isEmpty();
   }
+
+  @Override
+  public boolean updateSet(SetData setData) {
+
+    SetData fromDatabase = new SetData();
+    
+    fromDatabase.id = UUID.randomUUID();
+    fromDatabase.setSpec = StringUtils.trimToEmpty(setData.setSpec);
+    fromDatabase.setName = StringUtils.trimToEmpty(setData.setName);
+
+    PreparedStatement updateStmt = session.prepare("update sets set setSpec = ?, setName = ? where id = ? if exists");
+    BoundStatement updateBound = updateStmt.bind(fromDatabase.setSpec, fromDatabase.setName, fromDatabase.id);
+    ResultSet updateResult = session.execute(updateBound);
+    
+    PreparedStatement insertStmt = session.prepare("insert into sets (id, setSpec, setName) values (?, ?, ?) if not exists");
+    BoundStatement insertBound = insertStmt.bind(fromDatabase.id, fromDatabase.setSpec, fromDatabase.setName);
+    ResultSet insertResult = session.execute(insertBound);
+    
+    return true;
+  }
   
   private void readRow(SetData setData, Row row) {
     setData.id = row.getUuid("id");

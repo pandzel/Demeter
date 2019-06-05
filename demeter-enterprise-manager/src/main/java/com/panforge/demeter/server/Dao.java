@@ -54,6 +54,14 @@ public interface Dao {
   /**
    * Deletes set.
    * @param id set id
+   * @return <code>true</code> if update successful.
    */
   boolean deleteSet(UUID id);
+  
+  /**
+   * Updates set.
+   * @param setData
+   * @return <code>true</code> if update successful.
+   */
+  boolean updateSet(SetData setData);
 }

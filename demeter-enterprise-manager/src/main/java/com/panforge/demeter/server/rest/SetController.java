@@ -83,6 +83,20 @@ public class SetController {
     }
   }
   
+  @RequestMapping(value = "/sets/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<OperationStatus> put(HttpServletRequest request, @PathVariable UUID id, @RequestBody SetData setData) {
+    try {
+      setData.id = id;
+      LOG.debug(String.format("Received request '%s'", request.getQueryString()));
+      boolean success = dao.updateSet(setData);
+      OperationStatus opStat = success? new OperationStatus(id): new OperationStatus(id, "Error updating record");
+      return new ResponseEntity<>(opStat, HttpStatus.OK);
+    } catch (Exception ex) {
+      LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  
   @RequestMapping(value = "/sets/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<SetInfo> list(HttpServletRequest request, @PathVariable UUID id) {
     try {
