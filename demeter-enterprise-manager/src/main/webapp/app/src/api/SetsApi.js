@@ -19,4 +19,10 @@ class SetsApi {
       axios.delete(`${config.context}rest/sets/`+id).then((result)=>resolve(result.data));
     });
   }
+  
+  update(data) {
+    return new Promise((resolve, reject) => {
+      axios.put(`${config.context}rest/sets/`+data.id, data).then((result)=>resolve(result.data));
+    });
+  }
 }
