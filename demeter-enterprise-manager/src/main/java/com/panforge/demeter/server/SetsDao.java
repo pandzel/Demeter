@@ -15,7 +15,6 @@
  */
 package com.panforge.demeter.server;
 
-import com.datastax.oss.driver.api.core.CqlSession;
 import com.panforge.demeter.server.elements.SetData;
 import com.panforge.demeter.server.elements.SetInfo;
 import java.util.List;
@@ -24,12 +23,7 @@ import java.util.UUID;
 /**
  * DAO.
  */
-public interface Dao {
-  /**
-   * Gets CQL session.
-   * @return session
-   */
-  CqlSession getSession();
+public interface SetsDao {
   
   /**
    * Sets all sets data.

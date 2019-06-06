@@ -15,56 +15,44 @@
  */
 package com.panforge.demeter.server.beans;
 
-import com.datastax.oss.driver.api.core.CqlIdentifier;
-import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.BoundStatement;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
-import com.panforge.demeter.server.Dao;
+import com.panforge.demeter.server.Connection;
 import com.panforge.demeter.server.elements.SetData;
 import com.panforge.demeter.server.elements.SetInfo;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.panforge.demeter.server.SetsDao;
 
 /**
  * DAO service.
  */
 @Service
-public class DaoService implements Dao {
-  private final Logger LOG = LoggerFactory.getLogger(DaoService.class);
-
-  private CqlSession session;
+public class SetsDaoService implements SetsDao {
+  private final Logger LOG = LoggerFactory.getLogger(SetsDaoService.class);
   
-  @PostConstruct
-  public void construct() {
-    session = CqlSession.builder().withKeyspace(CqlIdentifier.fromCql("demeter")).build();
-    LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
-  }
+  private Connection conn;
   
-  @PreDestroy
-  public void destroy() {
-    if (session != null) {
-      session.close();
-    }
-    LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
-  }
-  
-  @Override
-  public CqlSession getSession() {
-    return session;
+  /**
+   * Creates instance of the DAO service
+   * @param conn connection
+   */
+  @Autowired
+  public SetsDaoService(Connection conn) {
+    this.conn = conn;
   }
   
   @Override
   public List<SetData> listSets() {
-    ResultSet rs = session.execute("select * from sets");
+    ResultSet rs = conn.execute("select * from sets");
     return rs.all().stream()
             .map(row -> {
               SetData setData = new SetData();
@@ -76,7 +64,10 @@ public class DaoService implements Dao {
   
   @Override
   public SetInfo readSet(UUID id) {
-    ResultSet rs = session.execute("select * from sets where id = "+id.toString());
+    PreparedStatement stmt = conn.prepare("select * from sets where id = ?");
+    BoundStatement bound = stmt.bind(id);
+    
+    ResultSet rs = conn.execute(bound);
     Row row = rs.one();
     
     if (row==null) return null;
@@ -98,17 +89,17 @@ public class DaoService implements Dao {
     fromDatabase.setSpec = StringUtils.trimToEmpty(setData.setSpec);
     fromDatabase.setName = StringUtils.trimToEmpty(setData.setName);
     
-    PreparedStatement stmt = session.prepare("insert into sets (id, setSpec, setName) values (?, ?, ?)");
+    PreparedStatement stmt = conn.prepare("insert into sets (id, setSpec, setName) values (?, ?, ?)");
     BoundStatement bound = stmt.bind(fromDatabase.id, fromDatabase.setSpec, fromDatabase.setName);
-    ResultSet result = session.execute(bound);
+    ResultSet result = conn.execute(bound);
     return result!=null && result.getExecutionInfo().getErrors().isEmpty()? fromDatabase: null;
   }
 
   @Override
   public boolean deleteSet(UUID id) {
-    PreparedStatement stmt = session.prepare("delete from sets where id = ?");
+    PreparedStatement stmt = conn.prepare("delete from sets where id = ?");
     BoundStatement bound = stmt.bind(id);
-    ResultSet result = session.execute(bound);
+    ResultSet result = conn.execute(bound);
     return result!=null && result.getExecutionInfo().getErrors().isEmpty();
   }
 
@@ -121,9 +112,9 @@ public class DaoService implements Dao {
     fromDatabase.setSpec = StringUtils.trimToEmpty(setData.setSpec);
     fromDatabase.setName = StringUtils.trimToEmpty(setData.setName);
 
-    PreparedStatement updateStmt = session.prepare("update sets set setSpec = ?, setName = ? where id = ?");
+    PreparedStatement updateStmt = conn.prepare("update sets set setSpec = ?, setName = ? where id = ?");
     BoundStatement updateBound = updateStmt.bind(fromDatabase.setSpec, fromDatabase.setName, fromDatabase.id);
-    ResultSet result = session.execute(updateBound);
+    ResultSet result = conn.execute(updateBound);
     
     return result!=null && result.getExecutionInfo().getErrors().isEmpty();
   }

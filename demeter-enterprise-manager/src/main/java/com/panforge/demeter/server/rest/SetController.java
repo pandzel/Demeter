@@ -15,7 +15,6 @@
  */
 package com.panforge.demeter.server.rest;
 
-import com.panforge.demeter.server.Dao;
 import com.panforge.demeter.server.elements.OperationStatus;
 import com.panforge.demeter.server.elements.SetData;
 import com.panforge.demeter.server.elements.SetInfo;
@@ -35,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import com.panforge.demeter.server.SetsDao;
 
 /**
  * OAI controller
@@ -44,10 +44,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class SetController {
   private final Logger LOG = LoggerFactory.getLogger(SetController.class);
   
-  private final Dao dao;
+  private final SetsDao dao;
   
   @Autowired 
-  public SetController(Dao dao) {
+  public SetController(SetsDao dao) {
     this.dao = dao;
   }
   
