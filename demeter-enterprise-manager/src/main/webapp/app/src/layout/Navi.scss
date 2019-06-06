@@ -1,7 +1,6 @@
 @import '../main/colors.scss';
 
 .Navi {
-  width: 120px;
   height: 100%;
   color: $naviText;
   background-color: $naviBackground;
@@ -9,10 +8,10 @@
   display: table-cell;
   
   img {
-    margin: 20px;
+    margin: 0.8em;
     cursor: pointer;
-    border: solid transparent 4px;
-    border-radius: 15px;
+    border: solid transparent 0.4em;
+    border-radius: 1.5em;
     transition: 0.5s;
   }
   
@@ -21,6 +20,6 @@
   }
   
   .selected {
-    border: solid $iconBorder 4px;
+    border: solid $iconBorder 0.4em;
   }
 }

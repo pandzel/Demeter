@@ -17,10 +17,10 @@ class SetsTable extends Component{
   
   actionTemplate(rowData, column) {
     return (<div>
-              <Button type="button" icon="pi pi-trash" className="p-button-warning" 
+              <Button type="button" icon="pi pi-trash" className="p-button-warning action-button delete-button" 
                       title="Delete record"
                       onClick={() => this.onDelete(rowData)}/>
-              <Button type="button" icon="pi pi-list" className="p-button-info" 
+              <Button type="button" icon="pi pi-list" className="p-button-info action-button info-button" 
                       title="Show more information"
                       onClick={() => this.onInfo(rowData)}/>
             </div>);
@@ -85,7 +85,7 @@ class SetsTable extends Component{
         <DataTable value={this.state.data}>
           <Column field="setName" header="Name" editor={props => this.nameEditor(props)} onEditorSubmit={props => this.onUpdate(props.rowData)} />
           <Column field="setSpec" header="Spec" editor={props => this.specEditor(props)} onEditorSubmit={props => this.onUpdate(props.rowData)} />
-          <Column body={(rowData, column) => this.actionTemplate(rowData, column)} style={{textAlign:'center', width: '10em'}}/>
+          <Column body={(rowData, column) => this.actionTemplate(rowData, column)} className="action-buttons"/>
         </DataTable>
         <Button type="button" icon="pi pi-plus" className="p-button-info add" 
                 title="Add new record"
