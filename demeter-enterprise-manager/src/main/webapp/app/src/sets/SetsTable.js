@@ -46,8 +46,18 @@ class SetsTable extends Component{
   }
   
   onUpdate(props) {
-    // save state
-    console.log("Update", props);
+    if (props.id) {
+      this.api.update(props).then(result => {
+        console.log("Update (modify)", props);
+      });
+    } else {
+      this.api.create(props).then(result => {
+        console.log("Update (insert)", props);
+        let updatedItems = [...this.state.data];
+        updatedItems.push(result);
+        this.setState({data: updatedItems});
+      });
+    }
   }
   
   onAdd() {
@@ -73,8 +83,8 @@ class SetsTable extends Component{
     return(
       <div className="SetsTable">
         <DataTable value={this.state.data}>
-          <Column field="setName" header="Name" editor={props => this.nameEditor(props)} onEditorSubmit={props => this.onUpdate(props)} />
-          <Column field="setSpec" header="Spec" editor={props => this.specEditor(props)}/>
+          <Column field="setName" header="Name" editor={props => this.nameEditor(props)} onEditorSubmit={props => this.onUpdate(props.rowData)} />
+          <Column field="setSpec" header="Spec" editor={props => this.specEditor(props)} onEditorSubmit={props => this.onUpdate(props.rowData)} />
           <Column body={(rowData, column) => this.actionTemplate(rowData, column)} style={{textAlign:'center', width: '10em'}}/>
         </DataTable>
         <Button type="button" icon="pi pi-plus" className="p-button-info add" 

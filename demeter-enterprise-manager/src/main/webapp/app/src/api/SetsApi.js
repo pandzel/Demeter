@@ -8,9 +8,9 @@ class SetsApi {
     });
   }
   
-  create() {
+  create(data) {
     return new Promise((resolve, reject) => {
-      axios.post(`${config.context}rest/sets`, {}).then((result)=>resolve(result.data));
+      axios.post(`${config.context}rest/sets`, data==undefined? {}: data).then((result)=>resolve(result.data));
     });
   }
   
