@@ -1,14 +1,18 @@
 import React, { Component} from "react";
 import "./DataPane.scss";
 import RecordsApi from '../api/RecordsApi';
+import DataTable from './DataTable';
 
 export default
 class DataPane extends Component{
+  state = {};
   
   componentDidMount() {
     const api = new RecordsApi();
     api.list().then(result => {
-      console.log(result);
+      this.setState({
+        data: result
+      });
     });
   }
   
@@ -16,6 +20,7 @@ class DataPane extends Component{
     return(
       <div className="DataPane">
         <div>DATA</div>
+        {this.state.data && <DataTable data={this.state.data}/>}
       </div>
     );
   }
