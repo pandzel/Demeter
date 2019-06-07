@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * DAO.
+ * Sets DAO.
  */
 public interface SetsDao {
   

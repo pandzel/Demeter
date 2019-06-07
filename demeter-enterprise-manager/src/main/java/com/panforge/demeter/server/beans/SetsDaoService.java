@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 import com.panforge.demeter.server.SetsDao;
 
 /**
- * DAO service.
+ * Sets DAO service.
  */
 @Service
 public class SetsDaoService implements SetsDao {
