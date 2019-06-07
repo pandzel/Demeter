@@ -9,9 +9,6 @@ import SettingsPane from '../settings/SettingsPane';
 
 export default
 class Content extends Component{
-  constructor(props) {
-    super(props);
-  }
   
   render(){
     var contentPane;

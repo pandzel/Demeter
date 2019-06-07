@@ -9,10 +9,9 @@ import iconSettings from '../images/icon-settings.png';
 export default
 class Navi extends Component{
   
-  constructor(props) {
-    super(props);
-    this.state = { selected: 'home' };
-  };
+  state = {
+    selected: 'home'
+  }
   
   handleClick(e) {
     this.setState({ selected: e });

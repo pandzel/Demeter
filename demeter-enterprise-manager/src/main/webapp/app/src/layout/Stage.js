@@ -6,12 +6,9 @@ import Content from './Content';
 export default
 class Stage extends Component{
   
-  constructor(props) {
-    super(props);
-    this.state = { 
-      content: "home" 
-    };
-  };
+  state = {
+    content: 'home' 
+  }
   
   handleNaviClick(event) {
     this.setState({content: event.content});
