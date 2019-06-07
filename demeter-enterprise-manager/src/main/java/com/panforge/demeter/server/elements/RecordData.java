@@ -16,6 +16,8 @@
 package com.panforge.demeter.server.elements;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.panforge.demeter.server.LocalDateSerializer;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -31,6 +33,7 @@ public class RecordData {
   public String description;
   public String publisher;
   public String contributor;
+  @JsonSerialize(using = LocalDateSerializer.class)
   public LocalDate date;
   public String type;
   public String format;
