@@ -5,10 +5,7 @@ import SetsTable from './SetsTable';
 
 export default
 class SetsPane extends Component{
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
+  state = {};
   
   componentDidMount() {
     const api = new SetsApi();
