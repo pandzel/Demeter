@@ -15,9 +15,16 @@
  */
 package com.panforge.demeter.server;
 
+import com.panforge.demeter.server.elements.RecordData;
+import java.util.List;
+
 /**
  * Records DAO.
  */
 public interface RecordsDao {
-  
+  /**
+   * Lists all records.
+   * @return records
+   */
+  List<RecordData> listRecords();
 }

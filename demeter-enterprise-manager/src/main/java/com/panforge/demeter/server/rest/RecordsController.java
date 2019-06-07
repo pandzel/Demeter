@@ -16,12 +16,20 @@
 package com.panforge.demeter.server.rest;
 
 import com.panforge.demeter.server.RecordsDao;
+import com.panforge.demeter.server.elements.RecordData;
+import com.panforge.demeter.server.elements.SetData;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -47,6 +55,17 @@ public class RecordsController {
   @PreDestroy
   public void destroy() {
     LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
+  }
+  
+  @RequestMapping(value = "/records", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<List<RecordData>> list(HttpServletRequest request) {
+    try {
+      LOG.debug(String.format("Received request '%s'", request.getQueryString()));
+      return new ResponseEntity<>(dao.listRecords(), HttpStatus.OK);
+    } catch (Exception ex) {
+      LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
   
 }

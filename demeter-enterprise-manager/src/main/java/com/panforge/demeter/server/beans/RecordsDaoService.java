@@ -15,13 +15,18 @@
  */
 package com.panforge.demeter.server.beans;
 
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.server.Connection;
 import com.panforge.demeter.server.RecordsDao;
 import com.panforge.demeter.server.elements.RecordData;
+import com.panforge.demeter.server.elements.SetData;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +50,18 @@ public class RecordsDaoService implements RecordsDao {
     this.conn = conn;
   }
   
+  @Override
+  public List<RecordData> listRecords() {
+    ResultSet rs = conn.execute("select * from records");
+    return rs.all().stream()
+            .map(row -> {
+              RecordData recordData = new RecordData();
+              readRow(recordData, row);
+              return recordData;
+            })
+            .collect(Collectors.toList());
+  }
+  
   private void readRow(RecordData setData, Row row) {
     setData.id = row.getUuid("id");
     setData.title = row.getString("title");
@@ -53,7 +70,7 @@ public class RecordsDaoService implements RecordsDao {
     setData.description = row.getString("description");
     setData.publisher = row.getString("publisher");
     setData.contributor = row.getString("contributor");
-    setData.date = OffsetDateTime.ofInstant(Instant.MIN, ZoneId.systemDefault());
+    setData.date = row.getLocalDate("date");
     setData.format = row.getString("format");
     setData.identifier = row.getString("identifier");
     setData.source = row.getString("source");

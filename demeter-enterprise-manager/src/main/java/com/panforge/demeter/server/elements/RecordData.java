@@ -16,7 +16,7 @@
 package com.panforge.demeter.server.elements;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -31,7 +31,7 @@ public class RecordData {
   public String description;
   public String publisher;
   public String contributor;
-  public OffsetDateTime date;
+  public LocalDate date;
   public String type;
   public String format;
   public String identifier;
