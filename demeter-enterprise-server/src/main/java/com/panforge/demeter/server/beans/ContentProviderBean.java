@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.stream.Collectors;
 import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.content.Filter;
+import com.panforge.demeter.server.Connection;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -59,19 +60,16 @@ public class ContentProviderBean implements ContentProvider {
   @Autowired
   private MetaProcessorService metadataProcessorService;
 
-  private CqlSession session;
+  @Autowired
+  private Connection conn;
 
   @PostConstruct
   public void construct() {
-    session = CqlSession.builder().withKeyspace(CqlIdentifier.fromCql("demeter")).build();
     LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
   }
 
   @PreDestroy
   public void destroy() {
-    if (session != null) {
-      session.close();
-    }
     LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
   }
 
@@ -86,7 +84,7 @@ public class ContentProviderBean implements ContentProvider {
 
   @Override
   public Cursor<Set> listSets() throws NoSetHierarchyException {
-    ResultSet rs = session.execute("select * from sets");
+    ResultSet rs = conn.execute("select * from sets");
     int total = rs.getAvailableWithoutFetching();
     return Cursor.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
       String setSpec = row.getString("setSpec");
@@ -96,13 +94,13 @@ public class ContentProviderBean implements ContentProvider {
   }
 
   private Cursor<UUID> listSetsIdsFor(String recordId) {
-    ResultSet rs = session.execute("select setId from records_sets where recordId = " + recordId);
+    ResultSet rs = conn.execute("select setId from records_sets where recordId = " + recordId);
     int total = rs.getAvailableWithoutFetching();
     return Cursor.of(StreamSupport.stream(rs.spliterator(), false).map(row -> row.getUuid("setId")), total);
   }
 
   private Cursor<Set> listSetsFor(String recordId) {
-    ResultSet rs = session.execute("select * from sets where id in (" + listSetsIdsFor(recordId).createStream().map(UUID::toString).collect(Collectors.joining(",")) + ")");
+    ResultSet rs = conn.execute("select * from sets where id in (" + listSetsIdsFor(recordId).createStream().map(UUID::toString).collect(Collectors.joining(",")) + ")");
     int total = rs.getAvailableWithoutFetching();
     return Cursor.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
       String setSpec = row.getString("setSpec");
@@ -120,7 +118,7 @@ public class ContentProviderBean implements ContentProvider {
     } catch (NoMetadataFormatsException | IdDoesNotExistException ex) {
       throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", filter.metadataPrefix), ex);
     }
-    ResultSet rs = session.execute("select id, identifier, date from records");
+    ResultSet rs = conn.execute("select id, identifier, date from records");
     int total = rs.getAvailableWithoutFetching();
     return Cursor.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
       UUID id = row.getUuid("id");
@@ -134,7 +132,7 @@ public class ContentProviderBean implements ContentProvider {
 
   @Override
   public Record readRecord(URI identifier, String metadataPrefix) throws IdDoesNotExistException, CannotDisseminateFormatException {
-    ResultSet rs = session.execute("select * from records where identifier = '"+identifier+"'");
+    ResultSet rs = conn.execute("select * from records where identifier = '"+identifier+"'");
     Row row = rs.one();
     if (row==null) {
       throw new IdDoesNotExistException(identifier.toString());
