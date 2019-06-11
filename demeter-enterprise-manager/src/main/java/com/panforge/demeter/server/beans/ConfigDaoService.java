@@ -15,49 +15,56 @@
  */
 package com.panforge.demeter.server.beans;
 
+import com.datastax.oss.driver.api.core.CqlIdentifier;
+import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
-import com.panforge.demeter.server.ConfigService;
 import com.panforge.demeter.core.api.Config;
+import com.panforge.demeter.server.ConfigDao;
 import com.panforge.demeter.server.Connection;
+import com.panforge.demeter.server.elements.ConfigData;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
- * Configuration service bean.
+ * Config dao service.
  */
-@Service
-public class ConfigServiceBean implements ConfigService {
+public class ConfigDaoService implements ConfigDao {
+  private final Logger LOG = LoggerFactory.getLogger(ConfigDaoService.class);
   
-  private static final Logger LOG = LoggerFactory.getLogger(ConfigServiceBean.class);
-
-  @Autowired
   private Connection conn;
   
-  @PostConstruct
-  public void construct() {
-    LOG.info(String.format("%s created.", this.getClass().getSimpleName()));
+  /**
+   * Creates instance of the DAO service
+   * @param conn connection
+   */
+  @Autowired
+  public ConfigDaoService(Connection conn) {
+    this.conn = conn;
   }
-  
-  @PreDestroy
-  public void destroy() {
-    LOG.info(String.format("%s destroyed.", this.getClass().getSimpleName()));
-  }
-  
+
   @Override
-  public Config getConfig() {
-    Config config = new Config();
+  public ConfigData loadConfig() {
+    ConfigData configData = createDefaultConfigData();
     ResultSet rs = conn.execute("SELECT * FROM config where ID = 0");
     Row one = rs.one();
     if (one!=null) {
-      config.repositoryName = one.getString("repositoryName");
-      config.baseURL = one.getString("baseURL");
-      config.adminEmail = one.getList("adminEmail", String.class).stream().toArray(String[]::new);
+      configData.repositoryName = one.getString("repositoryName");
+      configData.baseURL = one.getString("baseURL");
+      configData.adminEmail = one.getList("adminEmail", String.class).stream().toArray(String[]::new);
     }
-    return config;
+    return configData;
+  }
+  
+  private ConfigData createDefaultConfigData() {
+    Config config = new Config();
+    ConfigData configData = new ConfigData();
+    configData.repositoryName = config.repositoryName;
+    configData.baseURL = config.baseURL;
+    configData.adminEmail = config.adminEmail;
+    return configData;
   }
 }

@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.panforge.demeter.server.SetsDao;
 
 /**
- * OAI controller
+ * Sets controller.
  */
 @RestController
 @RequestMapping("/rest")
