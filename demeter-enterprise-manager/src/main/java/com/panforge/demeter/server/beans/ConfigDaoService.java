@@ -15,23 +15,21 @@
  */
 package com.panforge.demeter.server.beans;
 
-import com.datastax.oss.driver.api.core.CqlIdentifier;
-import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.server.ConfigDao;
 import com.panforge.demeter.server.Connection;
 import com.panforge.demeter.server.elements.ConfigData;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Config dao service.
  */
+@Service
 public class ConfigDaoService implements ConfigDao {
   private final Logger LOG = LoggerFactory.getLogger(ConfigDaoService.class);
   
