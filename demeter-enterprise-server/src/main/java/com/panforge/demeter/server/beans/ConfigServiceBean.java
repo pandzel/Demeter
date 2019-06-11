@@ -15,6 +15,8 @@
  */
 package com.panforge.demeter.server.beans;
 
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -27,6 +29,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.core.utils.DateTimeUtils;
+import com.panforge.demeter.server.Connection;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,6 +37,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -43,15 +47,9 @@ import org.springframework.stereotype.Service;
 public class ConfigServiceBean implements ConfigService {
   
   private static final Logger LOG = LoggerFactory.getLogger(ConfigServiceBean.class);
-  private static final ObjectMapper MAPPER = new ObjectMapper(new YAMLFactory());
-  
-  static {
-    SimpleModule module = new SimpleModule();
-    module.addSerializer(OffsetDateTime.class, new OffsetDateTimeSerializer());
-    module.addDeserializer(OffsetDateTime.class, new OffsetDateTimeDeserializer());
-    MAPPER.registerModule(module);
-  }
-  private Config config = new Config();
+
+  @Autowired
+  private Connection conn;
   
   @PostConstruct
   public void construct() {
@@ -65,37 +63,14 @@ public class ConfigServiceBean implements ConfigService {
   
   @Override
   public Config getConfig() {
+    Config config = new Config();
+    ResultSet rs = conn.execute("SELECT * FROM config where ID = 0");
+    Row one = rs.one();
+    if (one!=null) {
+      config.repositoryName = one.getString("repositoryName");
+      config.baseURL = one.getString("baseURL");
+      config.adminEmail = one.getList("adminEmail", String.class).stream().toArray(String[]::new);
+    }
     return config;
   }
-  
-  /**
-   * OffsetDateTime serializer.
-   */
-  private static class OffsetDateTimeSerializer extends StdSerializer<OffsetDateTime> {
-    
-    public OffsetDateTimeSerializer() {
-      super(OffsetDateTime.class);
-    }
-    
-    @Override
-    public void serialize(OffsetDateTime value, com.fasterxml.jackson.core.JsonGenerator gen, SerializerProvider provider) throws IOException {
-      gen.writeString(DateTimeFormatter.ISO_DATE_TIME.format(value));
-    }
-  }
-  
-  /**
-   * OffsetDateTime deserializer.
-   */
-  private static class OffsetDateTimeDeserializer extends StdDeserializer<OffsetDateTime> {
-    
-    public OffsetDateTimeDeserializer() {
-      super(OffsetDateTime.class);
-    }
-    
-    @Override
-    public OffsetDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-      return DateTimeUtils.parseTimestamp(p.getText());
-    }
-    
-  }  
 }
