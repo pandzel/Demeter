@@ -15,8 +15,6 @@
  */
 package com.panforge.demeter.server.beans;
 
-import com.datastax.oss.driver.api.core.CqlIdentifier;
-import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.core.api.exception.CannotDisseminateFormatException;
