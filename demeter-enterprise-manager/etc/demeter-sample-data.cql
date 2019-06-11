@@ -1,7 +1,7 @@
 USE demeter;
 
 INSERT INTO config (id, repositoryName, baseURL, adminEmail)
-  VALUES(1, 'Demeter Enterprise OAI-PMH Server', 'http://localhost:8080/demeter-enterprise-manager', ['admin@localhost']);
+  VALUES(0, 'Demeter Enterprise OAI-PMH Server', 'http://localhost:8080/demeter-enterprise', ['admin@localhost']);
   
 INSERT INTO sets (id, setSpec, setName)
   VALUES (10000000-0000-0000-0000-000000000001, 'catalog', 'Main catalog of data');
