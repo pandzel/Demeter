@@ -6,6 +6,13 @@ CREATE KEYSPACE demeter
 // create tables
 USE demeter;
 
+CREATE TABLE config (
+   id INT PRIMARY KEY,
+   repositoryName TEXT,
+   baseURL TEXT,
+   adminEmail LIST<TEXT>
+);
+
 CREATE TABLE sets (
    id UUID PRIMARY KEY,
    setSpec TEXT,
