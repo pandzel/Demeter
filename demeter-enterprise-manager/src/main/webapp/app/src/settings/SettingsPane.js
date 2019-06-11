@@ -6,7 +6,7 @@ class SettingsPane extends Component{
   render(){
     return(
       <div className="SettingsPane">
-        <div>SETTINGS</div>
+        <div className="Title">Settings</div>
       </div>
     );
   }

@@ -19,7 +19,7 @@ class DataPane extends Component{
   render(){
     return(
       <div className="DataPane">
-        <div>DATA</div>
+        <div className="Title">Data</div>
         {this.state.data && <DataTable data={this.state.data}/>}
       </div>
     );

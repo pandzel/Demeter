@@ -6,7 +6,7 @@ class ToolsPane extends Component{
   render(){
     return(
       <div className="ToolsPane">
-        <div>TOOLS</div>
+        <div className="Title">Tools</div>
       </div>
     );
   }

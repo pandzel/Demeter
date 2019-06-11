@@ -19,7 +19,7 @@ class SetsPane extends Component{
   render(){
     return(
       <div className="SetsPane">
-        <div className="SetsTitle">Sets</div>
+        <div className="Title">Sets</div>
         {this.state.data && <SetsTable data={this.state.data}/>}
       </div>
     );
