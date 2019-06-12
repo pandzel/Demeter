@@ -33,7 +33,9 @@ class SettingsForm extends Component{
   }
   
   onSaveClick = (e) => {
-    this.api.save(this.state.data).then(result => {
+    var data = Object.assign(this.state.data);
+    data.adminEmail = data.adminEmail.split(/[ ]*,[ ]*/);
+    this.api.save(data).then(result => {
       this.state.updated = false;
       this.setState(this.state);
     });

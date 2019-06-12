@@ -27,7 +27,15 @@ public class OperationStatus {
   public boolean success;
   public String error;
   
-  public OperationStatus() {}
+  public OperationStatus() {
+    this.success = true;
+  }
+  
+  public OperationStatus(String error) {
+    this.id = null;
+    this.success = false;
+    this.error = error;
+  }
   
   public OperationStatus(UUID id) {
     this.id = id;

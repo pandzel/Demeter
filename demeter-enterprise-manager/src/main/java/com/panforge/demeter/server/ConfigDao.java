@@ -26,4 +26,11 @@ public interface ConfigDao {
    * @return config data
    */
   ConfigData loadConfig();
+  
+  /**
+   * Saves config.
+   * @param configData config data
+   * @return <code>true</code> if success
+   */
+  boolean saveConfig(ConfigData configData);
 }

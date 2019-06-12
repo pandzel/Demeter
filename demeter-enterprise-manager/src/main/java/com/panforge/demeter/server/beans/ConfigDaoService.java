@@ -15,12 +15,15 @@
  */
 package com.panforge.demeter.server.beans;
 
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.server.ConfigDao;
 import com.panforge.demeter.server.Connection;
 import com.panforge.demeter.server.elements.ConfigData;
+import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +58,14 @@ public class ConfigDaoService implements ConfigDao {
       configData.adminEmail = one.getList("adminEmail", String.class).stream().toArray(String[]::new);
     }
     return configData;
+  }
+  
+  @Override
+  public boolean saveConfig(ConfigData configData) {
+    PreparedStatement stmt = conn.prepare("INSERT INTO config (id, repositoryName, baseURL, adminEmail) VALUES (0, ?, ?, ?)");
+    BoundStatement bind = stmt.bind(configData.repositoryName, configData.baseURL, configData.adminEmail!=null? Arrays.asList(configData.adminEmail): null);
+    ResultSet result = conn.execute(bind);
+    return result!=null && result.getExecutionInfo().getErrors().isEmpty();
   }
   
   private ConfigData createDefaultConfigData() {

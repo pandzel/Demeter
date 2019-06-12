@@ -10,8 +10,7 @@ class ConfigApi {
   
   save(data) {
     return new Promise((resolve, reject) => {
-      // TODO: provide implementation once server side is done
-      resolve({success: true});
+      axios.post(`${config.context}rest/config`, data).then((result)=>resolve(result));
     });
   }
 }
