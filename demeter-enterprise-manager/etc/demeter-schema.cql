@@ -13,6 +13,14 @@ CREATE TABLE config (
    adminEmail LIST<TEXT>
 );
 
+CREATE TABLE tokens (
+   id UUID PRIMARY KEY,
+   value TEXT,
+   expiration BIGINT,
+   completeListSize BIGINT,
+   cursor BIGINT
+) WITH default_time_to_live = 60;
+
 CREATE TABLE sets (
    id UUID PRIMARY KEY,
    setSpec TEXT,
