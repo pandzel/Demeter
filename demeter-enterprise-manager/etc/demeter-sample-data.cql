@@ -21,3 +21,6 @@ INSERT INTO records_sets (recordId, setId)
 
 INSERT INTO sets_records (setId, recordId)
   VALUES (10000000-0000-0000-0000-000000000001, 20000000-0000-0000-0000-000000000001);
+  
+UPDATE counter SET counter=3 WHERE table_name='sets';
+UPDATE counter SET counter=1 WHERE table_name='records';

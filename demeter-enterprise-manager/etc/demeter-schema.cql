@@ -6,6 +6,11 @@ CREATE KEYSPACE demeter
 // create tables
 USE demeter;
 
+CREATE TABLE counter (
+   table_name TEXT PRIMARY KEY,
+   counter BIGINT
+);
+
 CREATE TABLE config (
    id INT PRIMARY KEY,
    repositoryName TEXT,
