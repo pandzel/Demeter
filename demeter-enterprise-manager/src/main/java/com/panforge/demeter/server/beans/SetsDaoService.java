@@ -92,7 +92,13 @@ public class SetsDaoService implements SetsDao {
     PreparedStatement stmt = conn.prepare("insert into sets (id, setSpec, setName) values (?, ?, ?)");
     BoundStatement bound = stmt.bind(fromDatabase.id, fromDatabase.setSpec, fromDatabase.setName);
     ResultSet result = conn.execute(bound);
-    return result!=null && result.getExecutionInfo().getErrors().isEmpty()? fromDatabase: null;
+    
+    boolean success = result!=null && result.getExecutionInfo().getErrors().isEmpty();
+    if (success) {
+      conn.execute("update counter set counter = counter+1 where table_name = 'sets'");
+    }
+    
+    return success? fromDatabase: null;
   }
 
   @Override
@@ -100,7 +106,13 @@ public class SetsDaoService implements SetsDao {
     PreparedStatement stmt = conn.prepare("delete from sets where id = ?");
     BoundStatement bound = stmt.bind(id);
     ResultSet result = conn.execute(bound);
-    return result!=null && result.getExecutionInfo().getErrors().isEmpty();
+    
+    boolean success = result!=null && result.getExecutionInfo().getErrors().isEmpty();
+    if (success) {
+      conn.execute("update counter set counter = counter-1 where table_name = 'sets'");
+    }
+    
+    return success;
   }
 
   @Override
@@ -116,7 +128,9 @@ public class SetsDaoService implements SetsDao {
     BoundStatement updateBound = updateStmt.bind(fromDatabase.setSpec, fromDatabase.setName, fromDatabase.id);
     ResultSet result = conn.execute(updateBound);
     
-    return result!=null && result.getExecutionInfo().getErrors().isEmpty();
+    boolean success = result!=null && result.getExecutionInfo().getErrors().isEmpty();
+    
+    return success;
   }
   
   private void readRow(SetData setData, Row row) {
