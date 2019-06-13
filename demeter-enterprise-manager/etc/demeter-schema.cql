@@ -8,7 +8,7 @@ USE demeter;
 
 CREATE TABLE counter (
    table_name TEXT PRIMARY KEY,
-   counter BIGINT
+   counter COUNTER
 );
 
 CREATE TABLE config (
