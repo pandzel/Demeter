@@ -83,6 +83,7 @@ public class ContentProviderBean implements ContentProvider {
   @Override
   public Cursor<Set> listSets() throws NoSetHierarchyException {
     ResultSet rs = conn.execute("select * from sets");
+    // TODO: replace getAvailableWithoutFetching() with reading counter value
     int total = rs.getAvailableWithoutFetching();
     return Cursor.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
       String setSpec = row.getString("setSpec");
