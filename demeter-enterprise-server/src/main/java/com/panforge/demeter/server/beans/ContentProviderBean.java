@@ -82,9 +82,8 @@ public class ContentProviderBean implements ContentProvider {
 
   @Override
   public Cursor<Set> listSets() throws NoSetHierarchyException {
+    long total = conn.execute("select counter from counter where table_name = 'sets'").one().getLong("counter");
     ResultSet rs = conn.execute("select * from sets");
-    // TODO: replace getAvailableWithoutFetching() with reading counter value
-    int total = rs.getAvailableWithoutFetching();
     return Cursor.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
       String setSpec = row.getString("setSpec");
       String setName = row.getString("setName");
@@ -94,18 +93,18 @@ public class ContentProviderBean implements ContentProvider {
 
   private Cursor<UUID> listSetsIdsFor(String recordId) {
     ResultSet rs = conn.execute("select setId from records_sets where recordId = " + recordId);
-    int total = rs.getAvailableWithoutFetching();
-    return Cursor.of(StreamSupport.stream(rs.spliterator(), false).map(row -> row.getUuid("setId")), total);
+    List<Row> rows = rs.all();
+    return Cursor.of(rows.stream().map(row -> row.getUuid("setId")), rows.size());
   }
 
   private Cursor<Set> listSetsFor(String recordId) {
     ResultSet rs = conn.execute("select * from sets where id in (" + listSetsIdsFor(recordId).createStream().map(UUID::toString).collect(Collectors.joining(",")) + ")");
-    int total = rs.getAvailableWithoutFetching();
-    return Cursor.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
+    List<Row> rows = rs.all();
+    return Cursor.of(rows.stream().map(row -> {
       String setSpec = row.getString("setSpec");
       String setName = row.getString("setName");
       return new Set(setSpec, setName, null);
-    }), total);
+    }), rows.size());
   }
 
   @Override
@@ -117,8 +116,8 @@ public class ContentProviderBean implements ContentProvider {
     } catch (NoMetadataFormatsException | IdDoesNotExistException ex) {
       throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", filter.metadataPrefix), ex);
     }
+    long total = conn.execute("select counter from counter where table_name = 'records'").one().getLong("counter");
     ResultSet rs = conn.execute("select id, identifier, date from records");
-    int total = rs.getAvailableWithoutFetching();
     return Cursor.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
       UUID id = row.getUuid("id");
       String identifier = row.getString("identifier");
