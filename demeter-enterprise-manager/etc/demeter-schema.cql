@@ -20,10 +20,8 @@ CREATE TABLE config (
 
 CREATE TABLE tokens (
    id UUID PRIMARY KEY,
-   value TEXT,
-   expiration BIGINT,
-   completeListSize BIGINT,
-   cursor BIGINT
+   cql TEXT,
+   pagingState TEXT
 ) WITH default_time_to_live = 60;
 
 CREATE TABLE sets (
