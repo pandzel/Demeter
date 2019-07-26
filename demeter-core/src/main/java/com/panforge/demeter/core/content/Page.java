@@ -16,8 +16,9 @@
 package com.panforge.demeter.core.content;
 
 import java.io.Closeable;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Page of data.
@@ -37,4 +38,30 @@ public interface Page<T> extends Closeable, StreamingIterable<T> {
    */
   PageCursor nextPageCursor();
   
+  static <T> Page<T> of(final List<T> content, final PageCursor nextPageCursor) {
+    return new Page<T>() {
+      @Override
+      public long total() {
+        return content.size();
+      }
+
+      @Override
+      public PageCursor nextPageCursor() {
+        return nextPageCursor;
+      }
+
+      @Override
+      public void close() throws IOException {
+      }
+
+      @Override
+      public Iterator<T> iterator() {
+        return content.iterator();
+      }
+    };
+  }
+  
+  static <T> Page<T> of(final List<T> content) {
+    return of(content, null);
+  }
 }
