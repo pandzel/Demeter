@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.content.Filter;
 import com.panforge.demeter.core.content.Page;
+import com.panforge.demeter.core.content.PageCursorCodec;
 import com.panforge.demeter.core.content.StreamingIterable;
 import com.panforge.demeter.server.Connection;
 import java.time.LocalDate;
@@ -61,6 +62,9 @@ public class ContentProviderBean implements ContentProvider {
 
   @Autowired
   private Connection conn;
+  
+  @Autowired
+  private PageCursorCodec pageCursorCodec;
 
   @PostConstruct
   public void construct() {
