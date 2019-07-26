@@ -17,7 +17,6 @@ package com.panforge.demeter.service;
 
 import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.core.content.ContentProvider;
-import com.panforge.demeter.core.content.Cursor;
 import com.panforge.demeter.core.api.Context;
 import com.panforge.demeter.core.api.RequestParser;
 import com.panforge.demeter.core.api.ResponseFactory;
@@ -31,6 +30,8 @@ import com.panforge.demeter.core.api.exception.IdDoesNotExistException;
 import com.panforge.demeter.core.api.exception.NoMetadataFormatsException;
 import com.panforge.demeter.core.api.exception.NoRecordsMatchException;
 import com.panforge.demeter.core.api.exception.NoSetHierarchyException;
+import com.panforge.demeter.core.content.Page;
+import com.panforge.demeter.core.content.StreamingIterable;
 import com.panforge.demeter.core.model.request.GetRecordRequest;
 import com.panforge.demeter.core.model.request.IdentifyRequest;
 import com.panforge.demeter.core.model.request.ListMetadataFormatsRequest;
@@ -178,11 +179,10 @@ public class Service {
   }
   
   private String createListMetadataFormatsResponse(ListMetadataFormatsRequest request) throws IdDoesNotExistException, NoMetadataFormatsException {
-    try (Cursor<MetadataFormat> metadataFormats = repo.listMetadataFormats(request.getIdentifier());) {
-      MetadataFormat[] metadataFormatsArray = StreamSupport.stream(metadataFormats.spliterator(), false).toArray(MetadataFormat[]::new);
-      ListMetadataFormatsResponse metadataFormatsResponse = new ListMetadataFormatsResponse(request.getParameters(), OffsetDateTime.now(), metadataFormatsArray);
-      return factory.createListMetadataFormatsResponse(metadataFormatsResponse);
-    }
+    StreamingIterable<MetadataFormat> metadataFormats = repo.listMetadataFormats(request.getIdentifier());
+    MetadataFormat[] metadataFormatsArray = StreamSupport.stream(metadataFormats.spliterator(), false).toArray(MetadataFormat[]::new);
+    ListMetadataFormatsResponse metadataFormatsResponse = new ListMetadataFormatsResponse(request.getParameters(), OffsetDateTime.now(), metadataFormatsArray);
+    return factory.createListMetadataFormatsResponse(metadataFormatsResponse);
   }
   
   private String createGetRecordResponse(GetRecordRequest request) throws IdDoesNotExistException, CannotDisseminateFormatException {
@@ -192,7 +192,7 @@ public class Service {
   }
   
   private String createListSetsResponse(ListSetsRequest request) throws BadResumptionTokenException, NoSetHierarchyException {
-    try (Cursor<Set> listSets = repo.listSets();) {
+    try (Page<Set> listSets = repo.listSets();) {
       Spliterator<Set> spliterator = listSets.spliterator();
       return createListSetsSupplier(request, new ArrayList<>(), spliterator, listSets.total(), 0).get();
     }
@@ -213,7 +213,7 @@ public class Service {
   }
   
   private String createListIdentifiersResponse(ListIdentifiersRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    try (Cursor<Header> headers = repo.listHeaders(request.getFilter());) {
+    try (Page<Header> headers = repo.listHeaders(request.getFilter());) {
       Spliterator<Header> spliterator = headers.spliterator();
       return createListIdentifiersSupplier(request, new ArrayList<>(), spliterator, headers.total(), 0).get();
     }
@@ -234,7 +234,7 @@ public class Service {
   }
   
   private String createListRecordsResponse(ListRecordsRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    try (Cursor<Header> headers = repo.listHeaders(request.getFilter());) {
+    try (Page<Header> headers = repo.listHeaders(request.getFilter());) {
       Spliterator<Record> spliterator = StreamSupport.stream(headers.spliterator(), false)
               .map(h->{ 
                 if (!h.deleted) {

@@ -38,14 +38,14 @@ public interface ContentProvider {
    * @throws IdDoesNotExistException if id does not exist
    * @throws NoMetadataFormatsException if no metadata formats
    */
-  Cursor<MetadataFormat> listMetadataFormats(URI identifier) throws IdDoesNotExistException, NoMetadataFormatsException;
+  StreamingIterable<MetadataFormat> listMetadataFormats(URI identifier) throws IdDoesNotExistException, NoMetadataFormatsException;
   
   /**
    * Lists sets.
    * @return iterable of sets
    * @throws NoSetHierarchyException if error iterating sets
    */
-  Cursor<Set> listSets() throws NoSetHierarchyException;
+  Page<Set> listSets() throws NoSetHierarchyException;
   
   /**
    * Lists headers.
@@ -55,7 +55,7 @@ public interface ContentProvider {
    * @throws NoRecordsMatchException if no records
    * @throws NoSetHierarchyException if set hierarchy not supported
    */
-  Cursor<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException;
+  Page<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException;
   
   /**
    * Reads record.

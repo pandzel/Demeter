@@ -21,8 +21,9 @@ import com.panforge.demeter.core.api.exception.NoMetadataFormatsException;
 import com.panforge.demeter.core.api.exception.NoRecordsMatchException;
 import com.panforge.demeter.core.api.exception.NoSetHierarchyException;
 import com.panforge.demeter.core.content.ContentProvider;
-import com.panforge.demeter.core.content.Cursor;
 import com.panforge.demeter.core.content.Filter;
+import com.panforge.demeter.core.content.Page;
+import com.panforge.demeter.core.content.StreamingIterable;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.model.response.elements.Record;
@@ -36,6 +37,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,18 +94,18 @@ public class MockupContentProvider implements ContentProvider {
   }
 
   @Override
-  public Cursor<MetadataFormat> listMetadataFormats(URI identifier) throws IdDoesNotExistException, NoMetadataFormatsException {
-    return Cursor.of(new MetadataFormat[]{OAI_DC});
+  public StreamingIterable<MetadataFormat> listMetadataFormats(URI identifier) throws IdDoesNotExistException, NoMetadataFormatsException {
+    return Page.of(Arrays.asList(new MetadataFormat[]{OAI_DC}));
   }
 
   @Override
-  public Cursor<Set> listSets() throws NoSetHierarchyException {
-    return Cursor.of(new Set[]{MAIN_SET});
+  public Page<Set> listSets() throws NoSetHierarchyException {
+    return Page.of(Arrays.asList(new Set[]{MAIN_SET}));
   }
 
   @Override
-  public Cursor<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    return Cursor.of(descriptors.stream().map(MetaDescriptor::toHeader), descriptors.size());
+  public Page<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+    return Page.of(descriptors.stream().map(MetaDescriptor::toHeader), descriptors.size());
   }
 
   @Override

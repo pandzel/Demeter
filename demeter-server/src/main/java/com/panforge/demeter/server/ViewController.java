@@ -16,8 +16,8 @@
 package com.panforge.demeter.server;
 
 import com.panforge.demeter.core.content.ContentProvider;
-import com.panforge.demeter.core.content.Cursor;
 import com.panforge.demeter.core.content.Filter;
+import com.panforge.demeter.core.content.Page;
 import com.panforge.demeter.core.model.response.elements.Header;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,9 +50,9 @@ public class ViewController extends AbstractController {
     model.addObject("configFile", configService.getConfigFile().getAbsoluteFile());
     model.addObject("propFile", Thread.currentThread().getContextClassLoader().getResource("config/config.properties"));
     
-    Cursor<Header> headers = contentProvider.listHeaders(new Filter(null, null, "oai_dc", null));
+    Page<Header> headers = contentProvider.listHeaders(new Filter(null, null, "oai_dc", null));
     
-    List<String> firstIds = headers.createStream().limit(5).map(h->h.identifier.toASCIIString()).collect(Collectors.toList());
+    List<String> firstIds = headers.stream().limit(5).map(h->h.identifier.toASCIIString()).collect(Collectors.toList());
     model.addObject("firstIds", firstIds);
 		
 		return model;

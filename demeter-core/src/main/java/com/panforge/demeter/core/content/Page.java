@@ -16,15 +16,17 @@
 package com.panforge.demeter.core.content;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Page of data.
  * @param <T> data type
  */
 public interface Page<T> extends Closeable, StreamingIterable<T> {
+  @Override
+  public void close();
   
   /**
    * Gets total number of elements.
@@ -51,7 +53,7 @@ public interface Page<T> extends Closeable, StreamingIterable<T> {
       }
 
       @Override
-      public void close() throws IOException {
+      public void close() {
       }
 
       @Override
@@ -63,5 +65,32 @@ public interface Page<T> extends Closeable, StreamingIterable<T> {
   
   static <T> Page<T> of(final List<T> content) {
     return of(content, null);
+  }
+  
+  static <T> Page<T> of(final Stream<T> content, long total, final PageCursor nextPageCursor) {
+    return new Page<T>() {
+      @Override
+      public long total() {
+        return total;
+      }
+
+      @Override
+      public PageCursor nextPageCursor() {
+        return nextPageCursor;
+      }
+
+      @Override
+      public void close() {
+      }
+
+      @Override
+      public Iterator<T> iterator() {
+        return content.iterator();
+      }
+    };
+  }
+  
+  static <T> Page<T> of(final Stream<T> content, long total) {
+    return of(content, total, null);
   }
 }

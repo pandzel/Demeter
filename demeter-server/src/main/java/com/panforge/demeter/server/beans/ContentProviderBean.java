@@ -29,7 +29,6 @@ import java.net.URI;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.springframework.stereotype.Service;
-import com.panforge.demeter.core.content.Cursor;
 import com.panforge.demeter.server.MetaDescriptor;
 import com.panforge.demeter.server.MetaProcessorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +44,9 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.content.Filter;
+import com.panforge.demeter.core.content.Page;
+import com.panforge.demeter.core.content.StreamingIterable;
+import java.awt.Cursor;
 import java.util.List;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
@@ -81,21 +83,21 @@ public class ContentProviderBean implements ContentProvider {
   }
 
   @Override
-  public Cursor<MetadataFormat> listMetadataFormats(URI uri) throws  IdDoesNotExistException, NoMetadataFormatsException {
+  public StreamingIterable<MetadataFormat> listMetadataFormats(URI uri) throws  IdDoesNotExistException, NoMetadataFormatsException {
     List<MetadataFormat> formats = metadataProcessorService.listMetadataFormats().stream().collect(Collectors.toList());
     if (formats.isEmpty()) {
       throw new NoMetadataFormatsException(uri==null? String.format("No metadata formats"): String.format("No metadata formats for: %s", uri));
     }
-    return Cursor.of(formats);
+    return Page.of(formats);
   }
 
   @Override
-  public Cursor<Set> listSets() throws NoSetHierarchyException {
+  public Page<Set> listSets() throws NoSetHierarchyException {
     throw new NoSetHierarchyException("This repository does not support set hierarchy.");
   }
 
   @Override
-  public Cursor<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+  public Page<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     if (filter.set!=null) {
       throw new NoSetHierarchyException("This repository does not support set hierarchy.");
     }
@@ -121,7 +123,7 @@ public class ContentProviderBean implements ContentProvider {
     if (headers.isEmpty()) {
       throw new NoRecordsMatchException(String.format("No matching records."));
     }
-    return Cursor.of(headers);
+    return Page.of(headers);
   }
 
   @Override

@@ -82,7 +82,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListMetadataFormats.name(), response.getParameter("verb"));
     
     ListMetadataFormatsResponse responseObj = (ListMetadataFormatsResponse)response;
-    assertEquals("Invalid number of formats", contentProvider.listMetadataFormats(null).total(), responseObj.metadataFormats.length);
+    assertEquals("Invalid number of formats", contentProvider.listMetadataFormats(null).stream().count(), responseObj.metadataFormats.length);
   }
   
   @Test
