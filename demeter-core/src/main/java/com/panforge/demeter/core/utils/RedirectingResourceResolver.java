@@ -44,6 +44,7 @@ public class RedirectingResourceResolver implements LSResourceResolver {
             InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
             Input input = new Input();
             input.setCharacterStream(reader);
+            input.setSystemId(location);
             return input;
           }
         }
