@@ -31,6 +31,7 @@ import com.panforge.demeter.core.api.exception.NoMetadataFormatsException;
 import com.panforge.demeter.core.api.exception.NoRecordsMatchException;
 import com.panforge.demeter.core.api.exception.NoSetHierarchyException;
 import com.panforge.demeter.core.content.Page;
+import com.panforge.demeter.core.content.PageCursor;
 import com.panforge.demeter.core.content.StreamingIterable;
 import com.panforge.demeter.core.model.request.GetRecordRequest;
 import com.panforge.demeter.core.model.request.IdentifyRequest;
@@ -62,8 +63,9 @@ import org.apache.commons.lang3.Validate;
 
 /**
  * Service.
+ * @param <PC> page cursor type
  */
-public class Service {
+public class Service<PC extends PageCursor> {
   public static final int DEFAULT_BATCH_SIZE = 10;
   private final ContentProvider repo;
   private final TokenManager tokenManager;
@@ -80,7 +82,7 @@ public class Service {
    * @param tokenManager token manager
    * @param batchSize batch size
    */
-  public Service(Config config, ContentProvider repo, TokenManager tokenManager, int batchSize) {
+  public Service(Config config, ContentProvider<PC> repo, TokenManager tokenManager, int batchSize) {
     this.repo = repo;
     this.tokenManager = tokenManager;
     this.batchSize = batchSize;
@@ -192,7 +194,8 @@ public class Service {
   }
   
   private String createListSetsResponse(ListSetsRequest request) throws BadResumptionTokenException, NoSetHierarchyException {
-    try (Page<Set> listSets = repo.listSets();) {
+    // TODO: consider page cursor
+    try (Page<Set> listSets = repo.listSets(null);) {
       Spliterator<Set> spliterator = listSets.spliterator();
       return createListSetsSupplier(request, new ArrayList<>(), spliterator, listSets.total(), 0).get();
     }
@@ -213,7 +216,8 @@ public class Service {
   }
   
   private String createListIdentifiersResponse(ListIdentifiersRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    try (Page<Header> headers = repo.listHeaders(request.getFilter());) {
+    // TODO: consider page cursor
+    try (Page<Header> headers = repo.listHeaders(request.getFilter(), null);) {
       Spliterator<Header> spliterator = headers.spliterator();
       return createListIdentifiersSupplier(request, new ArrayList<>(), spliterator, headers.total(), 0).get();
     }
@@ -234,7 +238,8 @@ public class Service {
   }
   
   private String createListRecordsResponse(ListRecordsRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    try (Page<Header> headers = repo.listHeaders(request.getFilter());) {
+    // TODO: consider page cursor
+    try (Page<Header> headers = repo.listHeaders(request.getFilter(), null);) {
       Spliterator<Record> spliterator = StreamSupport.stream(headers.spliterator(), false)
               .map(h->{ 
                 if (!h.deleted) {

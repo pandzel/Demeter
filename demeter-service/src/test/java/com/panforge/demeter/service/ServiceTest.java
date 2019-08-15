@@ -21,7 +21,6 @@ import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.model.request.*;
 import com.panforge.demeter.core.model.response.*;
-import com.panforge.demeter.core.utils.QueryUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -98,7 +97,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListSets.name(), response.getParameter("verb"));
     
     ListSetsResponse responseObj = (ListSetsResponse)response;
-    assertEquals("Invalid number of formats", contentProvider.listSets().total(), responseObj.listSets.length);
+    assertEquals("Invalid number of formats", contentProvider.listSets(null).total(), responseObj.listSets.length);
   }
   
   @Test
@@ -114,7 +113,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListIdentifiers.name(), response.getParameter("verb"));
     
     ListIdentifiersResponse responseObj = (ListIdentifiersResponse)response;
-    assertEquals("Invalid number of identifiers", contentProvider.listHeaders(null).total(), responseObj.headers.length);
+    assertEquals("Invalid number of identifiers", contentProvider.listHeaders(null, null).total(), responseObj.headers.length);
   }
   
   @Test
@@ -146,7 +145,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListIdentifiers.name(), response.getParameter("verb"));
     
     responseObj = (ListIdentifiersResponse)response;
-    assertTrue("Invalid number of identifiers", auxBatchSize + responseObj.headers.length == contentProvider.listHeaders(null).total());
+    assertTrue("Invalid number of identifiers", auxBatchSize + responseObj.headers.length == contentProvider.listHeaders(null, null).total());
   }
   
   @Test
@@ -162,7 +161,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListRecords.name(), response.getParameter("verb"));
     
     ListRecordsResponse responseObj = (ListRecordsResponse)response;
-    assertEquals("Invalid number of formats", contentProvider.listHeaders(null).total(), responseObj.records.length);
+    assertEquals("Invalid number of formats", contentProvider.listHeaders(null, null).total(), responseObj.records.length);
   }
   
   @Test
@@ -194,7 +193,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListRecords.name(), response.getParameter("verb"));
     
     responseObj = (ListRecordsResponse)response;
-    assertTrue("Invalid number of records", auxBatchSize + responseObj.records.length == contentProvider.listHeaders(null).total());
+    assertTrue("Invalid number of records", auxBatchSize + responseObj.records.length == contentProvider.listHeaders(null, null).total());
   }
   
   @Test

@@ -58,7 +58,7 @@ import org.xml.sax.SAXException;
 /**
  * Mockup content provider.
  */
-public class MockupContentProvider implements ContentProvider {
+public class MockupContentProvider implements ContentProvider<MockupPageCursor> {
 
   private final static XPathFactory XPATH_FACTORY = XPathFactory.newInstance();
   private final static XPath XPATH = XPATH_FACTORY.newXPath();
@@ -99,12 +99,12 @@ public class MockupContentProvider implements ContentProvider {
   }
 
   @Override
-  public Page<Set> listSets() throws NoSetHierarchyException {
+  public Page<Set> listSets(MockupPageCursor pageCursor) throws NoSetHierarchyException {
     return Page.of(Arrays.asList(new Set[]{MAIN_SET}));
   }
 
   @Override
-  public Page<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+  public Page<Header> listHeaders(Filter filter, MockupPageCursor pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     return Page.of(descriptors.stream().map(MetaDescriptor::toHeader), descriptors.size());
   }
 

@@ -15,23 +15,18 @@
  */
 package com.panforge.demeter.server.beans;
 
-import com.panforge.demeter.core.content.PageCursorCodec;
-import org.springframework.stereotype.Service;
+import com.panforge.demeter.core.content.PageCursor;
 
 /**
- * Page cursor codec bean.
+ *
+ * @author Piotr Andzel
  */
-@Service
-public class PageCursorCodesBean implements PageCursorCodec<PageCursorImpl> {
+public class PageCursorImpl implements PageCursor {
+  
+  public final String pageCursorStr;
 
-  @Override
-  public String toString(PageCursorImpl pageCursor) {
-    return pageCursor.pageCursorStr;
+  public PageCursorImpl(String pageCursorStr) {
+    this.pageCursorStr = pageCursorStr;
   }
-
-  @Override
-  public PageCursorImpl fromString(String pageCursorStr) {
-    return new PageCursorImpl(pageCursorStr);
-  }
- 
+  
 }

@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * Repository bean.
  */
 @Service
-public class ContentProviderBean implements ContentProvider {
+public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
   private static final Logger LOG = LoggerFactory.getLogger(ContentProviderBean.class);
   
   @Autowired
@@ -95,12 +95,12 @@ public class ContentProviderBean implements ContentProvider {
   }
 
   @Override
-  public Page<Set> listSets() throws NoSetHierarchyException {
+  public Page<Set> listSets(PageCursorImpl pageCursor) throws NoSetHierarchyException {
     throw new NoSetHierarchyException("This repository does not support set hierarchy.");
   }
 
   @Override
-  public Page<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+  public Page<Header> listHeaders(Filter filter, PageCursorImpl pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     if (filter.set!=null) {
       throw new NoSetHierarchyException("This repository does not support set hierarchy.");
     }

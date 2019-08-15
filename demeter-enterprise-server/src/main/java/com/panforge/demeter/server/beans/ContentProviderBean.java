@@ -53,7 +53,7 @@ import org.w3c.dom.Document;
  * Repository bean.
  */
 @Service
-public class ContentProviderBean implements ContentProvider {
+public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
 
   private static final Logger LOG = LoggerFactory.getLogger(ContentProviderBean.class);
 
@@ -86,7 +86,7 @@ public class ContentProviderBean implements ContentProvider {
   }
 
   @Override
-  public Page<Set> listSets() throws NoSetHierarchyException {
+  public Page<Set> listSets(PageCursorImpl pageCursor) throws NoSetHierarchyException {
     long total = conn.execute("select counter from counter where table_name = 'sets'").one().getLong("counter");
     ResultSet rs = conn.execute("select * from sets");
     return Page.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
@@ -113,7 +113,7 @@ public class ContentProviderBean implements ContentProvider {
   }
 
   @Override
-  public Page<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+  public Page<Header> listHeaders(Filter filter, PageCursorImpl pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     try {
       if (!StreamSupport.stream(listMetadataFormats(null).spliterator(), false).map(f -> f.metadataPrefix).anyMatch(p -> p.equals(filter.metadataPrefix))) {
         throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", filter.metadataPrefix));

@@ -17,20 +17,21 @@ package com.panforge.demeter.core.content;
 
 /**
  * Page cursor codec.
+ * @param <PC> type of the page cursor
  */
-public interface PageCursorCodec {
+public interface PageCursorCodec<PC extends PageCursor> {
   
   /**
    * Encode page cursor.
    * @param pageCursor page cursor
    * @return encoded page cursor
    */
-  String toString(PageCursor pageCursor);
+  String toString(PC pageCursor);
   
   /**
    * Decode page cursor.
    * @param pageCursorStr encoded page cursor
    * @return page cursor
    */
-  PageCursor fromString(String pageCursorStr);
+  PC fromString(String pageCursorStr);
 }

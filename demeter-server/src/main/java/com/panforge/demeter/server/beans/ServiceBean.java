@@ -30,11 +30,11 @@ import org.slf4j.LoggerFactory;
  * Service bean.
  */
 @Service
-public class ServiceBean extends com.panforge.demeter.service.Service {
+public class ServiceBean extends com.panforge.demeter.service.Service<PageCursorImpl> {
   private static final Logger LOG = LoggerFactory.getLogger(ServiceBean.class);
 
   @Autowired 
-  public ServiceBean(ConfigService config, ContentProvider repo, TokenManager tokenManager, @Value("${batchSize}") int batchSize) {
+  public ServiceBean(ConfigService config, ContentProvider<PageCursorImpl> repo, TokenManager tokenManager, @Value("${batchSize}") int batchSize) {
     super(config.getConfig(), repo, tokenManager, batchSize);
   }
   

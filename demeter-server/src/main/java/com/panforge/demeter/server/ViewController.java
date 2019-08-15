@@ -50,7 +50,8 @@ public class ViewController extends AbstractController {
     model.addObject("configFile", configService.getConfigFile().getAbsoluteFile());
     model.addObject("propFile", Thread.currentThread().getContextClassLoader().getResource("config/config.properties"));
     
-    Page<Header> headers = contentProvider.listHeaders(new Filter(null, null, "oai_dc", null));
+    // TODO: consider page cursor
+    Page<Header> headers = contentProvider.listHeaders(new Filter(null, null, "oai_dc", null), null);
     
     List<String> firstIds = headers.stream().limit(5).map(h->h.identifier.toASCIIString()).collect(Collectors.toList());
     model.addObject("firstIds", firstIds);

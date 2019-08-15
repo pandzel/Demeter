@@ -28,8 +28,9 @@ import java.net.URI;
 
 /**
  * Content provider.
+ * @param <PC> page cursor type
  */
-public interface ContentProvider {
+public interface ContentProvider<PC extends PageCursor> {
   
   /**
    * Lists metadata formats.
@@ -42,20 +43,22 @@ public interface ContentProvider {
   
   /**
    * Lists sets.
-   * @return iterable of sets
+   * @param pageCursor page cursor
+   * @return page of sets
    * @throws NoSetHierarchyException if error iterating sets
    */
-  Page<Set> listSets() throws NoSetHierarchyException;
+  Page<Set> listSets(PC pageCursor) throws NoSetHierarchyException;
   
   /**
    * Lists headers.
    * @param filter filter
-   * @return iterable of headers
+   * @param pageCursor page cursor
+   * @return page of headers
    * @throws CannotDisseminateFormatException if invalid metadata format
    * @throws NoRecordsMatchException if no records
    * @throws NoSetHierarchyException if set hierarchy not supported
    */
-  Page<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException;
+  Page<Header> listHeaders(Filter filter, PC pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException;
   
   /**
    * Reads record.
