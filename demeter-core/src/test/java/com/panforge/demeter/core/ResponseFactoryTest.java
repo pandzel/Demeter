@@ -36,6 +36,7 @@ import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.elements.Set;
 import static com.panforge.demeter.core.DocumentSamples.*;
+import com.panforge.demeter.core.utils.RedirectingResourceResolver;
 import com.panforge.demeter.core.utils.namespace.Namespaces;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -102,6 +103,7 @@ public class ResponseFactoryTest {
     xpath = xfactory.newXPath();
 
     SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    schemaFactory.setResourceResolver(new RedirectingResourceResolver());
     List<StreamSource> sources = Namespaces.NSLIST.stream()
             .filter(ns->!StringUtils.isBlank(ns.schema))
             .map(ns->{
