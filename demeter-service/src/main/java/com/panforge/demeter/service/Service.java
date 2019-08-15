@@ -67,7 +67,7 @@ import org.apache.commons.lang3.Validate;
  */
 public class Service<PC extends PageCursor> {
   public static final int DEFAULT_BATCH_SIZE = 10;
-  private final ContentProvider repo;
+  private final ContentProvider<PC> repo;
   private final TokenManager tokenManager;
   
   private final Context ctx;
