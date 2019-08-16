@@ -56,8 +56,9 @@ import org.slf4j.LoggerFactory;
  * Repository bean.
  */
 @Service
-public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
+public class ContentProviderBean implements ContentProvider<PageCursorByPageNumber> {
   private static final Logger LOG = LoggerFactory.getLogger(ContentProviderBean.class);
+  private static final int PAGE_SIZE = 100;
   
   @Autowired
   private RootFolderService rootFolderServise;
@@ -95,12 +96,12 @@ public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
   }
 
   @Override
-  public Page<Set> listSets(PageCursorImpl pageCursor) throws NoSetHierarchyException {
+  public Page<Set> listSets(PageCursorByPageNumber pageCursor) throws NoSetHierarchyException {
     throw new NoSetHierarchyException("This repository does not support set hierarchy.");
   }
 
   @Override
-  public Page<Header> listHeaders(Filter filter, PageCursorImpl pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+  public Page<Header> listHeaders(Filter filter, PageCursorByPageNumber pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     if (filter.set!=null) {
       throw new NoSetHierarchyException("This repository does not support set hierarchy.");
     }
@@ -111,6 +112,7 @@ public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
     } catch (NoMetadataFormatsException|IdDoesNotExistException ex) {
         throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", filter.metadataPrefix), ex);
     }
+    int skip = pageCursor!=null && pageCursor.pageNumber!=null? pageCursor.pageNumber * PAGE_SIZE: 0;
     List<Header> headers = descriptors.values().stream()
                     .map(l -> {
                       MetaDescriptor md = l.values().stream()
@@ -121,12 +123,19 @@ public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
                       return md != null ? md.toHeader() : null;
                     })
                     .filter(h -> h != null)
+                    .skip(skip)
+                    .limit(PAGE_SIZE)
                     .collect(Collectors.toList());    
     
     if (headers.isEmpty()) {
       throw new NoRecordsMatchException(String.format("No matching records."));
     }
-    return Page.of(headers);
+    PageCursorByPageNumber nextPageCursor = null;
+    if (headers.size()>=PAGE_SIZE) {
+      nextPageCursor = new PageCursorByPageNumber();
+      nextPageCursor.pageNumber = skip + PAGE_SIZE;
+    }
+    return Page.of(headers, nextPageCursor);
   }
 
   @Override

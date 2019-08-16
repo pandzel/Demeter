@@ -21,12 +21,6 @@ import com.panforge.demeter.core.content.PageCursor;
  *
  * @author Piotr Andzel
  */
-public class PageCursorImpl implements PageCursor {
-  
-  public final String pageCursorStr;
-
-  public PageCursorImpl(String pageCursorStr) {
-    this.pageCursorStr = pageCursorStr;
-  }
-  
+public class PageCursorByPageNumber implements PageCursor {
+  public Integer pageNumber;
 }

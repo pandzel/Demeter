@@ -15,23 +15,39 @@
  */
 package com.panforge.demeter.server.beans;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.panforge.demeter.core.content.PageCursorCodec;
+import java.io.IOException;
 import org.springframework.stereotype.Service;
 
 /**
  * Page cursor codec bean.
  */
 @Service
-public class PageCursorCodesBean implements PageCursorCodec<PageCursorImpl> {
-
-  @Override
-  public String toString(PageCursorImpl pageCursor) {
-    return pageCursor.pageCursorStr;
+public class PageCursorCodesBean implements PageCursorCodec<PageCursorByPageNumber> {
+  private static final ObjectMapper MAPPER = new ObjectMapper();
+  static {
+    MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
   }
 
   @Override
-  public PageCursorImpl fromString(String pageCursorStr) {
-    return new PageCursorImpl(pageCursorStr);
+  public String toString(PageCursorByPageNumber pageCursor) {
+    try {
+      return MAPPER.writeValueAsString(pageCursor);
+    } catch (JsonProcessingException ex) {
+      return "";
+    }
+  }
+
+  @Override
+  public PageCursorByPageNumber fromString(String pageCursorStr) {
+    try {
+      return MAPPER.readValue(pageCursorStr, PageCursorByPageNumber.class);
+    } catch (IOException ex) {
+      return null;
+    }
   }
  
 }
