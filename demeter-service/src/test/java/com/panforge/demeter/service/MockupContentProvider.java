@@ -86,7 +86,7 @@ public class MockupContentProvider implements ContentProvider<MockupPageCursor> 
   
   private final List<MetaDescriptor> descriptors = new ArrayList<>();
   
-  ContentProvider initialize() throws URISyntaxException {
+  ContentProvider<MockupPageCursor> initialize() throws URISyntaxException {
     File root = new File(Thread.currentThread().getContextClassLoader().getResource("content").toURI());
     File[] files = root.listFiles();
     Stream.of(files).map(file -> descriptor(file, parseToXml(file))).forEach(desc->descriptors.add(desc));

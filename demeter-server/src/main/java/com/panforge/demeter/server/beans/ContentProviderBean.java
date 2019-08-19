@@ -45,7 +45,6 @@ import org.xml.sax.SAXException;
 import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.content.Filter;
 import com.panforge.demeter.core.content.Page;
-import com.panforge.demeter.core.content.PageCursorCodec;
 import com.panforge.demeter.core.content.StreamingIterable;
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -68,9 +67,6 @@ public class ContentProviderBean implements ContentProvider<PageCursorByPageNumb
   
   @Autowired
   private MetaProcessorService metadataProcessorService;
-  
-  @Autowired
-  private PageCursorCodec pageCursorCodec;
   
   private final Map<URI, Map<String,MetaDescriptor>> descriptors = Collections.synchronizedMap(new HashMap<>());
   

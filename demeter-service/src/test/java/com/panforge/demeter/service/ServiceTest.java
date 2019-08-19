@@ -18,6 +18,7 @@ package com.panforge.demeter.service;
 import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.core.api.ResponseParser;
 import com.panforge.demeter.core.content.ContentProvider;
+import com.panforge.demeter.core.content.PageCursorCodec;
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.model.request.*;
 import com.panforge.demeter.core.model.response.*;
@@ -34,9 +35,10 @@ import org.junit.BeforeClass;
  */
 public class ServiceTest {
   private static Config config;
-  private static Service service;
+  private static Service<MockupPageCursor> service;
   private static ResponseParser respParser;
-  private static ContentProvider contentProvider;
+  private static ContentProvider<MockupPageCursor> contentProvider;
+  private static PageCursorCodec<MockupPageCursor> pageCursorCodec;
   
   public ServiceTest() {
   }
@@ -45,8 +47,9 @@ public class ServiceTest {
   public static void setUpClass() throws URISyntaxException {
     config = new Config();
     config.repositoryName = "Mockup repository";
+    pageCursorCodec = new MockupPageCursorCodec();
     contentProvider = new MockupContentProvider().initialize();
-    service = new Service(config, contentProvider);
+    service = new Service<MockupPageCursor>(config, contentProvider, pageCursorCodec);
     respParser = new ResponseParser();
   }
   
@@ -119,7 +122,7 @@ public class ServiceTest {
   @Test
   public void testListIdentifiersWithToken() throws Exception {
     int auxBatchSize = 3;
-    Service auxService = new Service(config, contentProvider, new SimpleTokenManager(), auxBatchSize);
+    Service<MockupPageCursor> auxService = new Service<MockupPageCursor>(config, contentProvider, pageCursorCodec, new SimpleTokenManager(), auxBatchSize);
     ListIdentifiersRequest request = new ListIdentifiersRequest("oai_dc", null, null, null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = auxService.execute(parameters);
@@ -167,7 +170,7 @@ public class ServiceTest {
   @Test
   public void testListRecordsWithToken() throws Exception {
     int auxBatchSize = 3;
-    Service auxService = new Service(config, contentProvider, new SimpleTokenManager(), auxBatchSize);
+    Service<MockupPageCursor> auxService = new Service<MockupPageCursor>(config, contentProvider, pageCursorCodec, new SimpleTokenManager(), auxBatchSize);
     ListRecordsRequest request = new ListRecordsRequest("oai_dc", null, null, null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = auxService.execute(parameters);
