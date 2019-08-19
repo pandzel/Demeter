@@ -23,7 +23,6 @@ import com.panforge.demeter.core.api.ResponseFactory;
 import com.panforge.demeter.core.model.ErrorCode;
 import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.api.exception.ProtocolException;
-import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
 import com.panforge.demeter.core.api.exception.CannotDisseminateFormatException;
 import com.panforge.demeter.core.api.exception.IdDoesNotExistException;
@@ -32,7 +31,6 @@ import com.panforge.demeter.core.api.exception.NoRecordsMatchException;
 import com.panforge.demeter.core.api.exception.NoSetHierarchyException;
 import com.panforge.demeter.core.content.Page;
 import com.panforge.demeter.core.content.PageCursor;
-import com.panforge.demeter.core.content.PageCursorCodec;
 import com.panforge.demeter.core.content.StreamingIterable;
 import com.panforge.demeter.core.model.request.GetRecordRequest;
 import com.panforge.demeter.core.model.request.IdentifyRequest;
@@ -44,21 +42,13 @@ import com.panforge.demeter.core.model.request.Request;
 import com.panforge.demeter.core.model.response.GetRecordResponse;
 import com.panforge.demeter.core.model.response.IdentifyResponse;
 import com.panforge.demeter.core.model.response.ListMetadataFormatsResponse;
-import com.panforge.demeter.core.model.response.ListSetsResponse;
-import com.panforge.demeter.core.model.response.ListIdentifiersResponse;
-import com.panforge.demeter.core.model.response.ListRecordsResponse;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.elements.Set;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.utils.QueryUtils;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Spliterator;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.Validate;
 
@@ -108,15 +98,6 @@ public class Service<PC extends PageCursor> {
   }
 
   /**
-   * Creates instance of the service.
-   * @param config configuration
-   * @param repo repository
-   */
-  public Service(Config config, ContentProvider<PC> repo) {
-    this(config, repo, new SimpleTokenManager<PC>());
-  }
-
-  /**
    * Executes OAI-PMH request.
    * @param query HTTP query
    * @return response
@@ -145,28 +126,13 @@ public class Service<PC extends PageCursor> {
           return createGetRecordResponse((GetRecordRequest) request);
 
         case ListSets:
-          ListSetsRequest listSetsRequest = (ListSetsRequest)request;
-          if (listSetsRequest.getResumptionToken()==null) {
-            return createListSetsResponse(listSetsRequest);
-          } else {
-            return tokenManager.invoke(listSetsRequest.getResumptionToken());
-          }
+          return createListSetsResponse((ListSetsRequest)request);
           
         case ListIdentifiers:
-          ListIdentifiersRequest listIdentifiersRequest = (ListIdentifiersRequest)request;
-          if (listIdentifiersRequest.getResumptionToken()==null) {
-            return createListIdentifiersResponse(listIdentifiersRequest);
-          } else {
-            return tokenManager.invoke(listIdentifiersRequest.getResumptionToken());
-          }
+          return createListIdentifiersResponse((ListIdentifiersRequest)request);
           
         case ListRecords:
-          ListRecordsRequest listRecordsRequest = (ListRecordsRequest)request;
-          if (listRecordsRequest.getResumptionToken()==null) {
-            return createListRecordsResponse(listRecordsRequest);
-          } else {
-            return tokenManager.invoke(listRecordsRequest.getResumptionToken());
-          }
+          return createListRecordsResponse((ListRecordsRequest)request);
           
         default:
           return factory.createErrorResponse(OffsetDateTime.now(), parameters, new ErrorInfo[]{new ErrorInfo(ErrorCode.badArgument, "Error parsing request.")});
@@ -195,13 +161,19 @@ public class Service<PC extends PageCursor> {
   }
   
   private String createListSetsResponse(ListSetsRequest request) throws BadResumptionTokenException, NoSetHierarchyException {
-    // TODO: consider page cursor
-    try (Page<Set> listSets = repo.listSets(null);) {
-      Spliterator<Set> spliterator = listSets.spliterator();
-      return createListSetsSupplier(request, new ArrayList<>(), spliterator, listSets.total(), 0).get();
+    PC pageCursor = null;
+    if (request.getResumptionToken()!=null) {
+      pageCursor = tokenManager.pull(request.getResumptionToken());
+    }
+    try (Page<Set> listSets = repo.listSets(pageCursor);) {
+      // Spliterator<Set> spliterator = listSets.spliterator();
+      // return createListSetsSupplier(request, new ArrayList<>(), spliterator, listSets.total(), 0).get();
+      // TODO: generate response
+      return null;
     }
   }
   
+  /*
   private Supplier<String> createListSetsSupplier(ListSetsRequest request, List<Set> bufferedSets, Spliterator<Set> spliterator, long completeListSize, long cursor) {
     Set[] setArray = Stream.concat(bufferedSets.stream(), StreamSupport.stream(spliterator, false)).limit(batchSize).toArray(Set[]::new);
     return () -> { 
@@ -215,15 +187,22 @@ public class Service<PC extends PageCursor> {
       return factory.createListSetsResponse(response); 
     };
   }
+  */
   
   private String createListIdentifiersResponse(ListIdentifiersRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    // TODO: consider page cursor
-    try (Page<Header> headers = repo.listHeaders(request.getFilter(), null);) {
-      Spliterator<Header> spliterator = headers.spliterator();
-      return createListIdentifiersSupplier(request, new ArrayList<>(), spliterator, headers.total(), 0).get();
+    PC pageCursor = null;
+    if (request.getResumptionToken()!=null) {
+      pageCursor = tokenManager.pull(request.getResumptionToken());
+    }
+    try (Page<Header> headers = repo.listHeaders(request.getFilter(), pageCursor);) {
+      // Spliterator<Header> spliterator = headers.spliterator();
+      // return createListIdentifiersSupplier(request, new ArrayList<>(), spliterator, headers.total(), 0).get();
+      // TODO: generate response
+      return null;
     }
   }
   
+  /*
   private Supplier<String> createListIdentifiersSupplier(ListIdentifiersRequest request, List<Header> bufferedHeaders, Spliterator<Header> spliterator, long completeListSize, long cursor) {
     Header[] headerArray = Stream.concat(bufferedHeaders.stream(), StreamSupport.stream(spliterator, false)).limit(batchSize).toArray(Header[]::new);
     return () -> { 
@@ -237,29 +216,36 @@ public class Service<PC extends PageCursor> {
       return factory.createListIdentifiersResponse(response); 
     };
   }
+  */
   
   private String createListRecordsResponse(ListRecordsRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    // TODO: consider page cursor
-    try (Page<Header> headers = repo.listHeaders(request.getFilter(), null);) {
-      Spliterator<Record> spliterator = StreamSupport.stream(headers.spliterator(), false)
-              .map(h->{ 
-                if (!h.deleted) {
-                  try {
-                    return repo.readRecord(h.identifier, request.getMetadataPrefix()); 
-                  } catch (ProtocolException ex) {
-                    return null;
-                  }
-                } else {
-                  Record rec = new Record(h, null, null);
-                  return rec;
-                }
-              })
-              .filter(r->r!=null)
-              .spliterator();
-      return createListRecordsSupplier(request, new ArrayList<>(), spliterator, headers.total(), 0).get();
+    PC pageCursor = null;
+    if (request.getResumptionToken()!=null) {
+      pageCursor = tokenManager.pull(request.getResumptionToken());
+    }
+    try (Page<Header> headers = repo.listHeaders(request.getFilter(), pageCursor);) {
+//      Spliterator<Record> spliterator = StreamSupport.stream(headers.spliterator(), false)
+//              .map(h->{ 
+//                if (!h.deleted) {
+//                  try {
+//                    return repo.readRecord(h.identifier, request.getMetadataPrefix()); 
+//                  } catch (ProtocolException ex) {
+//                    return null;
+//                  }
+//                } else {
+//                  Record rec = new Record(h, null, null);
+//                  return rec;
+//                }
+//              })
+//              .filter(r->r!=null)
+//              .spliterator();
+//      return createListRecordsSupplier(request, new ArrayList<>(), spliterator, headers.total(), 0).get();
+      // TODO: generate response
+      return null;
     }
   }
   
+  /*
   private Supplier<String> createListRecordsSupplier(ListRecordsRequest request, List<Record> bufferedRecords, Spliterator<Record> spliterator, long completeListSize, long cursor) {
     Record[] headerArray = Stream.concat(bufferedRecords.stream(), StreamSupport.stream(spliterator, false)) .limit(batchSize).toArray(Record[]::new);
     return () -> { 
@@ -273,4 +259,5 @@ public class Service<PC extends PageCursor> {
       return factory.createListRecordsResponse(response); 
     };
   }
+  */
 }

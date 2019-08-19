@@ -32,12 +32,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class TokenManagerBean extends SimpleTokenManager<PageCursorImpl> {
   private static final Logger LOG = LoggerFactory.getLogger(TokenManagerBean.class);
-  private final PageCursorCodec<PageCursorImpl> codec;
 
   @Autowired
   public TokenManagerBean(PageCursorCodec<PageCursorImpl> codec, @Value("${tokenExpiration}") long expiration) {
-    super(expiration);
-    this.codec = codec;
+    super(codec, expiration);
   }
   
   @PostConstruct

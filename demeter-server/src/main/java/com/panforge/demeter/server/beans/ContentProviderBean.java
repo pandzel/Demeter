@@ -108,7 +108,7 @@ public class ContentProviderBean implements ContentProvider<PageCursorByPageNumb
     } catch (NoMetadataFormatsException|IdDoesNotExistException ex) {
         throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", filter.metadataPrefix), ex);
     }
-    int skip = pageCursor!=null && pageCursor.pageNumber!=null? pageCursor.pageNumber * PAGE_SIZE: 0;
+    int skip = pageCursor!=null && pageCursor.cursor!=null? pageCursor.cursor: 0;
     List<Header> headers = descriptors.values().stream()
                     .map(l -> {
                       MetaDescriptor md = l.values().stream()
@@ -129,7 +129,8 @@ public class ContentProviderBean implements ContentProvider<PageCursorByPageNumb
     PageCursorByPageNumber nextPageCursor = null;
     if (headers.size()>=PAGE_SIZE) {
       nextPageCursor = new PageCursorByPageNumber();
-      nextPageCursor.pageNumber = skip + PAGE_SIZE;
+      nextPageCursor.cursor = skip + PAGE_SIZE;
+      nextPageCursor.total = headers.size();
     }
     return Page.of(headers, nextPageCursor);
   }

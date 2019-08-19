@@ -18,12 +18,9 @@ package com.panforge.demeter.service;
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
 import com.panforge.demeter.core.content.PageCursor;
+import com.panforge.demeter.core.content.PageCursorCodec;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.UUID;
-import java.util.function.Supplier;
 import org.apache.commons.collections4.map.PassiveExpiringMap;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Simple token manager.
@@ -31,25 +28,35 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class SimpleTokenManager<PC extends PageCursor> implements TokenManager<PC> {
   public static final long DEFAULT_EXPIRATION = 60000;
-  private final PassiveExpiringMap<String, TokenEntry> tokens;
+  private final PassiveExpiringMap<String, ResumptionToken> tokens;
+  
+  private final PageCursorCodec<PC> codec;
   private final long expiration;
 
   /**
    * Creates instance of the default token manager.
    * @param expiration expiration time (in milliseconds) of the token
    */
-  public SimpleTokenManager(long expiration) {
+  public SimpleTokenManager(PageCursorCodec<PC> codec, long expiration) {
+    this.codec = codec;
     this.expiration = expiration;
     this.tokens = new PassiveExpiringMap<>(expiration);
   }
 
-  /**
-   * Creates instance of the default token manager.
-   */
-  public SimpleTokenManager() {
-    this(DEFAULT_EXPIRATION);
+  @Override
+  public ResumptionToken put(PC pageCursor) {
+    OffsetDateTime now = OffsetDateTime.now();
+    String pcString = codec.toString(pageCursor);
+    ResumptionToken resTok = new ResumptionToken(pcString, OffsetDateTime.MIN, expiration, expiration);
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
+  @Override
+  public PC pull(String tokenId) throws BadResumptionTokenException {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+  
+  /*
   @Override
   public ResumptionToken register(Supplier<String> supplier, long completeListSize, long cursor) {
     synchronized (tokens) {
@@ -77,16 +84,6 @@ public class SimpleTokenManager<PC extends PageCursor> implements TokenManager<P
       return tokenEntry.supplier.get();
     }
   }
-  
-  private class TokenEntry {
-    public final ResumptionToken resumptionToken;
-    public final Supplier<String> supplier;
-
-    public TokenEntry(ResumptionToken resumptionToken, Supplier<String> supplier) {
-      this.resumptionToken = resumptionToken;
-      this.supplier = supplier;
-    }
-    
-  }
+  */
   
 }

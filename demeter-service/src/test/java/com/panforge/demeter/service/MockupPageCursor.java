@@ -22,5 +22,15 @@ import com.panforge.demeter.core.content.PageCursor;
  * @author Piotr Andzel
  */
 public class MockupPageCursor implements PageCursor {
+
+  @Override
+  public int total() {
+    return 0;
+  }
+
+  @Override
+  public int cursor() {
+    return 0;
+  }
   
 }

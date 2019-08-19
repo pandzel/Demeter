@@ -15,31 +15,16 @@
  */
 package com.panforge.demeter.service;
 
-import com.panforge.demeter.core.api.exception.ProtocolException;
+import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
 import com.panforge.demeter.core.content.PageCursor;
 import com.panforge.demeter.core.model.ResumptionToken;
-import java.util.function.Supplier;
 
 /**
  * Token manager.
  * @param <PC> type of page cursor
  */
 public interface TokenManager<PC extends PageCursor> {
-
-  /**
-   * Invoke action for a token.
-   * @param token resumption token
-   * @return response
-   * @throws ProtocolException if invoking action fails
-   */
-  String invoke(String token) throws ProtocolException;
+  ResumptionToken put(PC pageCursor);
   
-  /**
-   * Registers a supplier for a new token.
-   * @param supplier action to be invoked with the next call with a token
-   * @param completeListSize complete list size
-   * @param cursor cursor position
-   * @return resumption token.
-   */
-  ResumptionToken register(Supplier<String> supplier, long completeListSize, long cursor);
+  PC pull(String tokenId) throws BadResumptionTokenException;
 }

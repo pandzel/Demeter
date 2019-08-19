@@ -23,10 +23,24 @@ import com.panforge.demeter.core.content.PageCursor;
  */
 public class PageCursorImpl implements PageCursor {
   
-  public final String pageCursorStr;
+  public String pageCursorStr;
+  public Integer total;
+  public Integer cursor;
 
-  public PageCursorImpl(String pageCursorStr) {
+  @Override
+  public int total() {
+    return total!=null? total: 0;
+  }
+
+  @Override
+  public int cursor() {
+    return cursor!=null? cursor: 0;
+  }
+
+  public PageCursorImpl(String pageCursorStr, int total, int cursor) {
     this.pageCursorStr = pageCursorStr;
+    this.total = total;
+    this.cursor = cursor;
   }
   
 }

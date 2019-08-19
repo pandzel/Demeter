@@ -16,6 +16,7 @@
 package com.panforge.demeter.service;
 
 import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
+import com.panforge.demeter.core.content.PageCursor;
 import com.panforge.demeter.core.model.ResumptionToken;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -28,14 +29,14 @@ import static org.junit.Assert.*;
  */
 public class SimpleTokenManagerTest {
   private static final long expiration = 1000;
-  private static SimpleTokenManager tm;
+  private static SimpleTokenManager<MockupPageCursor> tm;
   
   public SimpleTokenManagerTest() {
   }
   
   @BeforeClass
   public static void setUpClass() {
-    tm = new SimpleTokenManager(expiration);
+    tm = new SimpleTokenManager<>(new MockupPageCursorCodec(), expiration);
   }
   
   @AfterClass
@@ -44,23 +45,20 @@ public class SimpleTokenManagerTest {
 
   @Test
   public void testToken() throws BadResumptionTokenException {
-    String content = "content";
-    ResumptionToken token = tm.register(()->content, 0, 0);
+    ResumptionToken token = tm.put(new MockupPageCursor());
     assertNotNull("No token", token);
     assertNotNull("Empty token value", token.value);
-    String result = tm.invoke(token.value);
-    assertNotNull("No content received", result);
-    assertEquals("Invalid content received", content, result);
+    MockupPageCursor pageCursor = tm.pull(token.value);
+    assertNotNull("No content received", pageCursor);
   }
   
   @Test(expected = com.panforge.demeter.core.api.exception.BadResumptionTokenException.class)
   public void testExpiration() throws BadResumptionTokenException, InterruptedException {
-    String content = "content";
-    ResumptionToken token = tm.register(()->content, 0, 0);
+    ResumptionToken token = tm.put(new MockupPageCursor());
     assertNotNull("No token", token);
     assertNotNull("Empty token value", token.value);
     Thread.sleep(expiration+10);
-    String result = tm.invoke(token.value);
+    MockupPageCursor pageCursor = tm.pull(token.value);
   }
   
 }
