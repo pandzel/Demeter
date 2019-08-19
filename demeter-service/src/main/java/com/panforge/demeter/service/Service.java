@@ -41,12 +41,15 @@ import com.panforge.demeter.core.model.request.ListRecordsRequest;
 import com.panforge.demeter.core.model.request.Request;
 import com.panforge.demeter.core.model.response.GetRecordResponse;
 import com.panforge.demeter.core.model.response.IdentifyResponse;
+import com.panforge.demeter.core.model.response.ListSetsResponse;
+import com.panforge.demeter.core.model.response.ListIdentifiersResponse;
 import com.panforge.demeter.core.model.response.ListMetadataFormatsResponse;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.elements.Set;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.utils.QueryUtils;
+import com.panforge.demeter.core.model.ResumptionToken;
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.stream.StreamSupport;
@@ -161,69 +164,33 @@ public class Service<PC extends PageCursor> {
   }
   
   private String createListSetsResponse(ListSetsRequest request) throws BadResumptionTokenException, NoSetHierarchyException {
-    PC pageCursor = null;
-    if (request.getResumptionToken()!=null) {
-      pageCursor = tokenManager.pull(request.getResumptionToken());
-    }
-    try (Page<Set> listSets = repo.listSets(pageCursor);) {
-      // Spliterator<Set> spliterator = listSets.spliterator();
-      // return createListSetsSupplier(request, new ArrayList<>(), spliterator, listSets.total(), 0).get();
-      // TODO: generate response
-      return null;
-    }
-  }
-  
-  /*
-  private Supplier<String> createListSetsSupplier(ListSetsRequest request, List<Set> bufferedSets, Spliterator<Set> spliterator, long completeListSize, long cursor) {
-    Set[] setArray = Stream.concat(bufferedSets.stream(), StreamSupport.stream(spliterator, false)).limit(batchSize).toArray(Set[]::new);
-    return () -> { 
-      ResumptionToken resumptionToken = null;
-      ArrayList<Set> prefetchedSets = new ArrayList<>();
-      if (spliterator.tryAdvance(set->{ prefetchedSets.add(set); })) {
-        Supplier<String> supplier = createListSetsSupplier(request, prefetchedSets, spliterator, completeListSize, cursor+setArray.length);
-        resumptionToken = tokenManager.register(supplier, completeListSize, cursor+setArray.length);
-      }
+    PC pageCursor = request.getResumptionToken()!=null? tokenManager.pull(request.getResumptionToken()): null;
+    try (Page<Set,PC> listSets = repo.listSets(pageCursor);) {
+      PC nextPageCursor = listSets.nextPageCursor();
+      ResumptionToken resumptionToken = nextPageCursor!=null? tokenManager.put(nextPageCursor): null;
+      Set[] setArray = StreamSupport.stream(listSets.spliterator(), false).toArray(Set[]::new);
       ListSetsResponse response = new ListSetsResponse(request.getParameters(), OffsetDateTime.now(), setArray, resumptionToken);
       return factory.createListSetsResponse(response); 
-    };
+    }
   }
-  */
   
   private String createListIdentifiersResponse(ListIdentifiersRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    PC pageCursor = null;
-    if (request.getResumptionToken()!=null) {
-      pageCursor = tokenManager.pull(request.getResumptionToken());
-    }
-    try (Page<Header> headers = repo.listHeaders(request.getFilter(), pageCursor);) {
-      // Spliterator<Header> spliterator = headers.spliterator();
-      // return createListIdentifiersSupplier(request, new ArrayList<>(), spliterator, headers.total(), 0).get();
-      // TODO: generate response
-      return null;
-    }
-  }
-  
-  /*
-  private Supplier<String> createListIdentifiersSupplier(ListIdentifiersRequest request, List<Header> bufferedHeaders, Spliterator<Header> spliterator, long completeListSize, long cursor) {
-    Header[] headerArray = Stream.concat(bufferedHeaders.stream(), StreamSupport.stream(spliterator, false)).limit(batchSize).toArray(Header[]::new);
-    return () -> { 
-      ResumptionToken resumptionToken = null;
-      ArrayList<Header> prefetchedHeaders = new ArrayList<>();
-      if (spliterator.tryAdvance(header->{ prefetchedHeaders.add(header); })) {
-        Supplier<String> supplier = createListIdentifiersSupplier(request, prefetchedHeaders, spliterator, completeListSize, cursor+headerArray.length);
-        resumptionToken = tokenManager.register(supplier, completeListSize, cursor+headerArray.length);
-      }
+    PC pageCursor = request.getResumptionToken()!=null? tokenManager.pull(request.getResumptionToken()): null;
+    try (Page<Header, PC> headers = repo.listHeaders(request.getFilter(), pageCursor);) {
+      PC nextPageCursor = headers.nextPageCursor();
+      ResumptionToken resumptionToken = nextPageCursor!=null? tokenManager.put(nextPageCursor): null;
+      Header[] headerArray = StreamSupport.stream(headers.spliterator(), false).toArray(Header[]::new);
       ListIdentifiersResponse response = new ListIdentifiersResponse(request.getParameters(), OffsetDateTime.now(), headerArray, resumptionToken);
       return factory.createListIdentifiersResponse(response); 
-    };
+    }
   }
-  */
   
   private String createListRecordsResponse(ListRecordsRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     PC pageCursor = null;
     if (request.getResumptionToken()!=null) {
       pageCursor = tokenManager.pull(request.getResumptionToken());
     }
-    try (Page<Header> headers = repo.listHeaders(request.getFilter(), pageCursor);) {
+    try (Page<Header, PC> headers = repo.listHeaders(request.getFilter(), pageCursor);) {
 //      Spliterator<Record> spliterator = StreamSupport.stream(headers.spliterator(), false)
 //              .map(h->{ 
 //                if (!h.deleted) {

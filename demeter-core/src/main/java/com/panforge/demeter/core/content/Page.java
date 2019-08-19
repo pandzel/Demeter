@@ -23,8 +23,9 @@ import java.util.stream.Stream;
 /**
  * Page of data.
  * @param <T> data type
+ * @param <PC> page cursor type
  */
-public interface Page<T> extends Closeable, StreamingIterable<T> {
+public interface Page<T, PC> extends Closeable, StreamingIterable<T> {
   @Override
   public void close();
   
@@ -38,17 +39,17 @@ public interface Page<T> extends Closeable, StreamingIterable<T> {
    * Gets cursor to the next page.
    * @return cursor to the next page or <code>null</code> if no more pages.
    */
-  PageCursor nextPageCursor();
+  PC nextPageCursor();
   
-  static <T> Page<T> of(final List<T> content, final PageCursor nextPageCursor) {
-    return new Page<T>() {
+  static <T,PC> Page<T,PC> of(final List<T> content, final PC nextPageCursor) {
+    return new Page<T,PC>() {
       @Override
       public long total() {
         return content.size();
       }
 
       @Override
-      public PageCursor nextPageCursor() {
+      public PC nextPageCursor() {
         return nextPageCursor;
       }
 
@@ -63,19 +64,19 @@ public interface Page<T> extends Closeable, StreamingIterable<T> {
     };
   }
   
-  static <T> Page<T> of(final List<T> content) {
+  static <T,PC> Page<T,PC> of(final List<T> content) {
     return of(content, null);
   }
   
-  static <T> Page<T> of(final Stream<T> content, long total, final PageCursor nextPageCursor) {
-    return new Page<T>() {
+  static <T,PC> Page<T,PC> of(final Stream<T> content, long total, final PC nextPageCursor) {
+    return new Page<T, PC>() {
       @Override
       public long total() {
         return total;
       }
 
       @Override
-      public PageCursor nextPageCursor() {
+      public PC nextPageCursor() {
         return nextPageCursor;
       }
 
@@ -90,7 +91,7 @@ public interface Page<T> extends Closeable, StreamingIterable<T> {
     };
   }
   
-  static <T> Page<T> of(final Stream<T> content, long total) {
+  static <T,PC> Page<T,PC> of(final Stream<T> content, long total) {
     return of(content, total, null);
   }
 }

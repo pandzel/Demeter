@@ -87,8 +87,6 @@ public class ServiceTest {
     assertEquals("Invalid number of formats", contentProvider.listMetadataFormats(null).stream().count(), responseObj.metadataFormats.length);
   }
   
-  // TODO: test list sets
-  /*
   @Test
   public void testListSets() throws Exception {
     ListSetsRequest request = new ListSetsRequest();
@@ -104,10 +102,7 @@ public class ServiceTest {
     ListSetsResponse responseObj = (ListSetsResponse)response;
     assertEquals("Invalid number of formats", contentProvider.listSets(null).total(), responseObj.listSets.length);
   }
-  */
   
-  // TODO: list identifiers
-  /*
   @Test
   public void testListIdentifiers() throws Exception {
     ListIdentifiersRequest request = new ListIdentifiersRequest("oai_dc", null, null, null);
@@ -123,7 +118,6 @@ public class ServiceTest {
     ListIdentifiersResponse responseObj = (ListIdentifiersResponse)response;
     assertEquals("Invalid number of identifiers", contentProvider.listHeaders(null, null).total(), responseObj.headers.length);
   }
-  */
   
   // TODO: list identifiers with token
   /*

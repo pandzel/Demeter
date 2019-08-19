@@ -82,7 +82,7 @@ public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
   }
 
   @Override
-  public Page<Set> listSets(PageCursorImpl pageCursor) throws NoSetHierarchyException {
+  public Page<Set, PageCursorImpl> listSets(PageCursorImpl pageCursor) throws NoSetHierarchyException {
     long total = conn.execute("select counter from counter where table_name = 'sets'").one().getLong("counter");
     ResultSet rs = conn.execute("select * from sets");
     return Page.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
@@ -92,13 +92,13 @@ public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
     }), total);
   }
 
-  private Page<UUID> listSetsIdsFor(String recordId) {
+  private Page<UUID, PageCursorImpl> listSetsIdsFor(String recordId) {
     ResultSet rs = conn.execute("select setId from records_sets where recordId = " + recordId);
     List<Row> rows = rs.all();
     return Page.of(rows.stream().map(row -> row.getUuid("setId")), rows.size());
   }
 
-  private Page<Set> listSetsFor(String recordId) {
+  private Page<Set, PageCursorImpl> listSetsFor(String recordId) {
     ResultSet rs = conn.execute("select * from sets where id in (" + listSetsIdsFor(recordId).stream().map(UUID::toString).collect(Collectors.joining(",")) + ")");
     List<Row> rows = rs.all();
     return Page.of(rows.stream().map(row -> {
@@ -109,7 +109,7 @@ public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
   }
 
   @Override
-  public Page<Header> listHeaders(Filter filter, PageCursorImpl pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+  public Page<Header, PageCursorImpl> listHeaders(Filter filter, PageCursorImpl pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     try {
       if (!StreamSupport.stream(listMetadataFormats(null).spliterator(), false).map(f -> f.metadataPrefix).anyMatch(p -> p.equals(filter.metadataPrefix))) {
         throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", filter.metadataPrefix));

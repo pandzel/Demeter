@@ -92,12 +92,12 @@ public class ContentProviderBean implements ContentProvider<PageCursorByPageNumb
   }
 
   @Override
-  public Page<Set> listSets(PageCursorByPageNumber pageCursor) throws NoSetHierarchyException {
+  public Page<Set, PageCursorByPageNumber> listSets(PageCursorByPageNumber pageCursor) throws NoSetHierarchyException {
     throw new NoSetHierarchyException("This repository does not support set hierarchy.");
   }
 
   @Override
-  public Page<Header> listHeaders(Filter filter, PageCursorByPageNumber pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+  public Page<Header, PageCursorByPageNumber> listHeaders(Filter filter, PageCursorByPageNumber pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     if (filter.set!=null) {
       throw new NoSetHierarchyException("This repository does not support set hierarchy.");
     }

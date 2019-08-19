@@ -19,6 +19,7 @@ import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.content.Filter;
 import com.panforge.demeter.core.content.Page;
 import com.panforge.demeter.core.model.response.elements.Header;
+import com.panforge.demeter.server.beans.PageCursorByPageNumber;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +52,7 @@ public class ViewController extends AbstractController {
     model.addObject("propFile", Thread.currentThread().getContextClassLoader().getResource("config/config.properties"));
     
     // TODO: consider page cursor
-    Page<Header> headers = contentProvider.listHeaders(new Filter(null, null, "oai_dc", null), null);
+    Page<Header,PageCursorByPageNumber> headers = contentProvider.listHeaders(new Filter(null, null, "oai_dc", null), null);
     
     List<String> firstIds = headers.stream().limit(5).map(h->h.identifier.toASCIIString()).collect(Collectors.toList());
     model.addObject("firstIds", firstIds);
