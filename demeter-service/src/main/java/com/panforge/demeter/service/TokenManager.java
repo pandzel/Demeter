@@ -16,13 +16,15 @@
 package com.panforge.demeter.service;
 
 import com.panforge.demeter.core.api.exception.ProtocolException;
+import com.panforge.demeter.core.content.PageCursor;
 import com.panforge.demeter.core.model.ResumptionToken;
 import java.util.function.Supplier;
 
 /**
  * Token manager.
+ * @param <PC> type of page cursor
  */
-public interface TokenManager {
+public interface TokenManager<PC extends PageCursor> {
 
   /**
    * Invoke action for a token.

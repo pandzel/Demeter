@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.server.beans;
 
+import com.panforge.demeter.core.content.PageCursorCodec;
 import com.panforge.demeter.service.SimpleTokenManager;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -28,12 +29,14 @@ import org.springframework.stereotype.Service;
  * Token manager bean.
  */
 @Service
-public class TokenManagerBean extends SimpleTokenManager {
+public class TokenManagerBean extends SimpleTokenManager<PageCursorByPageNumber> {
   private static final Logger LOG = LoggerFactory.getLogger(TokenManagerBean.class);
+  private final PageCursorCodec<PageCursorByPageNumber> codec;
 
   @Autowired
-  public TokenManagerBean( @Value("${tokenExpiration}") long expiration) {
+  public TokenManagerBean(PageCursorCodec<PageCursorByPageNumber> codec, @Value("${tokenExpiration}") long expiration) {
     super(expiration);
+    this.codec = codec;
   }
   
   @PostConstruct

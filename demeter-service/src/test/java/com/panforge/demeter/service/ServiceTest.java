@@ -47,9 +47,8 @@ public class ServiceTest {
   public static void setUpClass() throws URISyntaxException {
     config = new Config();
     config.repositoryName = "Mockup repository";
-    pageCursorCodec = new MockupPageCursorCodec();
     contentProvider = new MockupContentProvider().initialize();
-    service = new Service<MockupPageCursor>(config, contentProvider, pageCursorCodec);
+    service = new Service<MockupPageCursor>(config, contentProvider);
     respParser = new ResponseParser();
   }
   
@@ -122,7 +121,7 @@ public class ServiceTest {
   @Test
   public void testListIdentifiersWithToken() throws Exception {
     int auxBatchSize = 3;
-    Service<MockupPageCursor> auxService = new Service<MockupPageCursor>(config, contentProvider, pageCursorCodec, new SimpleTokenManager(), auxBatchSize);
+    Service<MockupPageCursor> auxService = new Service<>(config, contentProvider, new SimpleTokenManager<>(), auxBatchSize);
     ListIdentifiersRequest request = new ListIdentifiersRequest("oai_dc", null, null, null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = auxService.execute(parameters);
@@ -170,7 +169,7 @@ public class ServiceTest {
   @Test
   public void testListRecordsWithToken() throws Exception {
     int auxBatchSize = 3;
-    Service<MockupPageCursor> auxService = new Service<MockupPageCursor>(config, contentProvider, pageCursorCodec, new SimpleTokenManager(), auxBatchSize);
+    Service<MockupPageCursor> auxService = new Service<>(config, contentProvider, new SimpleTokenManager<>(), auxBatchSize);
     ListRecordsRequest request = new ListRecordsRequest("oai_dc", null, null, null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = auxService.execute(parameters);

@@ -35,8 +35,8 @@ public class ServiceBean extends com.panforge.demeter.service.Service<PageCursor
   private static final Logger LOG = LoggerFactory.getLogger(ServiceBean.class);
 
   @Autowired 
-  public ServiceBean(ConfigService config, ContentProvider<PageCursorByPageNumber> repo, PageCursorCodec<PageCursorByPageNumber> pageCursorCodec, TokenManager tokenManager, @Value("${batchSize}") int batchSize) {
-    super(config.getConfig(), repo, pageCursorCodec, tokenManager, batchSize);
+  public ServiceBean(ConfigService config, ContentProvider<PageCursorByPageNumber> repo, TokenManager<PageCursorByPageNumber> tokenManager, @Value("${batchSize}") int batchSize) {
+    super(config.getConfig(), repo, tokenManager, batchSize);
   }
   
   @PostConstruct

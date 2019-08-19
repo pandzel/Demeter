@@ -69,31 +69,27 @@ import org.apache.commons.lang3.Validate;
 public class Service<PC extends PageCursor> {
   public static final int DEFAULT_BATCH_SIZE = 10;
   private final ContentProvider<PC> repo;
-  private final TokenManager tokenManager;
+  private final TokenManager<PC> tokenManager;
   
   private final Context ctx;
   private final RequestParser parser;
   private final ResponseFactory factory;
   private final int batchSize;
-  private final PageCursorCodec<PC> pageCursorCodec;
 
   /**
    * Creates instance of the service.
    * @param config configuration
    * @param repo repository
-   * @param pageCursorCodec page cursor codec
    * @param tokenManager token manager
    * @param batchSize batch size
    */
-  public Service(Config config, ContentProvider<PC> repo, PageCursorCodec<PC> pageCursorCodec, TokenManager tokenManager, int batchSize) {
+  public Service(Config config, ContentProvider<PC> repo, TokenManager<PC> tokenManager, int batchSize) {
     this.repo = repo;
-    this.pageCursorCodec = pageCursorCodec;
     this.tokenManager = tokenManager;
     this.batchSize = batchSize;
     
     Validate.notNull(config, "Missing configuration");
     Validate.notNull(repo, "Missing content provider");
-    Validate.notNull(pageCursorCodec, "Missing page cursor codec");
     Validate.notNull(tokenManager, "Missing token manager");
     
     this.ctx = new Context(config);
@@ -105,21 +101,19 @@ public class Service<PC extends PageCursor> {
    * Creates instance of the service.
    * @param config configuration
    * @param repo repository
-   * @param pageCursorCodec page cursor codec
    * @param tokenManager token manager
    */
-  public Service(Config config, ContentProvider<PC> repo, PageCursorCodec<PC> pageCursorCodec, TokenManager tokenManager) {
-    this(config, repo, pageCursorCodec, tokenManager, DEFAULT_BATCH_SIZE);
+  public Service(Config config, ContentProvider<PC> repo, TokenManager<PC> tokenManager) {
+    this(config, repo, tokenManager, DEFAULT_BATCH_SIZE);
   }
 
   /**
    * Creates instance of the service.
    * @param config configuration
    * @param repo repository
-   * @param pageCursorCodec page cursor codec
    */
-  public Service(Config config, ContentProvider<PC> repo, PageCursorCodec<PC> pageCursorCodec) {
-    this(config, repo, pageCursorCodec, new SimpleTokenManager());
+  public Service(Config config, ContentProvider<PC> repo) {
+    this(config, repo, new SimpleTokenManager<PC>());
   }
 
   /**

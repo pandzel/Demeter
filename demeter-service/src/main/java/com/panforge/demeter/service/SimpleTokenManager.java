@@ -17,6 +17,7 @@ package com.panforge.demeter.service;
 
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
+import com.panforge.demeter.core.content.PageCursor;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
@@ -26,8 +27,9 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Simple token manager.
+ * @param <PC> page cursor type
  */
-public class SimpleTokenManager implements TokenManager {
+public class SimpleTokenManager<PC extends PageCursor> implements TokenManager<PC> {
   public static final long DEFAULT_EXPIRATION = 60000;
   private final PassiveExpiringMap<String, TokenEntry> tokens;
   private final long expiration;
