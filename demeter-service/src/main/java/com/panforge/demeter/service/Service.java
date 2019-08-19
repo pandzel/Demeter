@@ -102,7 +102,7 @@ public class Service<PC extends PageCursor> {
    * @param repo repository
    * @param tokenManager token manager
    */
-  public Service(Config config, ContentProvider repo, TokenManager tokenManager) {
+  public Service(Config config, ContentProvider<PC> repo, TokenManager tokenManager) {
     this(config, repo, tokenManager, DEFAULT_BATCH_SIZE);
   }
 
@@ -111,7 +111,7 @@ public class Service<PC extends PageCursor> {
    * @param config configuration
    * @param repo repository
    */
-  public Service(Config config, ContentProvider repo) {
+  public Service(Config config, ContentProvider<PC> repo) {
     this(config, repo, new SimpleTokenManager());
   }
 
