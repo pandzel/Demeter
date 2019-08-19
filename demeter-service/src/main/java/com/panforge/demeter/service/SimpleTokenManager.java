@@ -20,7 +20,10 @@ import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
 import com.panforge.demeter.core.content.PageCursor;
 import com.panforge.demeter.core.content.PageCursorCodec;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 import org.apache.commons.collections4.map.PassiveExpiringMap;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Simple token manager.
@@ -28,7 +31,7 @@ import org.apache.commons.collections4.map.PassiveExpiringMap;
  */
 public class SimpleTokenManager<PC extends PageCursor> implements TokenManager<PC> {
   public static final long DEFAULT_EXPIRATION = 60000;
-  private final PassiveExpiringMap<String, ResumptionToken> tokens;
+  private final PassiveExpiringMap<String, String> tokens;
   
   private final PageCursorCodec<PC> codec;
   private final long expiration;
@@ -46,16 +49,24 @@ public class SimpleTokenManager<PC extends PageCursor> implements TokenManager<P
   @Override
   public ResumptionToken put(PC pageCursor) {
     OffsetDateTime now = OffsetDateTime.now();
+    String tokenValue = UUID.randomUUID().toString();
     String pcString = codec.toString(pageCursor);
-    ResumptionToken resTok = new ResumptionToken(pcString, OffsetDateTime.MIN, expiration, expiration);
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    tokens.put(tokenValue, pcString);
+    ResumptionToken resumptionToken = new ResumptionToken(tokenValue, now.plus(expiration, ChronoUnit.MILLIS), pageCursor.total(), pageCursor.cursor());
+    return resumptionToken;
   }
 
   @Override
   public PC pull(String tokenId) throws BadResumptionTokenException {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    String pcString = tokens.get(tokenId);
+    if (pcString==null) {
+      throw new BadResumptionTokenException(String.format("Invalid token: '%s'", StringUtils.trimToEmpty(tokenId)));
+    }
+    PC pageCursor = codec.fromString(pcString);
+    return pageCursor;
   }
   
+  // TODO: cleanup
   /*
   @Override
   public ResumptionToken register(Supplier<String> supplier, long completeListSize, long cursor) {

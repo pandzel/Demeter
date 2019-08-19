@@ -16,7 +16,6 @@
 package com.panforge.demeter.service;
 
 import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
-import com.panforge.demeter.core.content.PageCursor;
 import com.panforge.demeter.core.model.ResumptionToken;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
