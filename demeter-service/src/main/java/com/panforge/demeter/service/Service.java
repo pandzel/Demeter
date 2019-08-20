@@ -50,6 +50,7 @@ import com.panforge.demeter.core.model.response.elements.Set;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.utils.QueryUtils;
 import com.panforge.demeter.core.model.ResumptionToken;
+import com.panforge.demeter.core.model.response.ListRecordsResponse;
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.stream.StreamSupport;
@@ -186,45 +187,24 @@ public class Service<PC extends PageCursor> {
   }
   
   private String createListRecordsResponse(ListRecordsRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    PC pageCursor = null;
-    if (request.getResumptionToken()!=null) {
-      pageCursor = tokenManager.pull(request.getResumptionToken());
-    }
+    PC pageCursor = request.getResumptionToken()!=null? tokenManager.pull(request.getResumptionToken()): null;
     try (Page<Header, PC> headers = repo.listHeaders(request.getFilter(), pageCursor);) {
-//      Spliterator<Record> spliterator = StreamSupport.stream(headers.spliterator(), false)
-//              .map(h->{ 
-//                if (!h.deleted) {
-//                  try {
-//                    return repo.readRecord(h.identifier, request.getMetadataPrefix()); 
-//                  } catch (ProtocolException ex) {
-//                    return null;
-//                  }
-//                } else {
-//                  Record rec = new Record(h, null, null);
-//                  return rec;
-//                }
-//              })
-//              .filter(r->r!=null)
-//              .spliterator();
-//      return createListRecordsSupplier(request, new ArrayList<>(), spliterator, headers.total(), 0).get();
-      // TODO: generate response
-      return null;
+      PC nextPageCursor = headers.nextPageCursor();
+      ResumptionToken resumptionToken = nextPageCursor!=null? tokenManager.put(nextPageCursor, headers.total()): null;
+      Record[] recordArray = StreamSupport.stream(headers.spliterator(), false).map(h -> {
+        if (!h.deleted) {
+          try {
+            return repo.readRecord(h.identifier, request.getMetadataPrefix()); 
+          } catch (ProtocolException ex) {
+            return null;
+          }
+        } else {
+          Record rec = new Record(h, null, null);
+          return rec;
+        }
+      }).filter(r->r!=null).toArray(Record[]::new);
+      ListRecordsResponse response = new ListRecordsResponse(request.getParameters(), OffsetDateTime.now(), recordArray, resumptionToken);
+      return factory.createListRecordsResponse(response); 
     }
   }
-  
-  /*
-  private Supplier<String> createListRecordsSupplier(ListRecordsRequest request, List<Record> bufferedRecords, Spliterator<Record> spliterator, long completeListSize, long cursor) {
-    Record[] headerArray = Stream.concat(bufferedRecords.stream(), StreamSupport.stream(spliterator, false)) .limit(batchSize).toArray(Record[]::new);
-    return () -> { 
-      ResumptionToken resumptionToken = null;
-      ArrayList<Record> prefetchedRecords = new ArrayList<>();
-      if (spliterator.tryAdvance(record->{ prefetchedRecords.add(record); })) {
-        Supplier<String> supplier = createListRecordsSupplier(request, prefetchedRecords, spliterator, completeListSize, cursor+headerArray.length);
-        resumptionToken = tokenManager.register(supplier, completeListSize, cursor+headerArray.length);
-      }
-      ListRecordsResponse response = new ListRecordsResponse(request.getParameters(), OffsetDateTime.now(), headerArray, resumptionToken);
-      return factory.createListRecordsResponse(response); 
-    };
-  }
-  */
 }

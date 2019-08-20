@@ -155,7 +155,6 @@ public class ServiceTest {
   */
   
   // TODO: list records
-  /*
   @Test
   public void testListRecords() throws Exception {
     ListRecordsRequest request = new ListRecordsRequest("oai_dc", null, null, null);
@@ -171,7 +170,6 @@ public class ServiceTest {
     ListRecordsResponse responseObj = (ListRecordsResponse)response;
     assertEquals("Invalid number of formats", contentProvider.listHeaders(null, null).total(), responseObj.records.length);
   }
-  */
   
   // TODO: list records with token
   /*
