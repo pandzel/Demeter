@@ -99,13 +99,14 @@ public class MockupContentProvider implements ContentProvider<MockupPageCursor> 
   }
 
   @Override
-  public Page<Set,MockupPageCursor> listSets(MockupPageCursor pageCursor) throws NoSetHierarchyException {
+  public Page<Set,MockupPageCursor> listSets(MockupPageCursor pageCursor, int pageSize) throws NoSetHierarchyException {
     return Page.of(Arrays.asList(new Set[]{MAIN_SET}));
   }
 
   @Override
-  public Page<Header,MockupPageCursor> listHeaders(Filter filter, MockupPageCursor pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    return Page.of(descriptors.stream().map(MetaDescriptor::toHeader), descriptors.size());
+  public Page<Header,MockupPageCursor> listHeaders(Filter filter, MockupPageCursor pageCursor, int pageSize) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+    Page<Header,MockupPageCursor> page = Page.of(descriptors.stream().skip(pageCursor!=null? pageCursor.cursor(): 0).limit(pageSize).map(MetaDescriptor::toHeader), descriptors.size());
+    return page;
   }
 
   @Override

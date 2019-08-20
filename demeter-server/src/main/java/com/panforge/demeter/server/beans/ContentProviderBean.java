@@ -57,7 +57,6 @@ import org.slf4j.LoggerFactory;
 @Service
 public class ContentProviderBean implements ContentProvider<PageCursorByPageNumber> {
   private static final Logger LOG = LoggerFactory.getLogger(ContentProviderBean.class);
-  private static final int PAGE_SIZE = 100;
   
   @Autowired
   private RootFolderService rootFolderServise;
@@ -92,12 +91,12 @@ public class ContentProviderBean implements ContentProvider<PageCursorByPageNumb
   }
 
   @Override
-  public Page<Set, PageCursorByPageNumber> listSets(PageCursorByPageNumber pageCursor) throws NoSetHierarchyException {
+  public Page<Set, PageCursorByPageNumber> listSets(PageCursorByPageNumber pageCursor, int pageSize) throws NoSetHierarchyException {
     throw new NoSetHierarchyException("This repository does not support set hierarchy.");
   }
 
   @Override
-  public Page<Header, PageCursorByPageNumber> listHeaders(Filter filter, PageCursorByPageNumber pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+  public Page<Header, PageCursorByPageNumber> listHeaders(Filter filter, PageCursorByPageNumber pageCursor, int pageSize) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     if (filter.set!=null) {
       throw new NoSetHierarchyException("This repository does not support set hierarchy.");
     }
@@ -120,16 +119,16 @@ public class ContentProviderBean implements ContentProvider<PageCursorByPageNumb
                     })
                     .filter(h -> h != null)
                     .skip(skip)
-                    .limit(PAGE_SIZE)
+                    .limit(pageSize)
                     .collect(Collectors.toList());    
     
     if (headers.isEmpty()) {
       throw new NoRecordsMatchException(String.format("No matching records."));
     }
     PageCursorByPageNumber nextPageCursor = null;
-    if (headers.size()>=PAGE_SIZE) {
+    if (headers.size()>=pageSize) {
       nextPageCursor = new PageCursorByPageNumber();
-      nextPageCursor.cursor = skip + PAGE_SIZE;
+      nextPageCursor.cursor = skip + pageSize;
     }
     return Page.of(headers, nextPageCursor);
   }

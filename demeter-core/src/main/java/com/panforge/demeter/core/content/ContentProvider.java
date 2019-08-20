@@ -47,7 +47,7 @@ public interface ContentProvider<PC extends PageCursor> {
    * @return page of sets
    * @throws NoSetHierarchyException if error iterating sets
    */
-  Page<Set, PC> listSets(PC pageCursor) throws NoSetHierarchyException;
+  Page<Set, PC> listSets(PC pageCursor, int pageSize) throws NoSetHierarchyException;
   
   /**
    * Lists headers.
@@ -58,7 +58,7 @@ public interface ContentProvider<PC extends PageCursor> {
    * @throws NoRecordsMatchException if no records
    * @throws NoSetHierarchyException if set hierarchy not supported
    */
-  Page<Header, PC> listHeaders(Filter filter, PC pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException;
+  Page<Header, PC> listHeaders(Filter filter, PC pageCursor, int pageSize) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException;
   
   /**
    * Reads record.

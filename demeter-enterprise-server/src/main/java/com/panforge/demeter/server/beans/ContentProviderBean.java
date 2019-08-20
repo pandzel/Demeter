@@ -82,7 +82,7 @@ public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
   }
 
   @Override
-  public Page<Set, PageCursorImpl> listSets(PageCursorImpl pageCursor) throws NoSetHierarchyException {
+  public Page<Set, PageCursorImpl> listSets(PageCursorImpl pageCursor, int pageSize) throws NoSetHierarchyException {
     long total = conn.execute("select counter from counter where table_name = 'sets'").one().getLong("counter");
     ResultSet rs = conn.execute("select * from sets");
     return Page.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
@@ -109,7 +109,7 @@ public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
   }
 
   @Override
-  public Page<Header, PageCursorImpl> listHeaders(Filter filter, PageCursorImpl pageCursor) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+  public Page<Header, PageCursorImpl> listHeaders(Filter filter, PageCursorImpl pageCursor, int pageSize) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     try {
       if (!StreamSupport.stream(listMetadataFormats(null).spliterator(), false).map(f -> f.metadataPrefix).anyMatch(p -> p.equals(filter.metadataPrefix))) {
         throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", filter.metadataPrefix));

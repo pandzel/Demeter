@@ -100,7 +100,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListSets.name(), response.getParameter("verb"));
     
     ListSetsResponse responseObj = (ListSetsResponse)response;
-    assertEquals("Invalid number of formats", contentProvider.listSets(null).total(), responseObj.listSets.length);
+    assertEquals("Invalid number of formats", contentProvider.listSets(null, Service.DEFAULT_BATCH_SIZE).total(), responseObj.listSets.length);
   }
   
   @Test
@@ -116,7 +116,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListIdentifiers.name(), response.getParameter("verb"));
     
     ListIdentifiersResponse responseObj = (ListIdentifiersResponse)response;
-    assertEquals("Invalid number of identifiers", contentProvider.listHeaders(null, null).total(), responseObj.headers.length);
+    assertEquals("Invalid number of identifiers", contentProvider.listHeaders(null, null, Service.DEFAULT_BATCH_SIZE).total(), responseObj.headers.length);
   }
   
   // TODO: list identifiers with token
@@ -150,11 +150,10 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListIdentifiers.name(), response.getParameter("verb"));
     
     responseObj = (ListIdentifiersResponse)response;
-    assertTrue("Invalid number of identifiers", auxBatchSize + responseObj.headers.length == contentProvider.listHeaders(null, null).total());
+    assertTrue("Invalid number of identifiers", auxBatchSize + responseObj.headers.length == contentProvider.listHeaders(null, null, Service.DEFAULT_BATCH_SIZE).total());
   }
   */
   
-  // TODO: list records
   @Test
   public void testListRecords() throws Exception {
     ListRecordsRequest request = new ListRecordsRequest("oai_dc", null, null, null);
@@ -168,7 +167,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListRecords.name(), response.getParameter("verb"));
     
     ListRecordsResponse responseObj = (ListRecordsResponse)response;
-    assertEquals("Invalid number of formats", contentProvider.listHeaders(null, null).total(), responseObj.records.length);
+    assertEquals("Invalid number of formats", contentProvider.listHeaders(null, null, Service.DEFAULT_BATCH_SIZE).total(), responseObj.records.length);
   }
   
   // TODO: list records with token

@@ -68,19 +68,19 @@ public class Service<PC extends PageCursor> {
   private final Context ctx;
   private final RequestParser parser;
   private final ResponseFactory factory;
-  private final int batchSize;
+  private final int pageSize;
 
   /**
    * Creates instance of the service.
    * @param config configuration
    * @param repo repository
    * @param tokenManager token manager
-   * @param batchSize batch size
+   * @param pageSize batch size
    */
-  public Service(Config config, ContentProvider<PC> repo, TokenManager<PC> tokenManager, int batchSize) {
+  public Service(Config config, ContentProvider<PC> repo, TokenManager<PC> tokenManager, int pageSize) {
     this.repo = repo;
     this.tokenManager = tokenManager;
-    this.batchSize = batchSize;
+    this.pageSize = pageSize;
     
     Validate.notNull(config, "Missing configuration");
     Validate.notNull(repo, "Missing content provider");
@@ -166,7 +166,7 @@ public class Service<PC extends PageCursor> {
   
   private String createListSetsResponse(ListSetsRequest request) throws BadResumptionTokenException, NoSetHierarchyException {
     PC pageCursor = request.getResumptionToken()!=null? tokenManager.pull(request.getResumptionToken()): null;
-    try (Page<Set,PC> listSets = repo.listSets(pageCursor);) {
+    try (Page<Set,PC> listSets = repo.listSets(pageCursor, pageSize);) {
       PC nextPageCursor = listSets.nextPageCursor();
       ResumptionToken resumptionToken = nextPageCursor!=null? tokenManager.put(nextPageCursor, listSets.total()): null;
       Set[] setArray = StreamSupport.stream(listSets.spliterator(), false).toArray(Set[]::new);
@@ -177,7 +177,7 @@ public class Service<PC extends PageCursor> {
   
   private String createListIdentifiersResponse(ListIdentifiersRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     PC pageCursor = request.getResumptionToken()!=null? tokenManager.pull(request.getResumptionToken()): null;
-    try (Page<Header, PC> headers = repo.listHeaders(request.getFilter(), pageCursor);) {
+    try (Page<Header, PC> headers = repo.listHeaders(request.getFilter(), pageCursor, pageSize);) {
       PC nextPageCursor = headers.nextPageCursor();
       ResumptionToken resumptionToken = nextPageCursor!=null? tokenManager.put(nextPageCursor, headers.total()): null;
       Header[] headerArray = StreamSupport.stream(headers.spliterator(), false).toArray(Header[]::new);
@@ -188,7 +188,7 @@ public class Service<PC extends PageCursor> {
   
   private String createListRecordsResponse(ListRecordsRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     PC pageCursor = request.getResumptionToken()!=null? tokenManager.pull(request.getResumptionToken()): null;
-    try (Page<Header, PC> headers = repo.listHeaders(request.getFilter(), pageCursor);) {
+    try (Page<Header, PC> headers = repo.listHeaders(request.getFilter(), pageCursor, pageSize);) {
       PC nextPageCursor = headers.nextPageCursor();
       ResumptionToken resumptionToken = nextPageCursor!=null? tokenManager.put(nextPageCursor, headers.total()): null;
       Record[] recordArray = StreamSupport.stream(headers.spliterator(), false).map(h -> {
