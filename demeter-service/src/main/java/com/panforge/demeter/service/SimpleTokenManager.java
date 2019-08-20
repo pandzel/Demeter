@@ -65,36 +65,4 @@ public class SimpleTokenManager<PC extends PageCursor> implements TokenManager<P
     PC pageCursor = codec.fromString(pcString);
     return pageCursor;
   }
-  
-  // TODO: cleanup
-  /*
-  @Override
-  public ResumptionToken register(Supplier<String> supplier, long completeListSize, long cursor) {
-    synchronized (tokens) {
-      OffsetDateTime now = OffsetDateTime.now();
-
-      String tokenValue = UUID.randomUUID().toString();
-      ResumptionToken resumptionToken = new ResumptionToken(tokenValue, now.plus(expiration, ChronoUnit.MILLIS), completeListSize, cursor);
-      TokenEntry tokenEntry = new TokenEntry(resumptionToken, supplier);
-      tokens.put(tokenValue, tokenEntry);
-
-      return resumptionToken;
-    }
-  }
-
-  @Override
-  public String invoke(String token) throws BadResumptionTokenException {
-    synchronized (tokens) {
-      TokenEntry tokenEntry = tokens.get(token);
-      if (tokenEntry==null) {
-        throw new BadResumptionTokenException(String.format("Invalid token: '%s'", StringUtils.trimToEmpty(token)));
-      }
-      if (tokenEntry.resumptionToken.expired()) {
-        throw new BadResumptionTokenException(String.format("Expired token: '%s'", StringUtils.trimToEmpty(token)));
-      }
-      return tokenEntry.supplier.get();
-    }
-  }
-  */
-  
 }
