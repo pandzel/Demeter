@@ -22,13 +22,7 @@ import com.panforge.demeter.core.content.PageCursor;
  * @author Piotr Andzel
  */
 public class PageCursorByPageNumber implements PageCursor {
-  public Integer total;
   public Integer cursor;
-
-  @Override
-  public int total() {
-    return total!=null? total: 0;
-  }
 
   @Override
   public int cursor() {

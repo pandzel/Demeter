@@ -24,7 +24,19 @@ import com.panforge.demeter.core.model.ResumptionToken;
  * @param <PC> type of page cursor
  */
 public interface TokenManager<PC extends PageCursor> {
-  ResumptionToken put(PC pageCursor);
+  /**
+   * Stores page cursor.
+   * @param pageCursor page cursor
+   * @param total total records
+   * @return resumption token
+   */
+  ResumptionToken put(PC pageCursor, long total);
   
+  /**
+   * Retrieves page cursor.
+   * @param tokenId token id
+   * @return page cursor
+   * @throws BadResumptionTokenException if invalid token
+   */
   PC pull(String tokenId) throws BadResumptionTokenException;
 }

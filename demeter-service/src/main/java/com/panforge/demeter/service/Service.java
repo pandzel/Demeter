@@ -167,7 +167,7 @@ public class Service<PC extends PageCursor> {
     PC pageCursor = request.getResumptionToken()!=null? tokenManager.pull(request.getResumptionToken()): null;
     try (Page<Set,PC> listSets = repo.listSets(pageCursor);) {
       PC nextPageCursor = listSets.nextPageCursor();
-      ResumptionToken resumptionToken = nextPageCursor!=null? tokenManager.put(nextPageCursor): null;
+      ResumptionToken resumptionToken = nextPageCursor!=null? tokenManager.put(nextPageCursor, listSets.total()): null;
       Set[] setArray = StreamSupport.stream(listSets.spliterator(), false).toArray(Set[]::new);
       ListSetsResponse response = new ListSetsResponse(request.getParameters(), OffsetDateTime.now(), setArray, resumptionToken);
       return factory.createListSetsResponse(response); 
@@ -178,7 +178,7 @@ public class Service<PC extends PageCursor> {
     PC pageCursor = request.getResumptionToken()!=null? tokenManager.pull(request.getResumptionToken()): null;
     try (Page<Header, PC> headers = repo.listHeaders(request.getFilter(), pageCursor);) {
       PC nextPageCursor = headers.nextPageCursor();
-      ResumptionToken resumptionToken = nextPageCursor!=null? tokenManager.put(nextPageCursor): null;
+      ResumptionToken resumptionToken = nextPageCursor!=null? tokenManager.put(nextPageCursor, headers.total()): null;
       Header[] headerArray = StreamSupport.stream(headers.spliterator(), false).toArray(Header[]::new);
       ListIdentifiersResponse response = new ListIdentifiersResponse(request.getParameters(), OffsetDateTime.now(), headerArray, resumptionToken);
       return factory.createListIdentifiersResponse(response); 

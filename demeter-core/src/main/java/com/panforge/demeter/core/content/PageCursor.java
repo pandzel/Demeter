@@ -19,6 +19,9 @@ package com.panforge.demeter.core.content;
  * Page cursor
  */
 public interface PageCursor {
-  int total();
+  /**
+   * Gets cursor position.
+   * @return cursor position
+   */
   int cursor();
 }

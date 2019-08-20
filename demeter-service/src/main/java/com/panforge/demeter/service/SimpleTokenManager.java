@@ -47,12 +47,12 @@ public class SimpleTokenManager<PC extends PageCursor> implements TokenManager<P
   }
 
   @Override
-  public ResumptionToken put(PC pageCursor) {
+  public ResumptionToken put(PC pageCursor, long total) {
     OffsetDateTime now = OffsetDateTime.now();
     String tokenValue = UUID.randomUUID().toString();
     String pcString = codec.toString(pageCursor);
     tokens.put(tokenValue, pcString);
-    ResumptionToken resumptionToken = new ResumptionToken(tokenValue, now.plus(expiration, ChronoUnit.MILLIS), pageCursor.total(), pageCursor.cursor());
+    ResumptionToken resumptionToken = new ResumptionToken(tokenValue, now.plus(expiration, ChronoUnit.MILLIS), total, pageCursor.cursor());
     return resumptionToken;
   }
 

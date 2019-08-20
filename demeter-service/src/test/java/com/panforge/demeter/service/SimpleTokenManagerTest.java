@@ -44,7 +44,7 @@ public class SimpleTokenManagerTest {
 
   @Test
   public void testToken() throws BadResumptionTokenException {
-    ResumptionToken token = tm.put(new MockupPageCursor());
+    ResumptionToken token = tm.put(new MockupPageCursor(), 0);
     assertNotNull("No token", token);
     assertNotNull("Empty token value", token.value);
     MockupPageCursor pageCursor = tm.pull(token.value);
@@ -53,7 +53,7 @@ public class SimpleTokenManagerTest {
   
   @Test(expected = com.panforge.demeter.core.api.exception.BadResumptionTokenException.class)
   public void testExpiration() throws BadResumptionTokenException, InterruptedException {
-    ResumptionToken token = tm.put(new MockupPageCursor());
+    ResumptionToken token = tm.put(new MockupPageCursor(), 0);
     assertNotNull("No token", token);
     assertNotNull("Empty token value", token.value);
     Thread.sleep(expiration+10);

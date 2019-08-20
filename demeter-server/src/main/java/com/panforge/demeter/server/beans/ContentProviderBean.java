@@ -130,7 +130,6 @@ public class ContentProviderBean implements ContentProvider<PageCursorByPageNumb
     if (headers.size()>=PAGE_SIZE) {
       nextPageCursor = new PageCursorByPageNumber();
       nextPageCursor.cursor = skip + PAGE_SIZE;
-      nextPageCursor.total = headers.size();
     }
     return Page.of(headers, nextPageCursor);
   }
