@@ -49,7 +49,7 @@ public class ServiceTest {
     config.repositoryName = "Mockup repository";
     contentProvider = new MockupContentProvider().initialize();
     pageCursorCodec = new MockupPageCursorCodec();
-    service = new Service<MockupPageCursor>(config, contentProvider, new SimpleTokenManager<>(pageCursorCodec, 1000));
+    service = new Service<>(config, contentProvider, new SimpleTokenManager<>(pageCursorCodec, 1000));
     respParser = new ResponseParser();
   }
   
@@ -168,8 +168,6 @@ public class ServiceTest {
     assertEquals("Invalid number of formats", contentProvider.listHeaders(null, null, Service.DEFAULT_BATCH_SIZE).total(), responseObj.records.length);
   }
   
-  // TODO: list records with token
-  /*
   @Test
   public void testListRecordsWithToken() throws Exception {
     int auxBatchSize = 3;
@@ -200,9 +198,8 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListRecords.name(), response.getParameter("verb"));
     
     responseObj = (ListRecordsResponse)response;
-    assertEquals("Invalid number of records", contentProvider.listHeaders(null, null, Service.DEFAULT_BATCH_SIZE).total(), responseObj.records.length);
+    assertTrue("Invalid number of records", auxBatchSize + responseObj.records.length == contentProvider.listHeaders(null, null, Service.DEFAULT_BATCH_SIZE).total());
   }
-  */
   
   @Test
   public void testGetRecord() throws Exception {
