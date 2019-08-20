@@ -23,7 +23,6 @@ import com.panforge.demeter.core.api.exception.NoSetHierarchyException;
 import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.content.Filter;
 import com.panforge.demeter.core.content.Page;
-import com.panforge.demeter.core.content.PageCursor;
 import com.panforge.demeter.core.content.StreamingIterable;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;

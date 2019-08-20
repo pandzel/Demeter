@@ -38,6 +38,7 @@ public class SimpleTokenManager<PC extends PageCursor> implements TokenManager<P
 
   /**
    * Creates instance of the default token manager.
+   * @param codec codec
    * @param expiration expiration time (in milliseconds) of the token
    */
   public SimpleTokenManager(PageCursorCodec<PC> codec, long expiration) {
