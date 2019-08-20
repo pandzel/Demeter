@@ -119,12 +119,11 @@ public class ServiceTest {
     assertEquals("Invalid number of identifiers", contentProvider.listHeaders(null, null, Service.DEFAULT_BATCH_SIZE).total(), responseObj.headers.length);
   }
   
-  // TODO: list identifiers with token
-  /*
   @Test
   public void testListIdentifiersWithToken() throws Exception {
     int auxBatchSize = 3;
-    Service<MockupPageCursor> auxService = new Service<>(config, contentProvider, new SimpleTokenManager<>(pageCursorCodec, 5000), auxBatchSize);
+    SimpleTokenManager<MockupPageCursor> simpleTokenManager = new SimpleTokenManager<>(pageCursorCodec, 500000);
+    Service<MockupPageCursor> auxService = new Service<>(config, contentProvider, simpleTokenManager, auxBatchSize);
     ListIdentifiersRequest request = new ListIdentifiersRequest("oai_dc", null, null, null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = auxService.execute(parameters);
@@ -152,7 +151,6 @@ public class ServiceTest {
     responseObj = (ListIdentifiersResponse)response;
     assertTrue("Invalid number of identifiers", auxBatchSize + responseObj.headers.length == contentProvider.listHeaders(null, null, Service.DEFAULT_BATCH_SIZE).total());
   }
-  */
   
   @Test
   public void testListRecords() throws Exception {
@@ -175,7 +173,8 @@ public class ServiceTest {
   @Test
   public void testListRecordsWithToken() throws Exception {
     int auxBatchSize = 3;
-    Service<MockupPageCursor> auxService = new Service<>(config, contentProvider, new SimpleTokenManager<>(pageCursorCodec, 5000), auxBatchSize);
+    SimpleTokenManager<MockupPageCursor> simpleTokenManager = new SimpleTokenManager<>(pageCursorCodec, 500000);
+    Service<MockupPageCursor> auxService = new Service<>(config, contentProvider, simpleTokenManager, auxBatchSize);
     ListRecordsRequest request = new ListRecordsRequest("oai_dc", null, null, null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = auxService.execute(parameters);
@@ -201,7 +200,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListRecords.name(), response.getParameter("verb"));
     
     responseObj = (ListRecordsResponse)response;
-    assertTrue("Invalid number of records", auxBatchSize + responseObj.records.length == contentProvider.listHeaders(null, null).total());
+    assertEquals("Invalid number of records", contentProvider.listHeaders(null, null, Service.DEFAULT_BATCH_SIZE).total(), responseObj.records.length);
   }
   */
   

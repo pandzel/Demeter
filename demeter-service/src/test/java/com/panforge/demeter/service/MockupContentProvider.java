@@ -23,6 +23,7 @@ import com.panforge.demeter.core.api.exception.NoSetHierarchyException;
 import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.content.Filter;
 import com.panforge.demeter.core.content.Page;
+import com.panforge.demeter.core.content.PageCursor;
 import com.panforge.demeter.core.content.StreamingIterable;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
@@ -105,7 +106,8 @@ public class MockupContentProvider implements ContentProvider<MockupPageCursor> 
 
   @Override
   public Page<Header,MockupPageCursor> listHeaders(Filter filter, MockupPageCursor pageCursor, int pageSize) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    Page<Header,MockupPageCursor> page = Page.of(descriptors.stream().skip(pageCursor!=null? pageCursor.cursor(): 0).limit(pageSize).map(MetaDescriptor::toHeader), descriptors.size());
+    MockupPageCursor nextPageCursor = pageCursor==null? pageSize < descriptors.size()? new MockupPageCursor(pageSize): null: pageCursor.cursor() + pageSize < descriptors.size()? new MockupPageCursor(pageCursor.cursor() + pageSize): null;
+    Page<Header,MockupPageCursor> page = Page.of(descriptors.stream().skip(pageCursor!=null? pageCursor.cursor(): 0).limit(pageSize).map(MetaDescriptor::toHeader), descriptors.size(), nextPageCursor);
     return page;
   }
 

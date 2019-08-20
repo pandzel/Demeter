@@ -15,22 +15,37 @@
  */
 package com.panforge.demeter.service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.panforge.demeter.core.content.PageCursorCodec;
+import java.io.IOException;
 
 /**
  *
  * @author Piotr Andzel
  */
 public class MockupPageCursorCodec implements PageCursorCodec<MockupPageCursor> {
+  private static final ObjectMapper MAPPER = new ObjectMapper();
+  static {
+    MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+  }
 
   @Override
   public String toString(MockupPageCursor pageCursor) {
-    return "";
+    try {
+      return MAPPER.writeValueAsString(pageCursor);
+    } catch (JsonProcessingException ex) {
+      return "";
+    }
   }
 
   @Override
   public MockupPageCursor fromString(String pageCursorStr) {
-    return new MockupPageCursor();
+    try {
+      return MAPPER.readValue(pageCursorStr, MockupPageCursor.class);
+    } catch (IOException ex) {
+      return null;
+    }
   }
-  
 }
