@@ -37,6 +37,7 @@ import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.content.Filter;
 import com.panforge.demeter.core.content.Page;
 import com.panforge.demeter.core.content.StreamingIterable;
+import com.panforge.demeter.core.utils.DefaultPageCursor;
 import com.panforge.demeter.server.Connection;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -52,7 +53,7 @@ import org.w3c.dom.Document;
  * Repository bean.
  */
 @Service
-public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
+public class ContentProviderBean implements ContentProvider<DefaultPageCursor> {
 
   private static final Logger LOG = LoggerFactory.getLogger(ContentProviderBean.class);
 
@@ -82,7 +83,7 @@ public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
   }
 
   @Override
-  public Page<Set, PageCursorImpl> listSets(PageCursorImpl pageCursor, int pageSize) throws NoSetHierarchyException {
+  public Page<Set, DefaultPageCursor> listSets(DefaultPageCursor pageCursor, int pageSize) throws NoSetHierarchyException {
     long total = conn.execute("select counter from counter where table_name = 'sets'").one().getLong("counter");
     ResultSet rs = conn.execute("select * from sets");
     return Page.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
@@ -92,13 +93,13 @@ public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
     }), total);
   }
 
-  private Page<UUID, PageCursorImpl> listSetsIdsFor(String recordId) {
+  private Page<UUID, DefaultPageCursor> listSetsIdsFor(String recordId) {
     ResultSet rs = conn.execute("select setId from records_sets where recordId = " + recordId);
     List<Row> rows = rs.all();
     return Page.of(rows.stream().map(row -> row.getUuid("setId")), rows.size());
   }
 
-  private Page<Set, PageCursorImpl> listSetsFor(String recordId) {
+  private Page<Set, DefaultPageCursor> listSetsFor(String recordId) {
     ResultSet rs = conn.execute("select * from sets where id in (" + listSetsIdsFor(recordId).stream().map(UUID::toString).collect(Collectors.joining(",")) + ")");
     List<Row> rows = rs.all();
     return Page.of(rows.stream().map(row -> {
@@ -109,7 +110,7 @@ public class ContentProviderBean implements ContentProvider<PageCursorImpl> {
   }
 
   @Override
-  public Page<Header, PageCursorImpl> listHeaders(Filter filter, PageCursorImpl pageCursor, int pageSize) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+  public Page<Header, DefaultPageCursor> listHeaders(Filter filter, DefaultPageCursor pageCursor, int pageSize) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     try {
       if (!StreamSupport.stream(listMetadataFormats(null).spliterator(), false).map(f -> f.metadataPrefix).anyMatch(p -> p.equals(filter.metadataPrefix))) {
         throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", filter.metadataPrefix));

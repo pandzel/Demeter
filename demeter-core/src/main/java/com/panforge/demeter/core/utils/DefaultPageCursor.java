@@ -13,27 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.panforge.demeter.server.beans;
+package com.panforge.demeter.core.utils;
 
 import com.panforge.demeter.core.content.PageCursor;
 
 /**
- *
- * @author Piotr Andzel
+ * Default page cursor.
  */
-public class PageCursorImpl implements PageCursor {
+public class DefaultPageCursor implements PageCursor {
   
-  public String pageCursorStr;
+  public String data;
   public Integer cursor;
 
   @Override
   public int cursor() {
     return cursor!=null? cursor: 0;
-  }
-
-  public PageCursorImpl(String pageCursorStr, int cursor) {
-    this.pageCursorStr = pageCursorStr;
-    this.cursor = cursor;
   }
   
 }

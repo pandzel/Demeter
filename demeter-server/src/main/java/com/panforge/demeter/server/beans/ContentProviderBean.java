@@ -46,6 +46,7 @@ import com.panforge.demeter.core.content.ContentProvider;
 import com.panforge.demeter.core.content.Filter;
 import com.panforge.demeter.core.content.Page;
 import com.panforge.demeter.core.content.StreamingIterable;
+import com.panforge.demeter.core.utils.DefaultPageCursor;
 import java.util.List;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * Repository bean.
  */
 @Service
-public class ContentProviderBean implements ContentProvider<PageCursorByPageNumber> {
+public class ContentProviderBean implements ContentProvider<DefaultPageCursor> {
   private static final Logger LOG = LoggerFactory.getLogger(ContentProviderBean.class);
   
   @Autowired
@@ -91,12 +92,12 @@ public class ContentProviderBean implements ContentProvider<PageCursorByPageNumb
   }
 
   @Override
-  public Page<Set, PageCursorByPageNumber> listSets(PageCursorByPageNumber pageCursor, int pageSize) throws NoSetHierarchyException {
+  public Page<Set, DefaultPageCursor> listSets(DefaultPageCursor pageCursor, int pageSize) throws NoSetHierarchyException {
     throw new NoSetHierarchyException("This repository does not support set hierarchy.");
   }
 
   @Override
-  public Page<Header, PageCursorByPageNumber> listHeaders(Filter filter, PageCursorByPageNumber pageCursor, int pageSize) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+  public Page<Header, DefaultPageCursor> listHeaders(Filter filter, DefaultPageCursor pageCursor, int pageSize) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
     if (filter.set!=null) {
       throw new NoSetHierarchyException("This repository does not support set hierarchy.");
     }
@@ -107,7 +108,7 @@ public class ContentProviderBean implements ContentProvider<PageCursorByPageNumb
     } catch (NoMetadataFormatsException|IdDoesNotExistException ex) {
         throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", filter.metadataPrefix), ex);
     }
-    int skip = pageCursor!=null && pageCursor.cursor!=null? pageCursor.cursor: 0;
+    int skip = pageCursor!=null && pageCursor.cursor!=null? pageCursor.cursor(): 0;
     List<Header> headers = descriptors.values().stream()
                     .map(l -> {
                       MetaDescriptor md = l.values().stream()
@@ -125,9 +126,9 @@ public class ContentProviderBean implements ContentProvider<PageCursorByPageNumb
     if (headers.isEmpty()) {
       throw new NoRecordsMatchException(String.format("No matching records."));
     }
-    PageCursorByPageNumber nextPageCursor = null;
+    DefaultPageCursor nextPageCursor = null;
     if (headers.size()>=pageSize) {
-      nextPageCursor = new PageCursorByPageNumber();
+      nextPageCursor = new DefaultPageCursor();
       nextPageCursor.cursor = skip + pageSize;
     }
     return Page.of(headers, nextPageCursor);
