@@ -21,8 +21,9 @@ import com.panforge.demeter.core.api.exception.NoMetadataFormatsException;
 import com.panforge.demeter.core.api.exception.NoRecordsMatchException;
 import com.panforge.demeter.core.api.exception.NoSetHierarchyException;
 import com.panforge.demeter.core.content.ContentProvider;
-import com.panforge.demeter.core.content.Cursor;
 import com.panforge.demeter.core.content.Filter;
+import com.panforge.demeter.core.content.Page;
+import com.panforge.demeter.core.content.StreamingIterable;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.model.response.elements.Record;
@@ -36,6 +37,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +58,7 @@ import org.xml.sax.SAXException;
 /**
  * Mockup content provider.
  */
-public class MockupContentProvider implements ContentProvider {
+public class MockupContentProvider implements ContentProvider<MockupPageCursor> {
 
   private final static XPathFactory XPATH_FACTORY = XPathFactory.newInstance();
   private final static XPath XPATH = XPATH_FACTORY.newXPath();
@@ -84,7 +86,7 @@ public class MockupContentProvider implements ContentProvider {
   
   private final List<MetaDescriptor> descriptors = new ArrayList<>();
   
-  ContentProvider initialize() throws URISyntaxException {
+  ContentProvider<MockupPageCursor> initialize() throws URISyntaxException {
     File root = new File(Thread.currentThread().getContextClassLoader().getResource("content").toURI());
     File[] files = root.listFiles();
     Stream.of(files).map(file -> descriptor(file, parseToXml(file))).forEach(desc->descriptors.add(desc));
@@ -92,18 +94,20 @@ public class MockupContentProvider implements ContentProvider {
   }
 
   @Override
-  public Cursor<MetadataFormat> listMetadataFormats(URI identifier) throws IdDoesNotExistException, NoMetadataFormatsException {
-    return Cursor.of(new MetadataFormat[]{OAI_DC});
+  public StreamingIterable<MetadataFormat> listMetadataFormats(URI identifier) throws IdDoesNotExistException, NoMetadataFormatsException {
+    return Page.of(Arrays.asList(new MetadataFormat[]{OAI_DC}));
   }
 
   @Override
-  public Cursor<Set> listSets() throws NoSetHierarchyException {
-    return Cursor.of(new Set[]{MAIN_SET});
+  public Page<Set,MockupPageCursor> listSets(MockupPageCursor pageCursor, int pageSize) throws NoSetHierarchyException {
+    return Page.of(Arrays.asList(new Set[]{MAIN_SET}));
   }
 
   @Override
-  public Cursor<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    return Cursor.of(descriptors.stream().map(MetaDescriptor::toHeader), descriptors.size());
+  public Page<Header,MockupPageCursor> listHeaders(Filter filter, MockupPageCursor pageCursor, int pageSize) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
+    MockupPageCursor nextPageCursor = pageCursor==null? pageSize < descriptors.size()? new MockupPageCursor(pageSize): null: pageCursor.cursor() + pageSize < descriptors.size()? new MockupPageCursor(pageCursor.cursor() + pageSize): null;
+    Page<Header,MockupPageCursor> page = Page.of(descriptors.stream().skip(pageCursor!=null? pageCursor.cursor(): 0).limit(pageSize).map(MetaDescriptor::toHeader), descriptors.size(), nextPageCursor);
+    return page;
   }
 
   @Override

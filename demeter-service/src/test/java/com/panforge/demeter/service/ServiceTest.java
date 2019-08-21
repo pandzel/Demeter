@@ -18,10 +18,10 @@ package com.panforge.demeter.service;
 import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.core.api.ResponseParser;
 import com.panforge.demeter.core.content.ContentProvider;
+import com.panforge.demeter.core.content.PageCursorCodec;
 import com.panforge.demeter.core.model.Verb;
 import com.panforge.demeter.core.model.request.*;
 import com.panforge.demeter.core.model.response.*;
-import com.panforge.demeter.core.utils.QueryUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -35,9 +35,10 @@ import org.junit.BeforeClass;
  */
 public class ServiceTest {
   private static Config config;
-  private static Service service;
+  private static Service<MockupPageCursor> service;
   private static ResponseParser respParser;
-  private static ContentProvider contentProvider;
+  private static ContentProvider<MockupPageCursor> contentProvider;
+  private static PageCursorCodec<MockupPageCursor> pageCursorCodec;
   
   public ServiceTest() {
   }
@@ -47,7 +48,8 @@ public class ServiceTest {
     config = new Config();
     config.repositoryName = "Mockup repository";
     contentProvider = new MockupContentProvider().initialize();
-    service = new Service(config, contentProvider);
+    pageCursorCodec = new MockupPageCursorCodec();
+    service = new Service<>(config, contentProvider, new SimpleTokenManager<>(pageCursorCodec, 1000));
     respParser = new ResponseParser();
   }
   
@@ -82,7 +84,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListMetadataFormats.name(), response.getParameter("verb"));
     
     ListMetadataFormatsResponse responseObj = (ListMetadataFormatsResponse)response;
-    assertEquals("Invalid number of formats", contentProvider.listMetadataFormats(null).total(), responseObj.metadataFormats.length);
+    assertEquals("Invalid number of formats", contentProvider.listMetadataFormats(null).stream().count(), responseObj.metadataFormats.length);
   }
   
   @Test
@@ -98,7 +100,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListSets.name(), response.getParameter("verb"));
     
     ListSetsResponse responseObj = (ListSetsResponse)response;
-    assertEquals("Invalid number of formats", contentProvider.listSets().total(), responseObj.listSets.length);
+    assertEquals("Invalid number of formats", contentProvider.listSets(null, Service.DEFAULT_BATCH_SIZE).total(), responseObj.listSets.length);
   }
   
   @Test
@@ -114,13 +116,14 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListIdentifiers.name(), response.getParameter("verb"));
     
     ListIdentifiersResponse responseObj = (ListIdentifiersResponse)response;
-    assertEquals("Invalid number of identifiers", contentProvider.listHeaders(null).total(), responseObj.headers.length);
+    assertEquals("Invalid number of identifiers", contentProvider.listHeaders(null, null, Service.DEFAULT_BATCH_SIZE).total(), responseObj.headers.length);
   }
   
   @Test
   public void testListIdentifiersWithToken() throws Exception {
     int auxBatchSize = 3;
-    Service auxService = new Service(config, contentProvider, new SimpleTokenManager(), auxBatchSize);
+    SimpleTokenManager<MockupPageCursor> simpleTokenManager = new SimpleTokenManager<>(pageCursorCodec, 500000);
+    Service<MockupPageCursor> auxService = new Service<>(config, contentProvider, simpleTokenManager, auxBatchSize);
     ListIdentifiersRequest request = new ListIdentifiersRequest("oai_dc", null, null, null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = auxService.execute(parameters);
@@ -146,7 +149,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListIdentifiers.name(), response.getParameter("verb"));
     
     responseObj = (ListIdentifiersResponse)response;
-    assertTrue("Invalid number of identifiers", auxBatchSize + responseObj.headers.length == contentProvider.listHeaders(null).total());
+    assertTrue("Invalid number of identifiers", auxBatchSize + responseObj.headers.length == contentProvider.listHeaders(null, null, Service.DEFAULT_BATCH_SIZE).total());
   }
   
   @Test
@@ -162,13 +165,14 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListRecords.name(), response.getParameter("verb"));
     
     ListRecordsResponse responseObj = (ListRecordsResponse)response;
-    assertEquals("Invalid number of formats", contentProvider.listHeaders(null).total(), responseObj.records.length);
+    assertEquals("Invalid number of formats", contentProvider.listHeaders(null, null, Service.DEFAULT_BATCH_SIZE).total(), responseObj.records.length);
   }
   
   @Test
   public void testListRecordsWithToken() throws Exception {
     int auxBatchSize = 3;
-    Service auxService = new Service(config, contentProvider, new SimpleTokenManager(), auxBatchSize);
+    SimpleTokenManager<MockupPageCursor> simpleTokenManager = new SimpleTokenManager<>(pageCursorCodec, 500000);
+    Service<MockupPageCursor> auxService = new Service<>(config, contentProvider, simpleTokenManager, auxBatchSize);
     ListRecordsRequest request = new ListRecordsRequest("oai_dc", null, null, null);
     Map<String, String[]> parameters = request.getParameters();
     String responseStr = auxService.execute(parameters);
@@ -194,7 +198,7 @@ public class ServiceTest {
     assertEquals("Invalid response type", Verb.ListRecords.name(), response.getParameter("verb"));
     
     responseObj = (ListRecordsResponse)response;
-    assertTrue("Invalid number of records", auxBatchSize + responseObj.records.length == contentProvider.listHeaders(null).total());
+    assertTrue("Invalid number of records", auxBatchSize + responseObj.records.length == contentProvider.listHeaders(null, null, Service.DEFAULT_BATCH_SIZE).total());
   }
   
   @Test

@@ -13,30 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.panforge.demeter.service;
-
-import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
-import com.panforge.demeter.core.content.PageCursor;
-import com.panforge.demeter.core.model.ResumptionToken;
+package com.panforge.demeter.core.content;
 
 /**
- * Token manager.
- * @param <PC> type of page cursor
+ * Page cursor codec.
+ * @param <PC> type of the page cursor
  */
-public interface TokenManager<PC extends PageCursor> {
-  /**
-   * Stores page cursor.
-   * @param pageCursor page cursor
-   * @param total total records
-   * @return resumption token
-   */
-  ResumptionToken put(PC pageCursor, long total);
+public interface PageCursorCodec<PC extends PageCursor> {
   
   /**
-   * Retrieves page cursor.
-   * @param tokenId token id
-   * @return page cursor
-   * @throws BadResumptionTokenException if invalid token
+   * Encode page cursor.
+   * @param pageCursor page cursor
+   * @return encoded page cursor
    */
-  PC pull(String tokenId) throws BadResumptionTokenException;
+  String toString(PC pageCursor);
+  
+  /**
+   * Decode page cursor.
+   * @param pageCursorStr encoded page cursor
+   * @return page cursor
+   */
+  PC fromString(String pageCursorStr);
 }

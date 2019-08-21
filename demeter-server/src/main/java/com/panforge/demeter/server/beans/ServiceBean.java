@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.panforge.demeter.core.content.ContentProvider;
+import com.panforge.demeter.core.utils.DefaultPageCursor;
 import com.panforge.demeter.server.ConfigService;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -30,11 +31,11 @@ import org.slf4j.LoggerFactory;
  * Service bean.
  */
 @Service
-public class ServiceBean extends com.panforge.demeter.service.Service {
+public class ServiceBean extends com.panforge.demeter.service.Service<DefaultPageCursor> {
   private static final Logger LOG = LoggerFactory.getLogger(ServiceBean.class);
 
   @Autowired 
-  public ServiceBean(ConfigService config, ContentProvider repo, TokenManager tokenManager, @Value("${batchSize}") int batchSize) {
+  public ServiceBean(ConfigService config, ContentProvider<DefaultPageCursor> repo, TokenManager<DefaultPageCursor> tokenManager, @Value("${batchSize}") int batchSize) {
     super(config.getConfig(), repo, tokenManager, batchSize);
   }
   

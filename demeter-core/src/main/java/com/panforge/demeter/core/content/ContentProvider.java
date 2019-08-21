@@ -28,8 +28,9 @@ import java.net.URI;
 
 /**
  * Content provider.
+ * @param <PC> page cursor type
  */
-public interface ContentProvider {
+public interface ContentProvider<PC extends PageCursor> {
   
   /**
    * Lists metadata formats.
@@ -38,24 +39,26 @@ public interface ContentProvider {
    * @throws IdDoesNotExistException if id does not exist
    * @throws NoMetadataFormatsException if no metadata formats
    */
-  Cursor<MetadataFormat> listMetadataFormats(URI identifier) throws IdDoesNotExistException, NoMetadataFormatsException;
+  StreamingIterable<MetadataFormat> listMetadataFormats(URI identifier) throws IdDoesNotExistException, NoMetadataFormatsException;
   
   /**
    * Lists sets.
-   * @return iterable of sets
+   * @param pageCursor page cursor
+   * @return page of sets
    * @throws NoSetHierarchyException if error iterating sets
    */
-  Cursor<Set> listSets() throws NoSetHierarchyException;
+  Page<Set, PC> listSets(PC pageCursor, int pageSize) throws NoSetHierarchyException;
   
   /**
    * Lists headers.
    * @param filter filter
-   * @return iterable of headers
+   * @param pageCursor page cursor
+   * @return page of headers
    * @throws CannotDisseminateFormatException if invalid metadata format
    * @throws NoRecordsMatchException if no records
    * @throws NoSetHierarchyException if set hierarchy not supported
    */
-  Cursor<Header> listHeaders(Filter filter) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException;
+  Page<Header, PC> listHeaders(Filter filter, PC pageCursor, int pageSize) throws CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException;
   
   /**
    * Reads record.

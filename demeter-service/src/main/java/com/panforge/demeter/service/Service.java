@@ -17,20 +17,21 @@ package com.panforge.demeter.service;
 
 import com.panforge.demeter.core.api.Config;
 import com.panforge.demeter.core.content.ContentProvider;
-import com.panforge.demeter.core.content.Cursor;
 import com.panforge.demeter.core.api.Context;
 import com.panforge.demeter.core.api.RequestParser;
 import com.panforge.demeter.core.api.ResponseFactory;
 import com.panforge.demeter.core.model.ErrorCode;
 import com.panforge.demeter.core.model.ErrorInfo;
 import com.panforge.demeter.core.api.exception.ProtocolException;
-import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
 import com.panforge.demeter.core.api.exception.CannotDisseminateFormatException;
 import com.panforge.demeter.core.api.exception.IdDoesNotExistException;
 import com.panforge.demeter.core.api.exception.NoMetadataFormatsException;
 import com.panforge.demeter.core.api.exception.NoRecordsMatchException;
 import com.panforge.demeter.core.api.exception.NoSetHierarchyException;
+import com.panforge.demeter.core.content.Page;
+import com.panforge.demeter.core.content.PageCursor;
+import com.panforge.demeter.core.content.StreamingIterable;
 import com.panforge.demeter.core.model.request.GetRecordRequest;
 import com.panforge.demeter.core.model.request.IdentifyRequest;
 import com.panforge.demeter.core.model.request.ListMetadataFormatsRequest;
@@ -40,49 +41,46 @@ import com.panforge.demeter.core.model.request.ListRecordsRequest;
 import com.panforge.demeter.core.model.request.Request;
 import com.panforge.demeter.core.model.response.GetRecordResponse;
 import com.panforge.demeter.core.model.response.IdentifyResponse;
-import com.panforge.demeter.core.model.response.ListMetadataFormatsResponse;
 import com.panforge.demeter.core.model.response.ListSetsResponse;
 import com.panforge.demeter.core.model.response.ListIdentifiersResponse;
-import com.panforge.demeter.core.model.response.ListRecordsResponse;
+import com.panforge.demeter.core.model.response.ListMetadataFormatsResponse;
 import com.panforge.demeter.core.model.response.elements.MetadataFormat;
 import com.panforge.demeter.core.model.response.elements.Record;
 import com.panforge.demeter.core.model.response.elements.Set;
 import com.panforge.demeter.core.model.response.elements.Header;
 import com.panforge.demeter.core.utils.QueryUtils;
+import com.panforge.demeter.core.model.ResumptionToken;
+import com.panforge.demeter.core.model.response.ListRecordsResponse;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Spliterator;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.Validate;
 
 /**
  * Service.
+ * @param <PC> page cursor type
  */
-public class Service {
+public class Service<PC extends PageCursor> {
   public static final int DEFAULT_BATCH_SIZE = 10;
-  private final ContentProvider repo;
-  private final TokenManager tokenManager;
+  private final ContentProvider<PC> repo;
+  private final TokenManager<PC> tokenManager;
   
   private final Context ctx;
   private final RequestParser parser;
   private final ResponseFactory factory;
-  private final int batchSize;
+  private final int pageSize;
 
   /**
    * Creates instance of the service.
    * @param config configuration
    * @param repo repository
    * @param tokenManager token manager
-   * @param batchSize batch size
+   * @param pageSize batch size
    */
-  public Service(Config config, ContentProvider repo, TokenManager tokenManager, int batchSize) {
+  public Service(Config config, ContentProvider<PC> repo, TokenManager<PC> tokenManager, int pageSize) {
     this.repo = repo;
     this.tokenManager = tokenManager;
-    this.batchSize = batchSize;
+    this.pageSize = pageSize;
     
     Validate.notNull(config, "Missing configuration");
     Validate.notNull(repo, "Missing content provider");
@@ -99,17 +97,8 @@ public class Service {
    * @param repo repository
    * @param tokenManager token manager
    */
-  public Service(Config config, ContentProvider repo, TokenManager tokenManager) {
+  public Service(Config config, ContentProvider<PC> repo, TokenManager<PC> tokenManager) {
     this(config, repo, tokenManager, DEFAULT_BATCH_SIZE);
-  }
-
-  /**
-   * Creates instance of the service.
-   * @param config configuration
-   * @param repo repository
-   */
-  public Service(Config config, ContentProvider repo) {
-    this(config, repo, new SimpleTokenManager());
   }
 
   /**
@@ -141,28 +130,13 @@ public class Service {
           return createGetRecordResponse((GetRecordRequest) request);
 
         case ListSets:
-          ListSetsRequest listSetsRequest = (ListSetsRequest)request;
-          if (listSetsRequest.getResumptionToken()==null) {
-            return createListSetsResponse(listSetsRequest);
-          } else {
-            return tokenManager.invoke(listSetsRequest.getResumptionToken());
-          }
+          return createListSetsResponse((ListSetsRequest)request);
           
         case ListIdentifiers:
-          ListIdentifiersRequest listIdentifiersRequest = (ListIdentifiersRequest)request;
-          if (listIdentifiersRequest.getResumptionToken()==null) {
-            return createListIdentifiersResponse(listIdentifiersRequest);
-          } else {
-            return tokenManager.invoke(listIdentifiersRequest.getResumptionToken());
-          }
+          return createListIdentifiersResponse((ListIdentifiersRequest)request);
           
         case ListRecords:
-          ListRecordsRequest listRecordsRequest = (ListRecordsRequest)request;
-          if (listRecordsRequest.getResumptionToken()==null) {
-            return createListRecordsResponse(listRecordsRequest);
-          } else {
-            return tokenManager.invoke(listRecordsRequest.getResumptionToken());
-          }
+          return createListRecordsResponse((ListRecordsRequest)request);
           
         default:
           return factory.createErrorResponse(OffsetDateTime.now(), parameters, new ErrorInfo[]{new ErrorInfo(ErrorCode.badArgument, "Error parsing request.")});
@@ -178,11 +152,10 @@ public class Service {
   }
   
   private String createListMetadataFormatsResponse(ListMetadataFormatsRequest request) throws IdDoesNotExistException, NoMetadataFormatsException {
-    try (Cursor<MetadataFormat> metadataFormats = repo.listMetadataFormats(request.getIdentifier());) {
-      MetadataFormat[] metadataFormatsArray = StreamSupport.stream(metadataFormats.spliterator(), false).toArray(MetadataFormat[]::new);
-      ListMetadataFormatsResponse metadataFormatsResponse = new ListMetadataFormatsResponse(request.getParameters(), OffsetDateTime.now(), metadataFormatsArray);
-      return factory.createListMetadataFormatsResponse(metadataFormatsResponse);
-    }
+    StreamingIterable<MetadataFormat> metadataFormats = repo.listMetadataFormats(request.getIdentifier());
+    MetadataFormat[] metadataFormatsArray = StreamSupport.stream(metadataFormats.spliterator(), false).toArray(MetadataFormat[]::new);
+    ListMetadataFormatsResponse metadataFormatsResponse = new ListMetadataFormatsResponse(request.getParameters(), OffsetDateTime.now(), metadataFormatsArray);
+    return factory.createListMetadataFormatsResponse(metadataFormatsResponse);
   }
   
   private String createGetRecordResponse(GetRecordRequest request) throws IdDoesNotExistException, CannotDisseminateFormatException {
@@ -192,79 +165,46 @@ public class Service {
   }
   
   private String createListSetsResponse(ListSetsRequest request) throws BadResumptionTokenException, NoSetHierarchyException {
-    try (Cursor<Set> listSets = repo.listSets();) {
-      Spliterator<Set> spliterator = listSets.spliterator();
-      return createListSetsSupplier(request, new ArrayList<>(), spliterator, listSets.total(), 0).get();
-    }
-  }
-  
-  private Supplier<String> createListSetsSupplier(ListSetsRequest request, List<Set> bufferedSets, Spliterator<Set> spliterator, long completeListSize, long cursor) {
-    Set[] setArray = Stream.concat(bufferedSets.stream(), StreamSupport.stream(spliterator, false)).limit(batchSize).toArray(Set[]::new);
-    return () -> { 
-      ResumptionToken resumptionToken = null;
-      ArrayList<Set> prefetchedSets = new ArrayList<>();
-      if (spliterator.tryAdvance(set->{ prefetchedSets.add(set); })) {
-        Supplier<String> supplier = createListSetsSupplier(request, prefetchedSets, spliterator, completeListSize, cursor+setArray.length);
-        resumptionToken = tokenManager.register(supplier, completeListSize, cursor+setArray.length);
-      }
+    PC pageCursor = request.getResumptionToken()!=null? tokenManager.pull(request.getResumptionToken()): null;
+    try (Page<Set,PC> listSets = repo.listSets(pageCursor, pageSize);) {
+      PC nextPageCursor = listSets.nextPageCursor();
+      ResumptionToken resumptionToken = nextPageCursor!=null? tokenManager.put(nextPageCursor, listSets.total()): null;
+      Set[] setArray = StreamSupport.stream(listSets.spliterator(), false).toArray(Set[]::new);
       ListSetsResponse response = new ListSetsResponse(request.getParameters(), OffsetDateTime.now(), setArray, resumptionToken);
       return factory.createListSetsResponse(response); 
-    };
+    }
   }
   
   private String createListIdentifiersResponse(ListIdentifiersRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    try (Cursor<Header> headers = repo.listHeaders(request.getFilter());) {
-      Spliterator<Header> spliterator = headers.spliterator();
-      return createListIdentifiersSupplier(request, new ArrayList<>(), spliterator, headers.total(), 0).get();
-    }
-  }
-  
-  private Supplier<String> createListIdentifiersSupplier(ListIdentifiersRequest request, List<Header> bufferedHeaders, Spliterator<Header> spliterator, long completeListSize, long cursor) {
-    Header[] headerArray = Stream.concat(bufferedHeaders.stream(), StreamSupport.stream(spliterator, false)).limit(batchSize).toArray(Header[]::new);
-    return () -> { 
-      ResumptionToken resumptionToken = null;
-      ArrayList<Header> prefetchedHeaders = new ArrayList<>();
-      if (spliterator.tryAdvance(header->{ prefetchedHeaders.add(header); })) {
-        Supplier<String> supplier = createListIdentifiersSupplier(request, prefetchedHeaders, spliterator, completeListSize, cursor+headerArray.length);
-        resumptionToken = tokenManager.register(supplier, completeListSize, cursor+headerArray.length);
-      }
+    PC pageCursor = request.getResumptionToken()!=null? tokenManager.pull(request.getResumptionToken()): null;
+    try (Page<Header, PC> headers = repo.listHeaders(request.getFilter(), pageCursor, pageSize);) {
+      PC nextPageCursor = headers.nextPageCursor();
+      ResumptionToken resumptionToken = nextPageCursor!=null? tokenManager.put(nextPageCursor, headers.total()): null;
+      Header[] headerArray = StreamSupport.stream(headers.spliterator(), false).toArray(Header[]::new);
       ListIdentifiersResponse response = new ListIdentifiersResponse(request.getParameters(), OffsetDateTime.now(), headerArray, resumptionToken);
       return factory.createListIdentifiersResponse(response); 
-    };
+    }
   }
   
   private String createListRecordsResponse(ListRecordsRequest request) throws BadResumptionTokenException, CannotDisseminateFormatException, NoRecordsMatchException, NoSetHierarchyException {
-    try (Cursor<Header> headers = repo.listHeaders(request.getFilter());) {
-      Spliterator<Record> spliterator = StreamSupport.stream(headers.spliterator(), false)
-              .map(h->{ 
-                if (!h.deleted) {
-                  try {
-                    return repo.readRecord(h.identifier, request.getMetadataPrefix()); 
-                  } catch (ProtocolException ex) {
-                    return null;
-                  }
-                } else {
-                  Record rec = new Record(h, null, null);
-                  return rec;
-                }
-              })
-              .filter(r->r!=null)
-              .spliterator();
-      return createListRecordsSupplier(request, new ArrayList<>(), spliterator, headers.total(), 0).get();
-    }
-  }
-  
-  private Supplier<String> createListRecordsSupplier(ListRecordsRequest request, List<Record> bufferedRecords, Spliterator<Record> spliterator, long completeListSize, long cursor) {
-    Record[] headerArray = Stream.concat(bufferedRecords.stream(), StreamSupport.stream(spliterator, false)) .limit(batchSize).toArray(Record[]::new);
-    return () -> { 
-      ResumptionToken resumptionToken = null;
-      ArrayList<Record> prefetchedRecords = new ArrayList<>();
-      if (spliterator.tryAdvance(record->{ prefetchedRecords.add(record); })) {
-        Supplier<String> supplier = createListRecordsSupplier(request, prefetchedRecords, spliterator, completeListSize, cursor+headerArray.length);
-        resumptionToken = tokenManager.register(supplier, completeListSize, cursor+headerArray.length);
-      }
-      ListRecordsResponse response = new ListRecordsResponse(request.getParameters(), OffsetDateTime.now(), headerArray, resumptionToken);
+    PC pageCursor = request.getResumptionToken()!=null? tokenManager.pull(request.getResumptionToken()): null;
+    try (Page<Header, PC> headers = repo.listHeaders(request.getFilter(), pageCursor, pageSize);) {
+      PC nextPageCursor = headers.nextPageCursor();
+      ResumptionToken resumptionToken = nextPageCursor!=null? tokenManager.put(nextPageCursor, headers.total()): null;
+      Record[] recordArray = StreamSupport.stream(headers.spliterator(), false).map(h -> {
+        if (!h.deleted) {
+          try {
+            return repo.readRecord(h.identifier, request.getMetadataPrefix()); 
+          } catch (ProtocolException ex) {
+            return null;
+          }
+        } else {
+          Record rec = new Record(h, null, null);
+          return rec;
+        }
+      }).filter(r->r!=null).toArray(Record[]::new);
+      ListRecordsResponse response = new ListRecordsResponse(request.getParameters(), OffsetDateTime.now(), recordArray, resumptionToken);
       return factory.createListRecordsResponse(response); 
-    };
+    }
   }
 }

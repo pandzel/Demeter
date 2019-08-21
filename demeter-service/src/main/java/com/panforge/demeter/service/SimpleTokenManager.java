@@ -17,74 +17,53 @@ package com.panforge.demeter.service;
 
 import com.panforge.demeter.core.model.ResumptionToken;
 import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
+import com.panforge.demeter.core.content.PageCursor;
+import com.panforge.demeter.core.content.PageCursorCodec;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
-import java.util.function.Supplier;
 import org.apache.commons.collections4.map.PassiveExpiringMap;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * Simple token manager.
+ * @param <PC> page cursor type
  */
-public class SimpleTokenManager implements TokenManager {
+public class SimpleTokenManager<PC extends PageCursor> implements TokenManager<PC> {
   public static final long DEFAULT_EXPIRATION = 60000;
-  private final PassiveExpiringMap<String, TokenEntry> tokens;
+  private final PassiveExpiringMap<String, String> tokens;
+  
+  private final PageCursorCodec<PC> codec;
   private final long expiration;
 
   /**
    * Creates instance of the default token manager.
+   * @param codec codec
    * @param expiration expiration time (in milliseconds) of the token
    */
-  public SimpleTokenManager(long expiration) {
+  public SimpleTokenManager(PageCursorCodec<PC> codec, long expiration) {
+    this.codec = codec;
     this.expiration = expiration;
     this.tokens = new PassiveExpiringMap<>(expiration);
   }
 
-  /**
-   * Creates instance of the default token manager.
-   */
-  public SimpleTokenManager() {
-    this(DEFAULT_EXPIRATION);
+  @Override
+  public ResumptionToken put(PC pageCursor, long total) {
+    OffsetDateTime now = OffsetDateTime.now();
+    String tokenValue = UUID.randomUUID().toString();
+    String pcString = codec.toString(pageCursor);
+    tokens.put(tokenValue, pcString);
+    ResumptionToken resumptionToken = new ResumptionToken(tokenValue, now.plus(expiration, ChronoUnit.MILLIS), total, pageCursor.cursor());
+    return resumptionToken;
   }
 
   @Override
-  public ResumptionToken register(Supplier<String> supplier, long completeListSize, long cursor) {
-    synchronized (tokens) {
-      OffsetDateTime now = OffsetDateTime.now();
-
-      String tokenValue = UUID.randomUUID().toString();
-      ResumptionToken resumptionToken = new ResumptionToken(tokenValue, now.plus(expiration, ChronoUnit.MILLIS), completeListSize, cursor);
-      TokenEntry tokenEntry = new TokenEntry(resumptionToken, supplier);
-      tokens.put(tokenValue, tokenEntry);
-
-      return resumptionToken;
+  public PC pull(String tokenId) throws BadResumptionTokenException {
+    String pcString = tokens.get(tokenId);
+    if (pcString==null) {
+      throw new BadResumptionTokenException(String.format("Invalid token: '%s'", StringUtils.trimToEmpty(tokenId)));
     }
+    PC pageCursor = codec.fromString(pcString);
+    return pageCursor;
   }
-
-  @Override
-  public String invoke(String token) throws BadResumptionTokenException {
-    synchronized (tokens) {
-      TokenEntry tokenEntry = tokens.get(token);
-      if (tokenEntry==null) {
-        throw new BadResumptionTokenException(String.format("Invalid token: '%s'", StringUtils.trimToEmpty(token)));
-      }
-      if (tokenEntry.resumptionToken.expired()) {
-        throw new BadResumptionTokenException(String.format("Expired token: '%s'", StringUtils.trimToEmpty(token)));
-      }
-      return tokenEntry.supplier.get();
-    }
-  }
-  
-  private class TokenEntry {
-    public final ResumptionToken resumptionToken;
-    public final Supplier<String> supplier;
-
-    public TokenEntry(ResumptionToken resumptionToken, Supplier<String> supplier) {
-      this.resumptionToken = resumptionToken;
-      this.supplier = supplier;
-    }
-    
-  }
-  
 }

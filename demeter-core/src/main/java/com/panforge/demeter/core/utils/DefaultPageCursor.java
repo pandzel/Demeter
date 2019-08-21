@@ -13,37 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.panforge.demeter.core.content;
+package com.panforge.demeter.core.utils;
 
-import java.util.Iterator;
-import java.util.stream.Stream;
+import com.panforge.demeter.core.content.PageCursor;
 
 /**
- * Stream cursor.
- * @param <T> type of the data
+ * Default page cursor.
  */
-class StreamCursor<T> implements Cursor<T> {
-  private final Stream<T> stream;
-  private final long total;
-
-  public StreamCursor(Stream<T> stream, long total) {
-    this.stream = stream;
-    this.total = total;
-  }
+public class DefaultPageCursor implements PageCursor {
+  
+  public String data;
+  public Integer cursor;
 
   @Override
-  public Iterator<T> iterator() {
-    return stream.iterator();
-  }
-
-  @Override
-  public long total() {
-    return total;
-  }
-
-  @Override
-  public void close() {
-    stream.close();
+  public int cursor() {
+    return cursor!=null? cursor: 0;
   }
   
 }

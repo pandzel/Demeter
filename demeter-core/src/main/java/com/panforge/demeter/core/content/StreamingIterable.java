@@ -15,38 +15,20 @@
  */
 package com.panforge.demeter.core.content;
 
-import java.util.AbstractList;
-import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
- * List cursor.
- * @param <T> type of the data accessible by the cursor
+ * Streaming iterable.
  */
-class ListCursor<T> extends AbstractList<T> implements Cursor<T> {
-
-  private final List<T> data;
-
-  public ListCursor(List<T> data) {
-    this.data = data;
-  }
-
-  @Override
-  public T get(int index) {
-    return data.get(index);
-  }
-
-  @Override
-  public int size() {
-    return data.size();
-  }
-
-  @Override
-  public long total() {
-    return data.size();
-  }
-
-  @Override
-  public void close() {
+public interface StreamingIterable<T> extends Iterable<T> {
+  
+  /**
+   * Creates a stream.
+   * @return stream of data
+   */
+  default Stream<T> stream() {
+    return StreamSupport.stream(this.spliterator(), false);
   }
   
 }

@@ -15,28 +15,24 @@
  */
 package com.panforge.demeter.service;
 
-import com.panforge.demeter.core.api.exception.BadResumptionTokenException;
 import com.panforge.demeter.core.content.PageCursor;
-import com.panforge.demeter.core.model.ResumptionToken;
 
 /**
- * Token manager.
- * @param <PC> type of page cursor
+ *
+ * @author Piotr Andzel
  */
-public interface TokenManager<PC extends PageCursor> {
-  /**
-   * Stores page cursor.
-   * @param pageCursor page cursor
-   * @param total total records
-   * @return resumption token
-   */
-  ResumptionToken put(PC pageCursor, long total);
+public class MockupPageCursor implements PageCursor {
+  public int cursor;
   
-  /**
-   * Retrieves page cursor.
-   * @param tokenId token id
-   * @return page cursor
-   * @throws BadResumptionTokenException if invalid token
-   */
-  PC pull(String tokenId) throws BadResumptionTokenException;
+  public MockupPageCursor() {}
+  
+  public MockupPageCursor(int cursor) {
+    this.cursor = cursor;
+  }
+
+  @Override
+  public int cursor() {
+    return cursor;
+  }
+  
 }
