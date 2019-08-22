@@ -166,6 +166,7 @@ public class ContentProviderBean implements ContentProvider<DefaultPageCursor> {
     try {
       return XmlUtils.parseToXml(file);
     } catch (IOException | SAXException ex) {
+      LOG.debug(String.format("Error parsing to XML: %s", file), ex);
       return null;
     }
   }

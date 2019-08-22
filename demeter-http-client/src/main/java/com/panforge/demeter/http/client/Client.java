@@ -153,6 +153,7 @@ public class Client implements Closeable {
       try {
         return new Date(System.currentTimeMillis() + 1000L * Integer.valueOf(retryAfterHeader.getValue()));
       } catch (NumberFormatException e) {
+        // ignore
       }
     }
     return null;

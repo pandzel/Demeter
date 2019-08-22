@@ -95,7 +95,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
     try {
       return (Boolean) XPATH.evaluate("count(//dc:identifier)>0", doc, XPathConstants.BOOLEAN);
     } catch (XPathExpressionException ex) {
-      return false;
+      throw new Error("Error interrogating file.", ex);
     }
   }
 
@@ -105,7 +105,7 @@ public class OaiDcProcessorBean implements MetaProcessor {
       OffsetDateTime fileTimestamp = OffsetDateTime.ofInstant(new Date(file.lastModified()).toInstant(), ZoneId.systemDefault());
       return new MetaDescriptor(this, file, URI.create((String) XPATH.evaluate("//dc:identifier", doc, XPathConstants.STRING)), OAI_DC, fileTimestamp);
     } catch (XPathExpressionException ex) {
-      return null;
+      throw new Error("Error reading metadata descriptor.", ex);
     }
   }
 
@@ -153,8 +153,11 @@ public class OaiDcProcessorBean implements MetaProcessor {
       
       return document;
       
-    } catch (DOMException|XPathExpressionException ex) {
+    } catch (DOMException ex) {
+      // ignore
       return null;
+    } catch (XPathExpressionException ex) {
+      throw new Error("Error adopting node.", ex);
     }
   }
 }

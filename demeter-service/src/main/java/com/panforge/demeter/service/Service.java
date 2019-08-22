@@ -55,12 +55,15 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Service.
  * @param <PC> page cursor type
  */
 public class Service<PC extends PageCursor> {
+  protected static final Logger LOG = LoggerFactory.getLogger(Service.class);
   public static final int DEFAULT_BATCH_SIZE = 10;
   private final ContentProvider<PC> repo;
   private final TokenManager<PC> tokenManager;
@@ -196,6 +199,7 @@ public class Service<PC extends PageCursor> {
           try {
             return repo.readRecord(h.identifier, request.getMetadataPrefix()); 
           } catch (ProtocolException ex) {
+            LOG.debug(String.format("Error reading record: %s", h.identifier), ex);
             return null;
           }
         } else {

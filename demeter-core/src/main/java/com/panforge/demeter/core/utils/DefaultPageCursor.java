@@ -30,4 +30,8 @@ public class DefaultPageCursor implements PageCursor {
     return cursor!=null? cursor: 0;
   }
   
+  @Override
+  public String toString() {
+    return String.format("DefaultPageCursor = data: %s, cursor: %s", data, cursor);
+  }
 }

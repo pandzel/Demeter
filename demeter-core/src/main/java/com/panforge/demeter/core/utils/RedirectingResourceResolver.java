@@ -21,6 +21,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
@@ -28,6 +30,7 @@ import org.w3c.dom.ls.LSResourceResolver;
  * Redirecting resource resolver.
  */
 public class RedirectingResourceResolver implements LSResourceResolver {
+  private static final Logger LOG = LoggerFactory.getLogger(RedirectingResourceResolver.class);
 
   @Override
   public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
@@ -49,6 +52,7 @@ public class RedirectingResourceResolver implements LSResourceResolver {
           }
         }
       } catch (IOException ex) {
+        LOG.debug(String.format("Error resolving resource"), ex);
       }
     }
     return null;

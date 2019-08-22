@@ -20,11 +20,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.panforge.demeter.core.content.PageCursorCodec;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default page cursor codec.
  */
 public class DefaultPageCursorCodec implements PageCursorCodec<DefaultPageCursor> {
+  private final static Logger LOG = LoggerFactory.getLogger(DefaultPageCursorCodec.class);
 
   protected static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -37,6 +40,7 @@ public class DefaultPageCursorCodec implements PageCursorCodec<DefaultPageCursor
     try {
       return MAPPER.writeValueAsString(pageCursor);
     } catch (JsonProcessingException ex) {
+      LOG.debug(String.format("Error encoding page cursor: %s", pageCursor), ex);
       return "";
     }
   }
@@ -46,6 +50,7 @@ public class DefaultPageCursorCodec implements PageCursorCodec<DefaultPageCursor
     try {
       return MAPPER.readValue(pageCursorStr, DefaultPageCursor.class);
     } catch (IOException ex) {
+      LOG.debug(String.format("Error decoding page cursor: %s", pageCursorStr), ex);
       return null;
     }
   }

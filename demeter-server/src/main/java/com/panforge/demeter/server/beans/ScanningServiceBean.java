@@ -78,6 +78,7 @@ public class ScanningServiceBean implements ScanningService {
     try {
       return XmlUtils.parseToXml(file);
     } catch (IOException | SAXException ex) {
+      LOG.debug(String.format("Error parsing file: %s", file), ex);
       return null;
     }
   }
