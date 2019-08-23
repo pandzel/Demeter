@@ -15,9 +15,9 @@
  */
 package com.panforge.demeter.server;
 
-import com.datastax.oss.driver.api.core.cql.BoundStatement;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Statement;
 
 /**
  * Connection.
@@ -33,10 +33,10 @@ public interface Connection {
 
   /**
    * Executes bound statement.
-   * @param bound bound statement
+   * @param stmt statement
    * @return result
    */
-  ResultSet execute(BoundStatement bound);
+  ResultSet execute(Statement stmt);
   
   /**
    * Prepares statement.
