@@ -84,7 +84,8 @@ public class ContentProviderBean implements ContentProvider<DefaultPageCursor> {
 
   @Override
   public Page<Set, DefaultPageCursor> listSets(DefaultPageCursor pageCursor, int pageSize) throws NoSetHierarchyException {
-    long total = conn.execute("select counter from counter where table_name = 'sets'").one().getLong("counter");
+    Row one = conn.execute("select counter from counter where table_name = 'sets'").one();
+    long total = one!=null? one.getLong("counter"): 0;
     ResultSet rs = conn.execute("select * from sets");
     return Page.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
       String setSpec = row.getString("setSpec");
@@ -118,7 +119,8 @@ public class ContentProviderBean implements ContentProvider<DefaultPageCursor> {
     } catch (NoMetadataFormatsException | IdDoesNotExistException ex) {
       throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", filter.metadataPrefix), ex);
     }
-    long total = conn.execute("select counter from counter where table_name = 'records'").one().getLong("counter");
+    Row one = conn.execute("select counter from counter where table_name = 'records'").one();
+    long total = one!=null? one.getLong("counter"): 0;
     ResultSet rs = conn.execute("select id, identifier, date from records");
     return Page.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
       UUID id = row.getUuid("id");
