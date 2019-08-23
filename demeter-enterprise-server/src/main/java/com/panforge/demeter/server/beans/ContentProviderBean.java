@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -112,24 +113,16 @@ public class ContentProviderBean implements ContentProvider<DefaultPageCursor> {
   private ByteBuffer extractPagingState(DefaultPageCursor pageCursor) {
     if (pageCursor==null || pageCursor.data==null) return null;
     
-    try {
-      return ByteBuffer.wrap(pageCursor.data.getBytes("UTF-8"));
-    } catch (UnsupportedEncodingException ex) {
-      return null;
-    }
+    return ByteBuffer.wrap(Base64.decodeBase64(pageCursor.data));
   }
   
   private DefaultPageCursor createPageCursor(ByteBuffer pagingState, long cursor) {
    if (pagingState==null) return null;
    
-   try {
-    DefaultPageCursor pageCursor = new DefaultPageCursor();
-    pageCursor.data = new String(pagingState.array(), "UTF-8");
-    pageCursor.cursor = cursor;
-    return pageCursor;
-   } catch (UnsupportedEncodingException ex) {
-     return null;
-   }
+  DefaultPageCursor pageCursor = new DefaultPageCursor();
+  pageCursor.data = Base64.encodeBase64String(pagingState.array());
+  pageCursor.cursor = cursor;
+  return pageCursor;
   }
 
   private Page<UUID, DefaultPageCursor> listSetsIdsFor(String recordId) {
