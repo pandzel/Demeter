@@ -204,9 +204,10 @@ public class ResponseFactory {
                 .forEach(Stream.of(set.descriptions != null ? set.descriptions : new Document[]{}).filter(doc->doc!=null), (nd, doc) -> {
                   nd.child("setDescription").addDocument(doc).done();
                 })
-                .done()
-                .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionToken(nd, resumptionToken, response.getParameter("resumptionToken") == null));
-            }).done()
+                .done();
+            })
+            .child(response.resumptionToken, (nd, resumptionToken) -> appendResumptionToken(nd, resumptionToken, response.getParameter("resumptionToken") == null))
+            .done()
             .end();
   }
 
