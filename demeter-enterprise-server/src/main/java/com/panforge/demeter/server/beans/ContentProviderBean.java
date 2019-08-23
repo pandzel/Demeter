@@ -89,40 +89,46 @@ public class ContentProviderBean implements ContentProvider<DefaultPageCursor> {
   @Override
   public Page<Set, DefaultPageCursor> listSets(DefaultPageCursor pageCursor, int pageSize) throws NoSetHierarchyException {
     Row one = conn.execute("select counter from counter where table_name = 'sets'").one();
-    long total = one!=null? one.getLong("counter"): 0;
-    
+    long total = one != null ? one.getLong("counter") : 0;
+
     ByteBuffer byteBuffer = extractPagingState(pageCursor);
     ResultSet rs = conn.execute(conn.prepare("select * from sets").bind().setPageSize(pageSize).setPagingState(byteBuffer));
-    
+
     ArrayList<Set> sets = new ArrayList<>();
     int counter = 0;
-    
-    for (Row row: rs) {
+
+    for (Row row : rs) {
       String setSpec = row.getString("setSpec");
       String setName = row.getString("setName");
       Set set = new Set(setSpec, setName, null);
       sets.add(set);
-      if ((++counter)>=pageSize) break;
+      if ((++counter) >= pageSize) {
+        break;
+      }
     }
-    
+
     DefaultPageCursor nextPageCursor = createPageCursor(rs.getExecutionInfo().getPagingState(), total);
-    
-    return Page.of(sets, (pageCursor!=null && pageCursor.cursor!=null? pageCursor.cursor: 0) + pageSize, nextPageCursor);
+
+    return Page.of(sets, (pageCursor != null && pageCursor.cursor != null ? pageCursor.cursor : 0) + pageSize, nextPageCursor);
   }
-  
+
   private ByteBuffer extractPagingState(DefaultPageCursor pageCursor) {
-    if (pageCursor==null || pageCursor.data==null) return null;
-    
+    if (pageCursor == null || pageCursor.data == null) {
+      return null;
+    }
+
     return ByteBuffer.wrap(Base64.decodeBase64(pageCursor.data));
   }
-  
+
   private DefaultPageCursor createPageCursor(ByteBuffer pagingState, long cursor) {
-   if (pagingState==null) return null;
-   
-  DefaultPageCursor pageCursor = new DefaultPageCursor();
-  pageCursor.data = Base64.encodeBase64String(pagingState.array());
-  pageCursor.cursor = cursor;
-  return pageCursor;
+    if (pagingState == null) {
+      return null;
+    }
+
+    DefaultPageCursor pageCursor = new DefaultPageCursor();
+    pageCursor.data = Base64.encodeBase64String(pagingState.array());
+    pageCursor.cursor = cursor;
+    return pageCursor;
   }
 
   private Page<UUID, DefaultPageCursor> listSetsIdsFor(String recordId) {
@@ -150,37 +156,52 @@ public class ContentProviderBean implements ContentProvider<DefaultPageCursor> {
     } catch (NoMetadataFormatsException | IdDoesNotExistException ex) {
       throw new CannotDisseminateFormatException(String.format("Invalid metadata format prefix: '%s'", filter.metadataPrefix), ex);
     }
+    
     Row one = conn.execute("select counter from counter where table_name = 'records'").one();
-    long total = one!=null? one.getLong("counter"): 0;
-    ResultSet rs = conn.execute("select id, identifier, date from records");
-    return Page.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
+    long total = one != null ? one.getLong("counter") : 0;
+
+    ByteBuffer byteBuffer = extractPagingState(pageCursor);
+    ResultSet rs = conn.execute(conn.prepare("select id, identifier, date from records").bind().setPageSize(pageSize).setPagingState(byteBuffer));
+
+    ArrayList<Header> headers = new ArrayList<>();
+    int counter = 0;
+
+    for (Row row : rs) {
       UUID id = row.getUuid("id");
       String identifier = row.getString("identifier");
       LocalDate localDate = row.getLocalDate("date");
-      List<String> sets = listSetsFor(id.toString()).stream().map(s->s.setSpec).collect(Collectors.toList());
-      String [] setsArray = !sets.isEmpty()? sets.toArray(new String[sets.size()]): null;
-      return new Header(URI.create(identifier), OffsetDateTime.ofInstant(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault()), setsArray, false);
-    }), total);
+      List<String> sets = listSetsFor(id.toString()).stream().map(s -> s.setSpec).collect(Collectors.toList());
+      String[] setsArray = !sets.isEmpty() ? sets.toArray(new String[sets.size()]) : null;
+      Header header = new Header(URI.create(identifier), OffsetDateTime.ofInstant(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault()), setsArray, false);
+      headers.add(header);
+      if ((++counter) >= pageSize) {
+        break;
+      }
+    }
+
+    DefaultPageCursor nextPageCursor = createPageCursor(rs.getExecutionInfo().getPagingState(), total);
+
+    return Page.of(headers, (pageCursor != null && pageCursor.cursor != null ? pageCursor.cursor : 0) + pageSize, nextPageCursor);
   }
 
   @Override
   public Record readRecord(URI identifier, String metadataPrefix) throws IdDoesNotExistException, CannotDisseminateFormatException {
-    ResultSet rs = conn.execute("select * from records where identifier = '"+identifier+"'");
+    ResultSet rs = conn.execute("select * from records where identifier = '" + identifier + "'");
     Row row = rs.one();
-    if (row==null) {
+    if (row == null) {
       throw new IdDoesNotExistException(identifier.toString());
     }
     Document doc = metadataProcessorService.adopt(row);
-    if (doc==null) {
+    if (doc == null) {
       throw new CannotDisseminateFormatException(identifier.toString());
     }
     LocalDate localDate = row.getLocalDate("date");
     UUID id = row.getUuid("id");
-    List<String> sets = listSetsFor(id.toString()).stream().map(s->s.setSpec).collect(Collectors.toList());
-    String [] setsArray = !sets.isEmpty()? sets.toArray(new String[sets.size()]): null;
+    List<String> sets = listSetsFor(id.toString()).stream().map(s -> s.setSpec).collect(Collectors.toList());
+    String[] setsArray = !sets.isEmpty() ? sets.toArray(new String[sets.size()]) : null;
     Header header = new Header(identifier, OffsetDateTime.ofInstant(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault()), setsArray, false);
     Record record = new Record(header, doc, null);
-    
+
     return record;
   }
 }
