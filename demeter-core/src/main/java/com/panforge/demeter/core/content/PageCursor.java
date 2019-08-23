@@ -23,5 +23,5 @@ public interface PageCursor {
    * Gets cursor position.
    * @return cursor position
    */
-  int cursor();
+  long cursor();
 }

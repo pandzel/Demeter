@@ -41,11 +41,11 @@ public interface Page<T, PC> extends Closeable, StreamingIterable<T> {
    */
   PC nextPageCursor();
   
-  static <T,PC> Page<T,PC> of(final List<T> content, final PC nextPageCursor) {
+  static <T,PC> Page<T,PC> of(final List<T> content, long total, final PC nextPageCursor) {
     return new Page<T,PC>() {
       @Override
       public long total() {
-        return content.size();
+        return total;
       }
 
       @Override
@@ -65,7 +65,7 @@ public interface Page<T, PC> extends Closeable, StreamingIterable<T> {
   }
   
   static <T,PC> Page<T,PC> of(final List<T> content) {
-    return of(content, null);
+    return of(content, content.size(), null);
   }
   
   static <T,PC> Page<T,PC> of(final Stream<T> content, long total, final PC nextPageCursor) {

@@ -39,9 +39,12 @@ import com.panforge.demeter.core.content.Page;
 import com.panforge.demeter.core.content.StreamingIterable;
 import com.panforge.demeter.core.utils.DefaultPageCursor;
 import com.panforge.demeter.server.Connection;
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
@@ -86,12 +89,47 @@ public class ContentProviderBean implements ContentProvider<DefaultPageCursor> {
   public Page<Set, DefaultPageCursor> listSets(DefaultPageCursor pageCursor, int pageSize) throws NoSetHierarchyException {
     Row one = conn.execute("select counter from counter where table_name = 'sets'").one();
     long total = one!=null? one.getLong("counter"): 0;
-    ResultSet rs = conn.execute("select * from sets");
-    return Page.of(StreamSupport.stream(rs.spliterator(), false).map(row -> {
+    
+    ByteBuffer byteBuffer = extractPagingState(pageCursor);
+    ResultSet rs = conn.execute(conn.prepare("select * from sets").bind().setPageSize(pageSize).setPagingState(byteBuffer));
+    
+    ArrayList<Set> sets = new ArrayList<>();
+    int counter = 0;
+    
+    for (Row row: rs) {
       String setSpec = row.getString("setSpec");
       String setName = row.getString("setName");
-      return new Set(setSpec, setName, null);
-    }), total);
+      Set set = new Set(setSpec, setName, null);
+      sets.add(set);
+      if ((++counter)>=pageSize) break;
+    }
+    
+    DefaultPageCursor nextPageCursor = createPageCursor(rs.getExecutionInfo().getPagingState(), total);
+    
+    return Page.of(sets, (pageCursor!=null && pageCursor.cursor!=null? pageCursor.cursor: 0) + pageSize, nextPageCursor);
+  }
+  
+  private ByteBuffer extractPagingState(DefaultPageCursor pageCursor) {
+    if (pageCursor==null || pageCursor.data==null) return null;
+    
+    try {
+      return ByteBuffer.wrap(pageCursor.data.getBytes("UTF-8"));
+    } catch (UnsupportedEncodingException ex) {
+      return null;
+    }
+  }
+  
+  private DefaultPageCursor createPageCursor(ByteBuffer pagingState, long cursor) {
+   if (pagingState==null) return null;
+   
+   try {
+    DefaultPageCursor pageCursor = new DefaultPageCursor();
+    pageCursor.data = new String(pagingState.array(), "UTF-8");
+    pageCursor.cursor = cursor;
+    return pageCursor;
+   } catch (UnsupportedEncodingException ex) {
+     return null;
+   }
   }
 
   private Page<UUID, DefaultPageCursor> listSetsIdsFor(String recordId) {

@@ -22,16 +22,16 @@ import com.panforge.demeter.core.content.PageCursor;
  * @author Piotr Andzel
  */
 public class MockupPageCursor implements PageCursor {
-  public int cursor;
+  public long cursor;
   
   public MockupPageCursor() {}
   
-  public MockupPageCursor(int cursor) {
+  public MockupPageCursor(long cursor) {
     this.cursor = cursor;
   }
 
   @Override
-  public int cursor() {
+  public long cursor() {
     return cursor;
   }
   

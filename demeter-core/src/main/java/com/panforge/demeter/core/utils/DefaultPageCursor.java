@@ -23,10 +23,10 @@ import com.panforge.demeter.core.content.PageCursor;
 public class DefaultPageCursor implements PageCursor {
   
   public String data;
-  public Integer cursor;
+  public Long cursor;
 
   @Override
-  public int cursor() {
+  public long cursor() {
     return cursor!=null? cursor: 0;
   }
   
