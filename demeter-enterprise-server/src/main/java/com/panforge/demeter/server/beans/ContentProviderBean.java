@@ -39,7 +39,6 @@ import com.panforge.demeter.core.content.Page;
 import com.panforge.demeter.core.content.StreamingIterable;
 import com.panforge.demeter.core.utils.DefaultPageCursor;
 import com.panforge.demeter.server.Connection;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
