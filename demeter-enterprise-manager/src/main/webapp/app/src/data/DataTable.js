@@ -17,7 +17,7 @@ class SetsTable extends Component{
   
   render(){
     return(
-      <div className="RecordsTable">
+      <div className="DataTable">
         <DataTable value={this.state.data}>
           <Column field="title" header="Title"/>
           <Column field="description" header="Description"/>
