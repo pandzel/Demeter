@@ -4,5 +4,19 @@
   
   .DataTable {
     padding: 1em;
+    
+    .add {
+      float: right;
+      margin: 1em;
+    }
+    
+    .action-buttons {
+       text-align: center;
+       width: 12em;
+    }
+    
+    .action-button {
+      margin-right: 1em;
+    }
   }
 }
