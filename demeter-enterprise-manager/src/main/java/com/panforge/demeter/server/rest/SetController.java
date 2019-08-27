@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.panforge.demeter.server.SetsDao;
+import com.panforge.demeter.server.elements.QueryResult;
 
 /**
  * Sets controller.
@@ -62,7 +63,7 @@ public class SetController {
   }
   
   @RequestMapping(value = "/sets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<List<SetData>> list(HttpServletRequest request) {
+  public ResponseEntity<QueryResult<SetData>> list(HttpServletRequest request) {
     try {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
       return new ResponseEntity<>(dao.listSets(), HttpStatus.OK);

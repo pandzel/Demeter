@@ -22,7 +22,6 @@ import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.server.Connection;
 import com.panforge.demeter.server.elements.SetData;
 import com.panforge.demeter.server.elements.SetInfo;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +30,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.panforge.demeter.server.SetsDao;
+import com.panforge.demeter.server.elements.QueryResult;
+import java.util.List;
 
 /**
  * Sets DAO service.
@@ -51,15 +52,22 @@ public class SetsDaoService implements SetsDao {
   }
   
   @Override
-  public List<SetData> listSets() {
+  public QueryResult<SetData> listSets() {
     ResultSet rs = conn.execute("select * from sets");
-    return rs.all().stream()
+    List<Row> allRows = rs.all();
+    
+    QueryResult<SetData> queryResult = new QueryResult<>();
+    queryResult.total = new Long(allRows.size());
+    queryResult.page = 0L;
+    queryResult.data = allRows.stream()
             .map(row -> {
               SetData setData = new SetData();
               readRow(setData, row);
               return setData;
             })
             .collect(Collectors.toList());
+
+    return queryResult;
   }
   
   @Override

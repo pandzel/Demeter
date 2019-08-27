@@ -15,9 +15,9 @@
  */
 package com.panforge.demeter.server;
 
+import com.panforge.demeter.server.elements.QueryResult;
 import com.panforge.demeter.server.elements.SetData;
 import com.panforge.demeter.server.elements.SetInfo;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -29,7 +29,7 @@ public interface SetsDao {
    * Sets all sets data.
    * @return sets data
    */
-  List<SetData> listSets();
+  QueryResult<SetData> listSets();
   
   /**
    * Reads set info.
