@@ -1,7 +1,7 @@
 import React, { Component} from "react";
 import "./DataPane.scss";
 import RecordsApi from '../api/RecordsApi';
-import DataTable from './DataTable';
+import RecordsTable from './RecordsTable';
 
 export default
 class DataPane extends Component{
@@ -20,7 +20,7 @@ class DataPane extends Component{
     return(
       <div className="DataPane">
         <div className="Title">Data</div>
-        {this.state.data && <DataTable data={this.state.data}/>}
+        {this.state.data && <RecordsTable data={this.state.data}/>}
       </div>
     );
   }

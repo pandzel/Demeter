@@ -7,7 +7,7 @@ import {Button} from 'primereact/button';
 import {InputText} from 'primereact/inputtext';
 
 export default
-class SetsTable extends Component{
+class RecordsTable extends Component {
   
   state  = { 
     data: this.props.data 
@@ -47,7 +47,7 @@ class SetsTable extends Component{
   
   render(){
     return(
-      <div className="DataTable">
+      <div className="RecordsTable">
         <DataTable value={this.state.data}>
           <Column field="title" header="Title"/>
           <Column field="description" header="Description"/>
