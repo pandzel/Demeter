@@ -5,12 +5,14 @@ import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 import {Button} from 'primereact/button';
 import {InputText} from 'primereact/inputtext';
+import EditorPane from './EditorPane';
 
 export default
 class RecordsTable extends Component {
   
   state  = { 
-    data: this.props.data 
+    data: this.props.data,
+    current: null
   };
   
   api = new RecordsApi();
@@ -35,6 +37,7 @@ class RecordsTable extends Component {
   
   onEdit = (props) => {
     console.log("Editing data", props);
+    this.setState({current: props});
   }
   
   onDelete = (props) => {
@@ -46,8 +49,9 @@ class RecordsTable extends Component {
   }
   
   render(){
-    return(
-      <div className="RecordsTable">
+    
+    let dataTable = 
+      <div>
         <DataTable value={this.state.data}>
           <Column field="title" header="Title"/>
           <Column field="description" header="Description"/>
@@ -56,6 +60,13 @@ class RecordsTable extends Component {
         <Button type="button" icon="pi pi-plus" className="p-button-info add" 
                 title="Add new record"
                 onClick={this.onAdd}/>
+      </div>;
+
+    let editorPane = <EditorPane record={this.state.current}/>;
+    
+    return(
+      <div className="RecordsTable">
+        {this.state.current? editorPane: dataTable}
       </div>
     );
   }
