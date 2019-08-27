@@ -16,9 +16,8 @@
 package com.panforge.demeter.server.rest;
 
 import com.panforge.demeter.server.RecordsDao;
+import com.panforge.demeter.server.elements.QueryResult;
 import com.panforge.demeter.server.elements.RecordData;
-import com.panforge.demeter.server.elements.SetData;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
@@ -58,7 +57,7 @@ public class RecordsController {
   }
   
   @RequestMapping(value = "/records", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<List<RecordData>> list(HttpServletRequest request) {
+  public ResponseEntity<QueryResult<RecordData>> list(HttpServletRequest request) {
     try {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
       return new ResponseEntity<>(dao.listRecords(), HttpStatus.OK);

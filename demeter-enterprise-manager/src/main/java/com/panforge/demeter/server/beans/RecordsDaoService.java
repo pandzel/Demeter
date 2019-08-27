@@ -19,6 +19,7 @@ import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.server.Connection;
 import com.panforge.demeter.server.RecordsDao;
+import com.panforge.demeter.server.elements.QueryResult;
 import com.panforge.demeter.server.elements.RecordData;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,15 +47,22 @@ public class RecordsDaoService implements RecordsDao {
   }
   
   @Override
-  public List<RecordData> listRecords() {
+  public QueryResult<RecordData> listRecords() {
     ResultSet rs = conn.execute("select * from records");
-    return rs.all().stream()
+    List<Row> allRows = rs.all();
+    
+    QueryResult<RecordData> queryResult = new QueryResult<>();
+    queryResult.total = new Long(allRows.size());
+    queryResult.page = 0L;
+    queryResult.data = allRows.stream()
             .map(row -> {
               RecordData recordData = new RecordData();
               readRow(recordData, row);
               return recordData;
             })
             .collect(Collectors.toList());
+
+    return queryResult;
   }
   
   private void readRow(RecordData setData, Row row) {
