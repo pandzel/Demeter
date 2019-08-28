@@ -18,7 +18,6 @@ package com.panforge.demeter.server.rest;
 import com.panforge.demeter.server.elements.OperationStatus;
 import com.panforge.demeter.server.elements.SetData;
 import com.panforge.demeter.server.elements.SetInfo;
-import java.util.List;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -99,7 +98,7 @@ public class SetController {
   }
   
   @RequestMapping(value = "/sets/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<SetInfo> list(HttpServletRequest request, @PathVariable UUID id) {
+  public ResponseEntity<SetInfo> read(HttpServletRequest request, @PathVariable UUID id) {
     try {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
       return new ResponseEntity<>(dao.readSet(id), HttpStatus.OK);
