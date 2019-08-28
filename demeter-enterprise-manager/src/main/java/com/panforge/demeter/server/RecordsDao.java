@@ -17,6 +17,9 @@ package com.panforge.demeter.server;
 
 import com.panforge.demeter.server.elements.QueryResult;
 import com.panforge.demeter.server.elements.RecordData;
+import com.panforge.demeter.server.elements.SetData;
+import com.panforge.demeter.server.elements.SetInfo;
+import java.util.UUID;
 
 /**
  * Records DAO.
@@ -27,4 +30,32 @@ public interface RecordsDao {
    * @return records
    */
   QueryResult<RecordData> listRecords();
+  
+  /**
+   * Reads record info.
+   * @param id record id
+   * @return record info
+   */
+  RecordData readRecord(UUID id);
+  
+  /**
+   * Creates new record.
+   * @param recordData record data
+   * @return actual record data
+   */
+  RecordData createRecord(RecordData recordData);
+  
+  /**
+   * Deletes record.
+   * @param id record id
+   * @return <code>true</code> if update successful.
+   */
+  boolean deleteRecord(UUID id);
+  
+  /**
+   * Updates record.
+   * @param recordData record data
+   * @return <code>true</code> if update successful.
+   */
+  boolean updateRecord(RecordData recordData);
 }

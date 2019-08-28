@@ -15,14 +15,20 @@
  */
 package com.panforge.demeter.server.beans;
 
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.panforge.demeter.server.Connection;
 import com.panforge.demeter.server.RecordsDao;
 import com.panforge.demeter.server.elements.QueryResult;
 import com.panforge.demeter.server.elements.RecordData;
+import com.panforge.demeter.server.elements.SetData;
+import com.panforge.demeter.server.elements.SetInfo;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,22 +71,126 @@ public class RecordsDaoService implements RecordsDao {
     return queryResult;
   }
   
-  private void readRow(RecordData setData, Row row) {
-    setData.id = row.getUuid("id");
-    setData.title = row.getString("title");
-    setData.creator = row.getString("creator");
-    setData.subject = row.getString("subject");
-    setData.description = row.getString("description");
-    setData.publisher = row.getString("publisher");
-    setData.contributor = row.getString("contributor");
-    setData.date = row.getLocalDate("date");
-    setData.format = row.getString("format");
-    setData.identifier = row.getString("identifier");
-    setData.source = row.getString("source");
-    setData.language = row.getString("language");
-    setData.relation = row.getString("relation");
-    setData.coverage = row.getString("coverage");
-    setData.rights = row.getString("rights");
+  @Override
+  public RecordData readRecord(UUID id) {
+    PreparedStatement stmt = conn.prepare("select * from records where id = ?");
+    BoundStatement bound = stmt.bind(id);
+    
+    ResultSet rs = conn.execute(bound);
+    Row row = rs.one();
+    
+    if (row==null) return null;
+    
+    RecordData recordInfo = new RecordData();
+    readRow(recordInfo, row);
+    
+    return recordInfo;
+  }
+
+  @Override
+  public RecordData createRecord(RecordData recordData) {
+
+    RecordData fromDatabase = new RecordData();
+    
+    fromDatabase.id = UUID.randomUUID();
+    fromDatabase.title = StringUtils.trimToEmpty(recordData.title);
+    fromDatabase.creator = StringUtils.trimToEmpty(recordData.creator);
+    fromDatabase.subject = StringUtils.trimToEmpty(recordData.subject);
+    fromDatabase.description = StringUtils.trimToEmpty(recordData.description);
+    fromDatabase.publisher = StringUtils.trimToEmpty(recordData.publisher);
+    fromDatabase.contributor = StringUtils.trimToEmpty(recordData.contributor);
+    fromDatabase.date = recordData.date;
+    fromDatabase.format = StringUtils.trimToEmpty(recordData.format);
+    fromDatabase.identifier = StringUtils.trimToEmpty(recordData.identifier);
+    fromDatabase.source = StringUtils.trimToEmpty(recordData.source);
+    fromDatabase.language = StringUtils.trimToEmpty(recordData.language);
+    fromDatabase.relation = StringUtils.trimToEmpty(recordData.relation);
+    fromDatabase.coverage = StringUtils.trimToEmpty(recordData.coverage);
+    fromDatabase.rights = StringUtils.trimToEmpty(recordData.rights);
+    
+    PreparedStatement stmt = conn.prepare("insert into records (id, title = ?, creator = ?, subject = ?, description = ?, publisher = ?, contributor = ?, date = ?, format = ?, identifier = ?, source = ?, language = ?, relation = ?, coverage = ?, rights = ?) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    BoundStatement bound = stmt.bind(
+      fromDatabase.id,
+      fromDatabase.title, fromDatabase.creator, fromDatabase.subject, fromDatabase.description, fromDatabase.publisher, 
+      fromDatabase.contributor, fromDatabase.date, fromDatabase.format, fromDatabase.identifier, fromDatabase.source, 
+      fromDatabase.language, fromDatabase.relation, fromDatabase.coverage, fromDatabase.rights
+    );
+    ResultSet result = conn.execute(bound);
+    
+    boolean success = result!=null && result.getExecutionInfo().getErrors().isEmpty();
+    if (success) {
+      conn.execute("update counter set counter = counter+1 where table_name = 'records'");
+    }
+    
+    return success? fromDatabase: null;
+  }
+
+  @Override
+  public boolean deleteRecord(UUID id) {
+    PreparedStatement stmt = conn.prepare("delete from records where id = ?");
+    BoundStatement bound = stmt.bind(id);
+    ResultSet result = conn.execute(bound);
+    
+    boolean success = result!=null && result.getExecutionInfo().getErrors().isEmpty();
+    if (success) {
+      conn.execute("update counter set counter = counter-1 where table_name = 'records'");
+    }
+    
+    return success;
+  }
+
+  @Override
+  public boolean updateRecord(RecordData recordData) {
+
+    RecordData fromDatabase = new RecordData();
+    
+    fromDatabase.id = recordData.id!=null? recordData.id: UUID.randomUUID();
+    fromDatabase.title = StringUtils.trimToEmpty(recordData.title);
+    fromDatabase.creator = StringUtils.trimToEmpty(recordData.creator);
+    fromDatabase.subject = StringUtils.trimToEmpty(recordData.subject);
+    fromDatabase.description = StringUtils.trimToEmpty(recordData.description);
+    fromDatabase.publisher = StringUtils.trimToEmpty(recordData.publisher);
+    fromDatabase.contributor = StringUtils.trimToEmpty(recordData.contributor);
+    fromDatabase.date = recordData.date;
+    fromDatabase.format = StringUtils.trimToEmpty(recordData.format);
+    fromDatabase.identifier = StringUtils.trimToEmpty(recordData.identifier);
+    fromDatabase.source = StringUtils.trimToEmpty(recordData.source);
+    fromDatabase.language = StringUtils.trimToEmpty(recordData.language);
+    fromDatabase.relation = StringUtils.trimToEmpty(recordData.relation);
+    fromDatabase.coverage = StringUtils.trimToEmpty(recordData.coverage);
+    fromDatabase.rights = StringUtils.trimToEmpty(recordData.rights);
+
+    PreparedStatement updateStmt = conn.prepare(
+            "update records set title = ?, creator = ?, subject = ?, description = ?, publisher = ?, contributor = ?, date = ?, format = ?, identifier = ?, source = ?, language = ?, relation = ?, coverage = ?, rights = ? where id = ?"
+    );
+    BoundStatement updateBound = updateStmt.bind(
+            fromDatabase.title, fromDatabase.creator, fromDatabase.subject, fromDatabase.description, fromDatabase.publisher, 
+            fromDatabase.contributor, fromDatabase.date, fromDatabase.format, fromDatabase.identifier, fromDatabase.source, 
+            fromDatabase.language, fromDatabase.relation, fromDatabase.coverage, fromDatabase.rights, fromDatabase.id
+    );
+    ResultSet result = conn.execute(updateBound);
+    
+    boolean success = result!=null && result.getExecutionInfo().getErrors().isEmpty();
+    
+    return success;
+  }
+  
+  private void readRow(RecordData recordData, Row row) {
+    recordData.id = row.getUuid("id");
+    recordData.title = row.getString("title");
+    recordData.creator = row.getString("creator");
+    recordData.subject = row.getString("subject");
+    recordData.description = row.getString("description");
+    recordData.publisher = row.getString("publisher");
+    recordData.contributor = row.getString("contributor");
+    recordData.date = row.getLocalDate("date");
+    recordData.format = row.getString("format");
+    recordData.identifier = row.getString("identifier");
+    recordData.source = row.getString("source");
+    recordData.language = row.getString("language");
+    recordData.relation = row.getString("relation");
+    recordData.coverage = row.getString("coverage");
+    recordData.rights = row.getString("rights");
   }
   
 }
