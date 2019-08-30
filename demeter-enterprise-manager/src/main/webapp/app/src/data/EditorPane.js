@@ -34,33 +34,33 @@ class EditorPane extends Component {
       <div className="EditorPane">
         <div className="table" style={{display: "table"}}>
             <TextRow caption="Title" value={this.state.record.title}
-                 onChange={(e) => this.setState({record: {title: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, title: e.target.value}})}/>
             <TextRow caption="Creator" value={this.state.record.creator}
-                 onChange={(e) => this.setState({record: {creator: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, creator: e.target.value}})}/>
             <TextRow caption="Subject" value={this.state.record.subject}
-                 onChange={(e) => this.setState({record: {subject: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, subject: e.target.value}})}/>
             <TextRow caption="Description" value={this.state.record.description}
-                 onChange={(e) => this.setState({record: {description: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, description: e.target.value}})}/>
             <TextRow caption="Publisher" value={this.state.record.publisher}
-                 onChange={(e) => this.setState({record: {publisher: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, publisher: e.target.value}})}/>
             <TextRow caption="Contributor" value={this.state.record.contributor}
-                 onChange={(e) => this.setState({record: {contributor: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, contributor: e.target.value}})}/>
             <DateRow caption="Date" value={this.state.record.date}
-                 onChange={(e) => this.setState({record: {date: e.value.toString()}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, date: e.value.toString()}})}/>
             <TextRow caption="Identifier" value={this.state.record.identifier}
-                 onChange={(e) => this.setState({record: {identifier: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, identifier: e.target.value}})}/>
             <TextRow caption="Format" value={this.state.record.format}
-                 onChange={(e) => this.setState({record: {format: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, format: e.target.value}})}/>
             <TextRow caption="Source" value={this.state.record.source}
-                 onChange={(e) => this.setState({record: {source: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, source: e.target.value}})}/>
             <TextRow caption="Language" value={this.state.record.language}
-                 onChange={(e) => this.setState({record: {language: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, language: e.target.value}})}/>
             <TextRow caption="Relation" value={this.state.record.relation}
-                 onChange={(e) => this.setState({record: {relation: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, relation: e.target.value}})}/>
             <TextRow caption="Coverage" value={this.state.record.coverage}
-                 onChange={(e) => this.setState({record: {coverage: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, coverage: e.target.value}})}/>
             <TextRow caption="Rights" value={this.state.record.rights}
-                 onChange={(e) => this.setState({record: {rights: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, rights: e.target.value}})}/>
         </div>
         <Button label="Save" onClick={(e) => this.props.onSave(this.state.record)}/>
       </div>
