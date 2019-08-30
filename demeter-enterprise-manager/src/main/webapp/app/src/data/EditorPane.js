@@ -1,12 +1,23 @@
 import React, {Component} from "react";
 import "./DataPane.scss";
 import {InputText} from 'primereact/inputtext';
+import {Calendar} from 'primereact/calendar';
+
 
 function TextRow(props) {
   return <div className="table-row" style={{display: "table-row"}}>
           <div className="table-cell table-cell-caption" style={{display: "table-cell"}}>{props.caption}</div>
           <div className="table-cell table-cell-value"style={{display: "table-cell"}}>
-            <InputText type="text" value={props.value} onChange={props.onChange}/>
+            <InputText value={props.value} onChange={props.onChange}/>
+          </div>
+        </div>;
+};
+
+function DateRow(props) {
+  return <div className="table-row" style={{display: "table-row"}}>
+          <div className="table-cell table-cell-caption" style={{display: "table-cell"}}>{props.caption}</div>
+          <div className="table-cell table-cell-value"style={{display: "table-cell"}}>
+            <Calendar value={new Date(props.value)} onChange={props.onChange}/>
           </div>
         </div>;
 };
@@ -33,6 +44,8 @@ class EditorPane extends Component {
                  onChange={(e) => this.setState({record: {publisher: e.target.value}})}/>
             <TextRow caption="Contributor" value={this.state.record.contributor}
                  onChange={(e) => this.setState({record: {contributor: e.target.value}})}/>
+            <DateRow caption="Date" value={this.state.record.date}
+                 onChange={(e) => this.setState({record: {date: e.value.toString()}})}/>
             <TextRow caption="Identifier" value={this.state.record.identifier}
                  onChange={(e) => this.setState({record: {identifier: e.target.value}})}/>
             <TextRow caption="Format" value={this.state.record.format}
