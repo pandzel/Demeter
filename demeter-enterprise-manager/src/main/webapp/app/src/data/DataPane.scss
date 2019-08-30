@@ -30,7 +30,10 @@
     }
     
     .table-cell {
-      padding: 1em;
+      padding: 0.5em;
+      > input {
+        width: 60em;
+      }
     }
     
     .table-cell-caption {

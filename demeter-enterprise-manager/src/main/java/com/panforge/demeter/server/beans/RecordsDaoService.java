@@ -23,8 +23,6 @@ import com.panforge.demeter.server.Connection;
 import com.panforge.demeter.server.RecordsDao;
 import com.panforge.demeter.server.elements.QueryResult;
 import com.panforge.demeter.server.elements.RecordData;
-import com.panforge.demeter.server.elements.SetData;
-import com.panforge.demeter.server.elements.SetInfo;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
