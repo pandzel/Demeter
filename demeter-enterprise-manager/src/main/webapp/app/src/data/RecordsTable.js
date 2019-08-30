@@ -7,6 +7,27 @@ import {Button} from 'primereact/button';
 import {InputText} from 'primereact/inputtext';
 import EditorPane from './EditorPane';
 
+function assureRecord(record) {
+  record = record || {};
+  
+  record.title = record.title || "";
+  record.creator = record.creator || "";
+  record.subject = record.subject || "";
+  record.description = record.description || "";
+  record.publisher = record.publisher || "";
+  record.contributor = record.contributor || "";
+  record.date = record.date || "";
+  record.identifier = record.identifier || "";
+  record.format = record.format || "";
+  record.source = record.source || "";
+  record.language = record.language || "";
+  record.relation = record.relation || "";
+  record.coverage = record.coverage || "";
+  record.rights = record.rights || "";
+  
+  return record;
+}
+
 export default
 class RecordsTable extends Component {
   
@@ -36,7 +57,7 @@ class RecordsTable extends Component {
   }
   
   onEdit = (props) => {
-    this.setState({current: props});
+    this.setState({current: assureRecord(props)});
   }
   
   onDelete = (props) => {
@@ -44,7 +65,7 @@ class RecordsTable extends Component {
   }
   
   onAdd = () => {
-    this.setState({current: {}});
+    this.setState({current: assureRecord()});
   }
   
   onSave = (record) => {
