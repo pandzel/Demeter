@@ -7,6 +7,8 @@ export default
 class DataPane extends Component{
   state = {};
   
+  api = new RecordsApi();
+  
   componentDidMount() {
     const api = new RecordsApi();
     api.list().then(result => {
@@ -16,8 +18,17 @@ class DataPane extends Component{
     });
   }
   
-  onSave = (data) => {
-    console.log("Saving", data);
+  onSave = (record) => {
+    const rowData = record;
+    if (record.id) {
+      this.api.update(record).then(result => {
+        console.log("Update (modify)", record);
+      });
+    } else {
+      this.api.create(record).then(result => {
+        console.log("Update (insert)", record);
+      });
+    }
   }
   
   render(){
