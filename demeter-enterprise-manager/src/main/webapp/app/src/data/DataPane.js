@@ -16,11 +16,15 @@ class DataPane extends Component{
     });
   }
   
+  onSave = (data) => {
+    console.log("Saving", data);
+  }
+  
   render(){
     return(
       <div className="DataPane">
         <div className="Title">Data</div>
-        {this.state.data && <RecordsTable data={this.state.data}/>}
+        {this.state.data && <RecordsTable onSave={this.onSave} data={this.state.data}/>}
       </div>
     );
   }

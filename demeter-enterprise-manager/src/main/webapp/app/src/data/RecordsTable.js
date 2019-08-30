@@ -36,7 +36,6 @@ class RecordsTable extends Component {
   }
   
   onEdit = (props) => {
-    console.log("Editing data", props);
     this.setState({current: props});
   }
   
@@ -45,7 +44,12 @@ class RecordsTable extends Component {
   }
   
   onAdd = () => {
-    console.log("Adding new record");
+    this.setState({current: {}});
+  }
+  
+  onSave = (record) => {
+    this.props.onSave(record);
+    this.setState({current: null});
   }
   
   render(){
@@ -62,7 +66,7 @@ class RecordsTable extends Component {
                 onClick={this.onAdd}/>
       </div>;
 
-    let editorPane = <EditorPane record={this.state.current}/>;
+    let editorPane = <EditorPane onSave={this.onSave} record={this.state.current}/>;
     
     return(
       <div className="RecordsTable">

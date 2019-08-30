@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import "./DataPane.scss";
 import {InputText} from 'primereact/inputtext';
 import {Calendar} from 'primereact/calendar';
+import {Button} from 'primereact/button';
 
 
 function TextRow(props) {
@@ -17,7 +18,7 @@ function DateRow(props) {
   return <div className="table-row" style={{display: "table-row"}}>
           <div className="table-cell table-cell-caption" style={{display: "table-cell"}}>{props.caption}</div>
           <div className="table-cell table-cell-value"style={{display: "table-cell"}}>
-            <Calendar value={new Date(props.value)} onChange={props.onChange}/>
+            <Calendar value={props.value? new Date(props.value): new Date()} onChange={props.onChange}/>
           </div>
         </div>;
 };
@@ -61,6 +62,7 @@ class EditorPane extends Component {
             <TextRow caption="Rights" value={this.state.record.rights}
                  onChange={(e) => this.setState({record: {rights: e.target.value}})}/>
         </div>
+        <Button label="Save" onClick={(e) => this.props.onSave(this.state.record)}/>
       </div>
     );
   }
