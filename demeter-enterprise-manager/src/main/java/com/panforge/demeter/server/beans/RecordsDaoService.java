@@ -106,7 +106,7 @@ public class RecordsDaoService implements RecordsDao {
     fromDatabase.coverage = StringUtils.trimToEmpty(recordData.coverage);
     fromDatabase.rights = StringUtils.trimToEmpty(recordData.rights);
     
-    PreparedStatement stmt = conn.prepare("insert into records (id, title = ?, creator = ?, subject = ?, description = ?, publisher = ?, contributor = ?, date = ?, format = ?, identifier = ?, source = ?, language = ?, relation = ?, coverage = ?, rights = ?) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    PreparedStatement stmt = conn.prepare("insert into records (id, title, creator, subject, description, publisher, contributor, date, format, identifier, source, language, relation, coverage, rights) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     BoundStatement bound = stmt.bind(
       fromDatabase.id,
       fromDatabase.title, fromDatabase.creator, fromDatabase.subject, fromDatabase.description, fromDatabase.publisher, 
