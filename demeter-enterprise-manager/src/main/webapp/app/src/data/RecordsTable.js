@@ -57,7 +57,7 @@ class RecordsTable extends Component {
   }
   
   onEdit = (props) => {
-    this.setState({current: assureRecord(props)});
+    this.setState({data: this.props.data, current: assureRecord(props)});
   }
   
   onDelete = (props) => {
@@ -65,12 +65,13 @@ class RecordsTable extends Component {
   }
   
   onAdd = () => {
-    this.setState({current: assureRecord()});
+    this.setState({data: this.props.data, current: assureRecord()});
   }
   
   onSave = (record) => {
     this.props.onSave(record);
-    this.setState({current: null});
+    this.setState({data: this.props.data, current: null});
+    
   }
   
   render(){
