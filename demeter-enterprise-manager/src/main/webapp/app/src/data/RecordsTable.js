@@ -61,7 +61,7 @@ class RecordsTable extends Component {
   }
   
   onDelete = (props) => {
-    console.log("Deleting data", props);
+    this.props.onDelete(props.id);
   }
   
   onAdd = () => {

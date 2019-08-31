@@ -10,32 +10,46 @@ class DataPane extends Component{
   api = new RecordsApi();
   
   componentDidMount() {
-    const api = new RecordsApi();
-    api.list().then(result => {
-      this.setState({
-        data: result
-      });
-    });
+    this.load();
   }
   
   onSave = (record) => {
-    const rowData = record;
-    if (record.id) {
-      this.api.update(record).then(result => {
-        console.log("Update (modify)", record);
-      });
-    } else {
-      this.api.create(record).then(result => {
-        console.log("Update (insert)", record);
-      });
-    }
+    return new Promise((resolve, reject) => {
+      if (record.id) {
+        this.api.update(record).then(result => {
+          resolve(result);
+          this.load();
+        }).catch(error => reject(error));
+      } else {
+        this.api.create(record).then(result => {
+          resolve(result);
+          this.load();
+        }).catch(error => reject(error));
+      }
+    });
+  }
+  
+  onDelete = (id) => {
+    return new Promise((resolve, reject) => {
+        this.api.delete(id).then(result => {
+          resolve(result);
+          this.load();
+        }).catch(error => reject(error));
+    });
+  }
+  
+  load = () => {
+    this.api.list().then(result => {
+      console.log("Loaded data", result);
+      this.setState({ data: result });
+    });
   }
   
   render(){
     return(
       <div className="DataPane">
         <div className="Title">Data</div>
-        {this.state.data && <RecordsTable onSave={this.onSave} data={this.state.data}/>}
+        {this.state.data && <RecordsTable onDelete={this.onDelete} onSave={this.onSave} data={this.state.data}/>}
       </div>
     );
   }
