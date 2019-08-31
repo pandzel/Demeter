@@ -39,6 +39,7 @@ class DataPane extends Component{
   }
   
   load = () => {
+    this.setState({ data: null });
     this.api.list().then(result => {
       console.log("Loaded data", result);
       this.setState({ data: result });
