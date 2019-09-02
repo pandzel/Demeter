@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import "./DataPane.scss";
 
 import {Button} from 'primereact/button';
+import {Paginator} from 'primereact/paginator';
 
 import RecordsApi from '../api/RecordsApi';
 import EditorPane from './EditorPane';
@@ -59,9 +60,15 @@ class RecordsPane extends Component {
     });
   }
   
+  onPageChange = (page) => {
+    console.log("onPageChange:", page);
+    this.props.onPageChange(page);
+  }
+  
   render(){
 
     let recordsTable = <div>
+                          <Paginator first={this.state.data.page + this.state.data.pageSize} rows={this.state.data.total} onPageChange={(e) => this.onPageChange(e.first * this.state.data.pageSize)}></Paginator>
                           <RecordsTable records={this.state.data.data} onEdit={this.onEdit} onDelete={this.onDelete} onInfo={this.onInfo}/>
                           <Button type="button" icon="pi pi-plus" className="p-button-info add" 
                                   title="Add new record"

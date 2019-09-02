@@ -4,7 +4,7 @@ export default
 class RecordsApi {
   list(page) {
     return new Promise((resolve, reject) => {
-      axios.get(`${config.context}rest/records`+(page? `?page=${page}`: ""))
+      axios.get(`${config.context}rest/records`+(page!==undefined? `?page=${page}`: ""))
               .then((result)=>{ console.log("RecordsApi list():", result.data); resolve(result.data); })
               .catch((error)=>{ console.error(error); reject(error); });
     });

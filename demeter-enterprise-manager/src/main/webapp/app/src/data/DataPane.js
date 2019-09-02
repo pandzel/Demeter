@@ -29,9 +29,9 @@ class DataPane extends Component{
     });
   }
   
-  load = () => {
+  load = (page) => {
     return new Promise((resolve, reject) => {
-      this.api.list().then(result => {
+      this.api.list(page).then(result => {
         this.setState({ data: result });
         resolve(result);
       }).catch(reject);
@@ -42,7 +42,7 @@ class DataPane extends Component{
     return(
       <div className="DataPane">
         <div className="Title">Data</div>
-        {this.state.data && <RecordsPane data={this.state.data} onDelete={this.onDelete} onSave={this.onSave}/>}
+        {this.state.data && <RecordsPane data={this.state.data} onDelete={this.onDelete} onSave={this.onSave} onPageChange={(page) => this.load(page)}/>}
       </div>
     );
   }
