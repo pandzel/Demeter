@@ -7,7 +7,7 @@ export default
 class Stage extends Component{
   
   state = {
-    content: 'home' 
+    content: 'data' 
   }
   
   handleNaviClick = (event) => {

@@ -29,7 +29,7 @@ class Content extends Component{
         contentPane = <SettingsPane/>;
         break;
       default:
-        contentPane = <HomePane/>;
+        contentPane = <DataPane/>;
         break;
     }
     return(

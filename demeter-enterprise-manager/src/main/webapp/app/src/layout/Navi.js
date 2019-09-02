@@ -10,7 +10,7 @@ export default
 class Navi extends Component{
   
   state = {
-    selected: 'home'
+    selected: 'data'
   }
   
   handleClick = (e) => {
@@ -22,10 +22,6 @@ class Navi extends Component{
   render(){
     return(
       <div className="Navi">
-        <img src={iconHome}     width="80" height="80" title="Home" value="home"
-            onClick={this.handleClick}
-            className={this.state.selected=='home'? 'selected': ''}/>
-            
         <img src={iconFiles}    width="80" height="80" title="Data" value="data"
             onClick={this.handleClick}
             className={this.state.selected=='data'? 'selected': ''}/>
@@ -33,10 +29,6 @@ class Navi extends Component{
         <img src={iconSets}     width="80" height="80" title="Sets" value="sets"
             onClick={this.handleClick}
             className={this.state.selected=='sets'? 'selected': ''}/>
-            
-        <img src={iconTools}    width="80" height="80" title="Tools" value="tools"
-            onClick={this.handleClick}
-            className={this.state.selected=='tools'? 'selected': ''}/>
             
         <img src={iconSettings} width="80" height="80" title="Settings" value="settings"
             onClick={this.handleClick}
