@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class RecordsDaoService implements RecordsDao {
   private final Logger LOG = LoggerFactory.getLogger(RecordsDaoService.class);
+  private final int PAGE_SIZE = 50;
   
   private Connection conn;
   
@@ -51,14 +52,16 @@ public class RecordsDaoService implements RecordsDao {
   }
   
   @Override
-  public QueryResult<RecordData> listRecords() {
+  public QueryResult<RecordData> listRecords(Integer page) {
     ResultSet rs = conn.execute("select * from records");
     List<Row> allRows = rs.all();
     
     QueryResult<RecordData> queryResult = new QueryResult<>();
     queryResult.total = new Long(allRows.size());
-    queryResult.page = 0L;
+    queryResult.page = page!=null? page: 0L;
     queryResult.data = allRows.stream()
+            .skip(page!=null? page * PAGE_SIZE: 0)
+            .limit(PAGE_SIZE)
             .map(row -> {
               RecordData recordData = new RecordData();
               readRow(recordData, row);

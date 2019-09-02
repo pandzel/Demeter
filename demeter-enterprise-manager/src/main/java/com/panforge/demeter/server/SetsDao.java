@@ -27,9 +27,10 @@ public interface SetsDao {
   
   /**
    * Sets all sets data.
+   * @param page page number
    * @return sets data
    */
-  QueryResult<SetData> listSets();
+  QueryResult<SetData> listSets(Integer page);
   
   /**
    * Reads set info.

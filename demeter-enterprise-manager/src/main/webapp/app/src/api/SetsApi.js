@@ -2,9 +2,9 @@ import axios from 'axios';
 
 export default
 class SetsApi {
-  list() {
+  list(page) {
     return new Promise((resolve, reject) => {
-      axios.get(`${config.context}rest/sets`)
+      axios.get(`${config.context}rest/sets`+(page? `?page=${page}`: ""))
               .then((result)=>{ console.log("SetsApi list():", result.data); resolve(result.data.data); })
               .catch((error)=>{ console.error(error); reject(error); });
     });

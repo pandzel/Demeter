@@ -2,9 +2,9 @@ import axios from 'axios';
 
 export default
 class RecordsApi {
-  list() {
+  list(page) {
     return new Promise((resolve, reject) => {
-      axios.get(`${config.context}rest/records`)
+      axios.get(`${config.context}rest/records`+(page? `?page=${page}`: ""))
               .then((result)=>{ console.log("RecordsApi list():", result.data); resolve(result.data.data); })
               .catch((error)=>{ console.error(error); reject(error); });
     });

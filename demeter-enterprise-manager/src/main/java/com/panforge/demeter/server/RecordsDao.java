@@ -17,8 +17,6 @@ package com.panforge.demeter.server;
 
 import com.panforge.demeter.server.elements.QueryResult;
 import com.panforge.demeter.server.elements.RecordData;
-import com.panforge.demeter.server.elements.SetData;
-import com.panforge.demeter.server.elements.SetInfo;
 import java.util.UUID;
 
 /**
@@ -27,9 +25,10 @@ import java.util.UUID;
 public interface RecordsDao {
   /**
    * Lists all records.
+   * @param page
    * @return records
    */
-  QueryResult<RecordData> listRecords();
+  QueryResult<RecordData> listRecords(Integer page);
   
   /**
    * Reads record info.

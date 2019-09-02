@@ -39,6 +39,7 @@ import java.util.List;
 @Service
 public class SetsDaoService implements SetsDao {
   private final Logger LOG = LoggerFactory.getLogger(SetsDaoService.class);
+  private final int PAGE_SIZE = 50;
   
   private Connection conn;
   
@@ -52,14 +53,16 @@ public class SetsDaoService implements SetsDao {
   }
   
   @Override
-  public QueryResult<SetData> listSets() {
+  public QueryResult<SetData> listSets(Integer page) {
     ResultSet rs = conn.execute("select * from sets");
     List<Row> allRows = rs.all();
     
     QueryResult<SetData> queryResult = new QueryResult<>();
     queryResult.total = new Long(allRows.size());
-    queryResult.page = 0L;
+    queryResult.page = page!=null? page: 0L;
     queryResult.data = allRows.stream()
+            .skip(page!=null? page * PAGE_SIZE: 0)
+            .limit(PAGE_SIZE)
             .map(row -> {
               SetData setData = new SetData();
               readRow(setData, row);

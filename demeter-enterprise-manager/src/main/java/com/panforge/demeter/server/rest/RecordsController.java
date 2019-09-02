@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -61,10 +62,10 @@ public class RecordsController {
   }
   
   @RequestMapping(value = "/records", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<QueryResult<RecordData>> list(HttpServletRequest request) {
+  public ResponseEntity<QueryResult<RecordData>> list(HttpServletRequest request, @RequestParam(required = false) Integer page) {
     try {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
-      return new ResponseEntity<>(dao.listRecords(), HttpStatus.OK);
+      return new ResponseEntity<>(dao.listRecords(page), HttpStatus.OK);
     } catch (Exception ex) {
       LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
