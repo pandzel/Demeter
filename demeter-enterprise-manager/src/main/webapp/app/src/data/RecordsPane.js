@@ -55,7 +55,9 @@ class RecordsPane extends Component {
   }
   
   onSave = (record) => {
-    this.props.onSave(record);
+    this.props.onSave(record).then(()=>{
+      this.setState({data: this.props.data, current: null});
+    });
   }
   
   render(){
