@@ -39,7 +39,6 @@ class RecordsPane extends Component {
   api = new RecordsApi();
   
   onInfo = (props) => {
-    console.log("More info", props);
   }
   
   onEdit = (props) => {

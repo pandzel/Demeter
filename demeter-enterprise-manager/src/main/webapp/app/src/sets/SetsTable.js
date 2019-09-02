@@ -33,13 +33,10 @@ class SetsTable extends Component{
   }
   
   onInfo = (props) => {
-    // display info
-    console.log("More Info", props);
   }
   
   onDelete = (props) => {
     this.api.delete(props.id).then(result => {
-      console.log("Delete", result);
       let updatedItems = [...this.state.data];
       this.setState({data: updatedItems.filter(rec => rec.id !=props.id)});
     });
@@ -49,11 +46,9 @@ class SetsTable extends Component{
     const rowData = props.rowData;
     if (rowData.id) {
       this.api.update(rowData).then(result => {
-        console.log("Update (modify)", rowData);
       });
     } else {
       this.api.create(rowData).then(result => {
-        console.log("Update (insert)", rowData);
         let updatedItems = [...this.state.data];
         updatedItems.push(result);
         this.setState({data: updatedItems});
@@ -73,7 +68,6 @@ class SetsTable extends Component{
   
   onAdd = () => {
     this.api.create().then(result => {
-      console.log("Add", result);
       let updatedItems = [...this.state.data];
       updatedItems.push(result);
       this.setState({data: updatedItems});

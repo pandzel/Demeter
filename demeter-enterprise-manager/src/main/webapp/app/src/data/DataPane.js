@@ -32,7 +32,6 @@ class DataPane extends Component{
   load = () => {
     return new Promise((resolve, reject) => {
       this.api.list().then(result => {
-        console.log("Loaded data", result);
         this.setState({ data: result });
         resolve(result);
       }).catch(reject);
