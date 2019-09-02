@@ -62,7 +62,7 @@ class RecordsPane extends Component {
   render(){
 
     let recordsTable = <div>
-                          <RecordsTable records={this.state.data} onEdit={this.onEdit} onDelete={this.onDelete} onInfo={this.onInfo}/>
+                          <RecordsTable records={this.state.data.data} onEdit={this.onEdit} onDelete={this.onDelete} onInfo={this.onInfo}/>
                           <Button type="button" icon="pi pi-plus" className="p-button-info add" 
                                   title="Add new record"
                                   onClick={this.onAdd}/>

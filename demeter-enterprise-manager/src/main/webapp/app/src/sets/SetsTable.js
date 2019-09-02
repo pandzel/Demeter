@@ -27,9 +27,9 @@ class SetsTable extends Component{
   }
     
   onEditorValueChange = (props, value) => {
-      let updatedItems = [...this.state.data];
+      let updatedItems = [...this.state.data.data];
       updatedItems[props.rowIndex][props.field] = value;
-      this.setState({data: updatedItems});
+      this.setState({data: {...this.state.data, data: updatedItems}});
   }
   
   onInfo = (props) => {
@@ -37,7 +37,7 @@ class SetsTable extends Component{
   
   onDelete = (props) => {
     this.api.delete(props.id).then(result => {
-      let updatedItems = [...this.state.data];
+      let updatedItems = [...this.state.data.data];
       this.setState({data: updatedItems.filter(rec => rec.id !=props.id)});
     });
   }
@@ -49,20 +49,20 @@ class SetsTable extends Component{
       });
     } else {
       this.api.create(rowData).then(result => {
-        let updatedItems = [...this.state.data];
+        let updatedItems = [...this.state.data.data];
         updatedItems.push(result);
-        this.setState({data: updatedItems});
+        this.setState({data: {...this.state.data, data: updatedItems}});
       });
     }
   }
 
   nameEditor = (props) => {
-      return <InputText type="text" value={this.state.data[props.rowIndex]['setName']} 
+      return <InputText type="text" value={this.state.data.data[props.rowIndex]['setName']} 
               onChange={(e) => this.onEditorValueChange(props, e.target.value)} />;
   }    
 
   specEditor = (props) => {
-      return <InputText type="text" value={this.state.data[props.rowIndex]['setSpec']} 
+      return <InputText type="text" value={this.state.data.data[props.rowIndex]['setSpec']} 
               onChange={(e) => this.onEditorValueChange(props, e.target.value)} />;
   }    
   
@@ -77,7 +77,7 @@ class SetsTable extends Component{
   render(){
     return(
       <div className="SetsTable">
-        <DataTable value={this.state.data}>
+        <DataTable value={this.state.data.data}>
           <Column field="setName" header="Name" editor={this.nameEditor} onEditorSubmit={this.onUpdate} />
           <Column field="setSpec" header="Spec" editor={this.specEditor} onEditorSubmit={this.onUpdate} />
           <Column body={(rowData, column) => this.actionTemplate(rowData, column)} className="action-buttons"/>
