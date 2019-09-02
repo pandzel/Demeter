@@ -29,7 +29,7 @@ function assureRecord(record) {
 }
 
 export default
-class RecordsTable extends Component {
+class RecordsPane extends Component {
   
   state  = { 
     data: this.props.data,
@@ -91,7 +91,7 @@ class RecordsTable extends Component {
     let editorPane = <EditorPane onSave={this.onSave} record={this.state.current}/>;
     
     return(
-      <div className="RecordsTable">
+      <div className="RecordsPane">
         {this.state.current? editorPane: dataTable}
       </div>
     );

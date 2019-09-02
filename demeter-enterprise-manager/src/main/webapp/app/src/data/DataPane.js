@@ -1,7 +1,7 @@
 import React, { Component} from "react";
 import "./DataPane.scss";
 import RecordsApi from '../api/RecordsApi';
-import RecordsTable from './RecordsTable';
+import RecordsPane from './RecordsPane';
 
 export default
 class DataPane extends Component{
@@ -50,7 +50,7 @@ class DataPane extends Component{
     return(
       <div className="DataPane">
         <div className="Title">Data</div>
-        {this.state.data && <RecordsTable onDelete={this.onDelete} onSave={this.onSave} data={this.state.data}/>}
+        {this.state.data && <RecordsPane data={this.state.data} onDelete={this.onDelete} onSave={this.onSave}/>}
       </div>
     );
   }
