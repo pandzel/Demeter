@@ -35,20 +35,20 @@ class EditorPane extends Component {
         <div className="table" style={{display: "table"}}>
             <TextRow caption="Title" value={this.state.record.title}
                  onChange={(e) => this.setState({record: {...this.state.record, title: e.target.value}})}/>
-            <TextRow caption="Creator" value={this.state.record.creator}
-                 onChange={(e) => this.setState({record: {...this.state.record, creator: e.target.value}})}/>
-            <TextRow caption="Subject" value={this.state.record.subject}
-                 onChange={(e) => this.setState({record: {...this.state.record, subject: e.target.value}})}/>
             <TextRow caption="Description" value={this.state.record.description}
                  onChange={(e) => this.setState({record: {...this.state.record, description: e.target.value}})}/>
+            <TextRow caption="Identifier" value={this.state.record.identifier}
+                 onChange={(e) => this.setState({record: {...this.state.record, identifier: e.target.value}})}/>
+            <TextRow caption="Subject" value={this.state.record.subject}
+                 onChange={(e) => this.setState({record: {...this.state.record, subject: e.target.value}})}/>
+            <TextRow caption="Creator" value={this.state.record.creator}
+                 onChange={(e) => this.setState({record: {...this.state.record, creator: e.target.value}})}/>
             <TextRow caption="Publisher" value={this.state.record.publisher}
                  onChange={(e) => this.setState({record: {...this.state.record, publisher: e.target.value}})}/>
             <TextRow caption="Contributor" value={this.state.record.contributor}
                  onChange={(e) => this.setState({record: {...this.state.record, contributor: e.target.value}})}/>
             <DateRow caption="Date" value={this.state.record.date}
                  onChange={(e) => this.setState({record: {...this.state.record, date: e.value.toString()}})}/>
-            <TextRow caption="Identifier" value={this.state.record.identifier}
-                 onChange={(e) => this.setState({record: {...this.state.record, identifier: e.target.value}})}/>
             <TextRow caption="Format" value={this.state.record.format}
                  onChange={(e) => this.setState({record: {...this.state.record, format: e.target.value}})}/>
             <TextRow caption="Source" value={this.state.record.source}

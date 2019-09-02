@@ -15,23 +15,17 @@ class DataPane extends Component{
   
   onSave = (record) => {
     return new Promise((resolve, reject) => {
-      if (record.id) {
-        this.api.update(record).then(result => {
-          this.load().then((recs) => resolve(recs)).catch(err => reject(err));
-        }).catch(error => reject(error));
-      } else {
-        this.api.create(record).then(result => {
-          this.load().then((recs) => resolve(recs)).catch(err => reject(err));
-        }).catch(error => reject(error));
-      }
+      (record.id? this.api.update: this.api.create)(record).then(resolve).catch(reject);
+    }).then(() => {
+      return this.load();
     });
   }
   
   onDelete = (id) => {
     return new Promise((resolve, reject) => {
-        this.api.delete(id).then(result => {
-          this.load().then((recs) => resolve(recs)).catch(err => reject(err));
-        }).catch(error => reject(error));
+      this.api.delete(id).then(resolve).catch(reject);
+    }).then(() => {
+      return this.load();
     });
   }
   
@@ -41,7 +35,7 @@ class DataPane extends Component{
         console.log("Loaded data", result);
         this.setState({ data: result });
         resolve(result);
-      }).catch(error => reject(error));
+      }).catch(reject);
     });
   }
   
