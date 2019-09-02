@@ -26,5 +26,6 @@ import java.util.List;
 public class QueryResult<RT> {
   public Long total;
   public Long page;
+  public Long pageSize;
   public List<RT> data;
 }

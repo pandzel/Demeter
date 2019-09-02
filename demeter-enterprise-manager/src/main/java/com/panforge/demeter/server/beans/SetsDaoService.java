@@ -39,7 +39,7 @@ import java.util.List;
 @Service
 public class SetsDaoService implements SetsDao {
   private final Logger LOG = LoggerFactory.getLogger(SetsDaoService.class);
-  private final int PAGE_SIZE = 50;
+  private final long PAGE_SIZE = 50;
   
   private Connection conn;
   
@@ -60,6 +60,7 @@ public class SetsDaoService implements SetsDao {
     QueryResult<SetData> queryResult = new QueryResult<>();
     queryResult.total = new Long(allRows.size());
     queryResult.page = page!=null? page: 0L;
+    queryResult.pageSize = PAGE_SIZE;
     queryResult.data = allRows.stream()
             .skip(page!=null? page * PAGE_SIZE: 0)
             .limit(PAGE_SIZE)
