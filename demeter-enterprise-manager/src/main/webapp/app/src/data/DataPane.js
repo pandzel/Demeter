@@ -17,13 +17,13 @@ class DataPane extends Component{
     return new Promise((resolve, reject) => {
       if (record.id) {
         this.api.update(record).then(result => {
-          resolve(result);
           this.load();
+          resolve(result);
         }).catch(error => reject(error));
       } else {
         this.api.create(record).then(result => {
-          resolve(result);
           this.load();
+          resolve(result);
         }).catch(error => reject(error));
       }
     });
@@ -32,8 +32,8 @@ class DataPane extends Component{
   onDelete = (id) => {
     return new Promise((resolve, reject) => {
         this.api.delete(id).then(result => {
-          resolve(result);
           this.load();
+          resolve(result);
         }).catch(error => reject(error));
     });
   }
