@@ -8,8 +8,8 @@ import {Button} from 'primereact/button';
 function TextRow(props) {
   return <div className="table-row" style={{display: "table-row"}}>
           <div className="table-cell table-cell-caption" style={{display: "table-cell"}}>{props.caption}</div>
-          <div className="table-cell table-cell-value"style={{display: "table-cell"}}>
-            <InputText value={props.value} onChange={props.onChange}/>
+          <div className="table-cell table-cell-value" style={{display: "table-cell"}}>
+            <InputText value={props.value} onChange={props.onChange} style={{width: props.width}}/>
           </div>
         </div>;
 };
@@ -17,7 +17,7 @@ function TextRow(props) {
 function DateRow(props) {
   return <div className="table-row" style={{display: "table-row"}}>
           <div className="table-cell table-cell-caption" style={{display: "table-cell"}}>{props.caption}</div>
-          <div className="table-cell table-cell-value"style={{display: "table-cell"}}>
+          <div className="table-cell table-cell-value" style={{display: "table-cell"}}>
             <Calendar value={props.value? new Date(props.value): new Date()} onChange={props.onChange}/>
           </div>
         </div>;
@@ -33,13 +33,13 @@ class EditorPane extends Component {
     return(
       <div className="EditorPane">
         <div className="table" style={{display: "table"}}>
-            <TextRow caption="Title" value={this.state.record.title}
+            <TextRow caption="Title" value={this.state.record.title} width={"60em"}
                  onChange={(e) => this.setState({record: {...this.state.record, title: e.target.value}})}/>
-            <TextRow caption="Description" value={this.state.record.description}
+            <TextRow caption="Description" value={this.state.record.description} width={"60em"}
                  onChange={(e) => this.setState({record: {...this.state.record, description: e.target.value}})}/>
-            <TextRow caption="Identifier" value={this.state.record.identifier}
+            <TextRow caption="Identifier" value={this.state.record.identifier} width={"60em"}
                  onChange={(e) => this.setState({record: {...this.state.record, identifier: e.target.value}})}/>
-            <TextRow caption="Subject" value={this.state.record.subject}
+            <TextRow caption="Subject" value={this.state.record.subject} width={"60em"}
                  onChange={(e) => this.setState({record: {...this.state.record, subject: e.target.value}})}/>
             <TextRow caption="Creator" value={this.state.record.creator}
                  onChange={(e) => this.setState({record: {...this.state.record, creator: e.target.value}})}/>
