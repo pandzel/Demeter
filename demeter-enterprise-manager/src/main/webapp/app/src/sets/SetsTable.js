@@ -1,10 +1,13 @@
 import React, {Component} from "react";
 import "./SetsPane.scss";
-import SetsApi from '../api/SetsApi';
+
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 import {Button} from 'primereact/button';
 import {InputText} from 'primereact/inputtext';
+import {Paginator} from 'primereact/paginator';
+
+import SetsApi from '../api/SetsApi';
 
 export default
 class SetsTable extends Component{
@@ -74,9 +77,14 @@ class SetsTable extends Component{
     });
   }
   
+  onPageChange = (page) => {
+    this.props.onPageChange(page);
+  }
+  
   render(){
     return(
       <div className="SetsTable">
+        <Paginator first={this.state.data.page * this.state.data.pageSize} rows={this.state.data.pageSize} totalRecords={this.state.data.total} onPageChange={(e) => this.onPageChange(e.page)}></Paginator>
         <DataTable value={this.state.data.data}>
           <Column field="setName" header="Name" editor={this.nameEditor} onEditorSubmit={this.onUpdate} />
           <Column field="setSpec" header="Spec" editor={this.specEditor} onEditorSubmit={this.onUpdate} />
