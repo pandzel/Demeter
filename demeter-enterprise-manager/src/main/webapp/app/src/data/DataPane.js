@@ -43,7 +43,7 @@ class DataPane extends Component{
     return(
       <div className="DataPane">
         <div className="Title">Data</div>
-        {this.state.data && <RecordsPane data={this.state.data} onDelete={this.onDelete} onSave={this.onSave} onPageChange={(page) => this.load(page)}/>}
+        {this.state.data && <RecordsPane data={this.state.data} onDelete={this.onDelete} onSave={this.onSave} onPageChange={this.load}/>}
       </div>
     );
   }
