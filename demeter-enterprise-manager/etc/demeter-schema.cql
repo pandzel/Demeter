@@ -52,14 +52,10 @@ CREATE TABLE records (
 CREATE INDEX identifierIndex ON records(identifier);
 CREATE INDEX dateIndex ON records(date);
 
-CREATE TABLE records_sets (
+CREATE TABLE collections (
   recordId UUID,
   setId UUID,
   PRIMARY KEY (recordId, setId)
 );
 
-CREATE TABLE sets_records (
-  setId UUID,
-  recordId UUID,
-  PRIMARY KEY (setId, recordId)
-);
+CREATE INDEX setIdx ON collections(setId);

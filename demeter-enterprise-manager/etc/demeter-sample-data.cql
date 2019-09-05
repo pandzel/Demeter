@@ -23,9 +23,5 @@ INSERT INTO records (id, identifier, title, description, creator, date, type)
 UPDATE counter SET counter = counter + 1 WHERE table_name = 'records';
 
 
-INSERT INTO records_sets (recordId, setId)
+INSERT INTO collections (recordId, setId)
   VALUES (20000000-0000-0000-0000-000000000001, 10000000-0000-0000-0000-000000000001);
-
-
-INSERT INTO sets_records (setId, recordId)
-  VALUES (10000000-0000-0000-0000-000000000001, 20000000-0000-0000-0000-000000000001);
