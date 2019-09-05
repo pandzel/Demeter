@@ -35,6 +35,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.panforge.demeter.server.SetsDao;
 import com.panforge.demeter.server.elements.QueryResult;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -115,6 +118,51 @@ public class SetController {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
       boolean success = dao.deleteSet(id);
       OperationStatus opStat = success? new OperationStatus(id): new OperationStatus(id, "Error deleting record");
+      return new ResponseEntity<>(opStat, HttpStatus.OK);
+    } catch (Exception ex) {
+      LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  
+  @RequestMapping(value = "/sets/{id}/records", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<QueryResult<DefaultKeyValue<String,String>>> getRecords(HttpServletRequest request, @PathVariable UUID id, @RequestParam(required = false) Integer page) {
+    try {
+      LOG.debug(String.format("Received request '%s'", request.getQueryString()));
+      // TODO: provide set records list implementation
+      QueryResult<DefaultKeyValue<String,String>> result = new QueryResult<>();
+      result.page = null;
+      result.pageSize = null;
+      result.total = 0L;
+      result.data = new ArrayList<>();
+      return new ResponseEntity<>(result, HttpStatus.OK);
+    } catch (Exception ex) {
+      LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  
+  @RequestMapping(value = "/sets/{id}/records/{recordId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<OperationStatus> putRecord(HttpServletRequest request, @PathVariable UUID id, @PathVariable UUID recordId) {
+    try {
+      LOG.debug(String.format("Received request '%s'", request.getQueryString()));
+      // TODO: provide record set put implementation
+      boolean success = false;
+      OperationStatus opStat = success? new OperationStatus(id): new OperationStatus(id, "Error updating record");
+      return new ResponseEntity<>(opStat, HttpStatus.OK);
+    } catch (Exception ex) {
+      LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  
+  @RequestMapping(value = "/sets/{id}/records/{recordId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<OperationStatus> deleteSet(HttpServletRequest request, @PathVariable UUID id, @PathVariable UUID recordId) {
+    try {
+      LOG.debug(String.format("Received request '%s'", request.getQueryString()));
+      // TODO: provide record set delete implementation
+      boolean success = false;
+      OperationStatus opStat = success? new OperationStatus(id): new OperationStatus(id, "Error updating record");
       return new ResponseEntity<>(opStat, HttpStatus.OK);
     } catch (Exception ex) {
       LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
