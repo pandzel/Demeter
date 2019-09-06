@@ -41,7 +41,10 @@ class SetsTable extends Component{
   onDelete = (props) => {
     this.api.delete(props.id).then(result => {
       let updatedItems = [...this.state.data.data];
-      this.setState({data: updatedItems.filter(rec => rec.id !=props.id)});
+      var data = {...this.state.data};
+      data.data = updatedItems.filter(rec => rec.id !=props.id);
+      data.total--;
+      this.setState({data: data});
     });
   }
   
