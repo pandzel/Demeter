@@ -131,6 +131,8 @@ public class RecordsDaoService implements RecordsDao {
 
   @Override
   public boolean deleteRecord(UUID id) {
+    conn.execute(conn.prepare("delete from collections where recordId = ?").bind(id));
+    
     PreparedStatement stmt = conn.prepare("delete from records where id = ?");
     BoundStatement bound = stmt.bind(id);
     ResultSet result = conn.execute(bound);

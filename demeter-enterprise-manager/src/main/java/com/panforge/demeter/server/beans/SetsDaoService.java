@@ -117,6 +117,8 @@ public class SetsDaoService implements SetsDao {
 
   @Override
   public boolean deleteSet(UUID id) {
+    conn.execute(conn.prepare("delete from collections where setId = ?").bind(id));
+    
     PreparedStatement stmt = conn.prepare("delete from sets where id = ?");
     BoundStatement bound = stmt.bind(id);
     ResultSet result = conn.execute(bound);
