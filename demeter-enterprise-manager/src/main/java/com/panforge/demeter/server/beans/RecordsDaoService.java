@@ -23,9 +23,9 @@ import com.panforge.demeter.server.Connection;
 import com.panforge.demeter.server.RecordsDao;
 import com.panforge.demeter.server.elements.QueryResult;
 import com.panforge.demeter.server.elements.RecordData;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,14 +53,16 @@ public class RecordsDaoService implements RecordsDao {
   
   @Override
   public QueryResult<RecordData> listRecords(Integer page) {
+    Row one = conn.execute("select counter from counter where table_name = 'records'").one();
+    long total = one != null ? one.getLong("counter") : 0;
+    
     ResultSet rs = conn.execute("select * from records");
-    List<Row> allRows = rs.all();
     
     QueryResult<RecordData> queryResult = new QueryResult<>();
-    queryResult.total = new Long(allRows.size());
+    queryResult.total = new Long(total);
     queryResult.page = page!=null? page: 0L;
     queryResult.pageSize = PAGE_SIZE;
-    queryResult.data = allRows.stream()
+    queryResult.data = StreamSupport.stream(rs.spliterator(), true)
             .skip(page!=null? page * PAGE_SIZE: 0)
             .limit(PAGE_SIZE)
             .map(row -> {

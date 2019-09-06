@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.panforge.demeter.server.SetsDao;
 import com.panforge.demeter.server.elements.QueryResult;
-import java.util.List;
+import java.util.stream.StreamSupport;
 
 /**
  * Sets DAO service.
@@ -54,14 +54,16 @@ public class SetsDaoService implements SetsDao {
   
   @Override
   public QueryResult<SetData> listSets(Integer page) {
+    Row one = conn.execute("select counter from counter where table_name = 'sets'").one();
+    long total = one != null ? one.getLong("counter") : 0;
+    
     ResultSet rs = conn.execute("select * from sets");
-    List<Row> allRows = rs.all();
     
     QueryResult<SetData> queryResult = new QueryResult<>();
-    queryResult.total = new Long(allRows.size());
+    queryResult.total = new Long(total);
     queryResult.page = page!=null? page: 0L;
     queryResult.pageSize = PAGE_SIZE;
-    queryResult.data = allRows.stream()
+    queryResult.data = StreamSupport.stream(rs.spliterator(), true)
             .skip(page!=null? page * PAGE_SIZE: 0)
             .limit(PAGE_SIZE)
             .map(row -> {
