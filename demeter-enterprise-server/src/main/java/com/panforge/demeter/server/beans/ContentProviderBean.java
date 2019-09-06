@@ -131,7 +131,7 @@ public class ContentProviderBean implements ContentProvider<DefaultPageCursor> {
   }
 
   private Page<UUID, DefaultPageCursor> listSetsIdsFor(String recordId) {
-    ResultSet rs = conn.execute("select setId from records_sets where recordId = " + recordId);
+    ResultSet rs = conn.execute("select setId from collections where recordId = " + recordId);
     List<Row> rows = rs.all();
     return Page.of(rows.stream().map(row -> row.getUuid("setId")), rows.size());
   }
