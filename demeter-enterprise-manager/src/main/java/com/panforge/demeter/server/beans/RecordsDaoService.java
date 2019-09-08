@@ -23,9 +23,12 @@ import com.panforge.demeter.server.Connection;
 import com.panforge.demeter.server.RecordsDao;
 import com.panforge.demeter.server.elements.QueryResult;
 import com.panforge.demeter.server.elements.RecordData;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.apache.commons.collections4.KeyValue;
+import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,6 +182,33 @@ public class RecordsDaoService implements RecordsDao {
     boolean success = result!=null && result.getExecutionInfo().getErrors().isEmpty();
     
     return success;
+  }
+
+  @Override
+  public QueryResult<KeyValue<String, String>> listSets(UUID recordId, Integer page) {
+    long total = conn.execute(conn.prepare("select count(*) from collections where recordId = ?").bind(recordId)).one().getLong(0);
+    ResultSet rows = conn.execute(conn.prepare("select setId from collections where recordId = ?").bind(recordId));
+    
+    List<KeyValue<String, String>> records = StreamSupport.stream(rows.spliterator(), false)
+            .skip(page!=null? page * PAGE_SIZE: 0)
+            .limit(PAGE_SIZE)
+            .map(row -> {
+              UUID setId = row.getUuid(0);
+              Row setRow = conn.execute(conn.prepare("select setName from sets where id = ?").bind(setId)).one();
+              if (setRow==null) return null;
+              String setName = setRow.getString(0);
+              return new DefaultKeyValue<String,String>(setId.toString(), setName);
+            })
+            .filter(kv -> kv!=null)
+            .collect(Collectors.toList());
+    
+    QueryResult<KeyValue<String, String>> result = new QueryResult<>();
+    result.page = page!=null? page.longValue(): 0;
+    result.pageSize = PAGE_SIZE;
+    result.total = total;
+    result.data = records;
+    
+    return result;
   }
   
   private void readRow(RecordData recordData, Row row) {

@@ -18,6 +18,7 @@ package com.panforge.demeter.server;
 import com.panforge.demeter.server.elements.QueryResult;
 import com.panforge.demeter.server.elements.RecordData;
 import java.util.UUID;
+import org.apache.commons.collections4.KeyValue;
 
 /**
  * Records DAO.
@@ -57,4 +58,6 @@ public interface RecordsDao {
    * @return <code>true</code> if update successful.
    */
   boolean updateRecord(RecordData recordData);
+  
+  public QueryResult<KeyValue<String, String>> listSets(UUID recordId, Integer page);
 }

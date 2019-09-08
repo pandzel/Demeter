@@ -128,12 +128,7 @@ public class RecordsController {
   public ResponseEntity<QueryResult<KeyValue<String,String>>> getSets(HttpServletRequest request, @PathVariable UUID id, @RequestParam(required = false) Integer page) {
     try {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
-      // TODO: provide record sets list implementation
-      QueryResult<KeyValue<String,String>> result = new QueryResult<>();
-      result.page = null;
-      result.pageSize = null;
-      result.total = 0L;
-      result.data = new ArrayList<>();
+      QueryResult<KeyValue<String,String>> result = dao.listSets(id, page);
       return new ResponseEntity<>(result, HttpStatus.OK);
     } catch (Exception ex) {
       LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
