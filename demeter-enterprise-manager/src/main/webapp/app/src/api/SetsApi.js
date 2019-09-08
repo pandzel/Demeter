@@ -33,4 +33,12 @@ class SetsApi {
               .catch((error)=>{ console.error(error); reject(error); });
     });
   }
+  
+  listRecords(setId, page) {
+    return new Promise((resolve, reject) => {
+      axios.get(`${config.context}rest/sets/${setId}/records`+(page!==undefined? `?page=${page}`: ""))
+              .then((result)=>{ console.log("SetsApi listRecords():", result.data); resolve(result.data); })
+              .catch((error)=>{ console.error(error); reject(error); });
+    });
+  }
 }

@@ -36,6 +36,7 @@ class SetsTable extends Component{
   }
   
   onInfo = (props) => {
+    this.api.listRecords(props.id).then(result => console.log(result));
   }
   
   onDelete = (props) => {

@@ -40,6 +40,7 @@ class RecordsPane extends Component {
   api = new RecordsApi();
   
   onInfo = (props) => {
+    this.api.listSets(props.id).then(result => console.log(result));
   }
   
   onEdit = (props) => {
