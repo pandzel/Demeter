@@ -162,7 +162,7 @@ public class SetsDaoService implements SetsDao {
             .limit(PAGE_SIZE)
             .map(row -> {
               UUID recordId = row.getUuid(0);
-              Row recordRow = conn.execute(conn.prepare("select title from records where recordId = ?").bind(recordId)).one();
+              Row recordRow = conn.execute(conn.prepare("select title from records where id = ?").bind(recordId)).one();
               if (recordRow==null) return null;
               String title = recordRow.getString(0);
               return new DefaultKeyValue<String,String>(recordId.toString(), title);
