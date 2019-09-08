@@ -20,11 +20,11 @@ import com.panforge.demeter.server.elements.OperationStatus;
 import com.panforge.demeter.server.elements.QueryResult;
 import com.panforge.demeter.server.elements.RecordData;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.collections4.KeyValue;
 import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,11 +125,11 @@ public class RecordsController {
   }
   
   @RequestMapping(value = "/records/{id}/sets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<QueryResult<DefaultKeyValue<String,String>>> getSets(HttpServletRequest request, @PathVariable UUID id, @RequestParam(required = false) Integer page) {
+  public ResponseEntity<QueryResult<KeyValue<String,String>>> getSets(HttpServletRequest request, @PathVariable UUID id, @RequestParam(required = false) Integer page) {
     try {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
       // TODO: provide record sets list implementation
-      QueryResult<DefaultKeyValue<String,String>> result = new QueryResult<>();
+      QueryResult<KeyValue<String,String>> result = new QueryResult<>();
       result.page = null;
       result.pageSize = null;
       result.total = 0L;

@@ -31,7 +31,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.panforge.demeter.server.SetsDao;
 import com.panforge.demeter.server.elements.QueryResult;
+import java.util.List;
 import java.util.stream.StreamSupport;
+import org.apache.commons.collections4.KeyValue;
+import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
 
 /**
  * Sets DAO service.
@@ -63,7 +66,7 @@ public class SetsDaoService implements SetsDao {
     queryResult.total = new Long(total);
     queryResult.page = page!=null? page: 0L;
     queryResult.pageSize = PAGE_SIZE;
-    queryResult.data = StreamSupport.stream(rs.spliterator(), true)
+    queryResult.data = StreamSupport.stream(rs.spliterator(), false)
             .skip(page!=null? page * PAGE_SIZE: 0)
             .limit(PAGE_SIZE)
             .map(row -> {
@@ -147,6 +150,33 @@ public class SetsDaoService implements SetsDao {
     boolean success = result!=null && result.getExecutionInfo().getErrors().isEmpty();
     
     return success;
+  }
+
+  @Override
+  public QueryResult<KeyValue<String, String>> listRecords(UUID setId, Integer page) {
+    long total = conn.execute(conn.prepare("select count(*) from collections where setId = ?").bind(setId)).one().getLong(0);
+    ResultSet rows = conn.execute(conn.prepare("select recordId from collections where setId = ?").bind(setId));
+    
+    List<KeyValue<String, String>> records = StreamSupport.stream(rows.spliterator(), false)
+            .skip(page!=null? page * PAGE_SIZE: 0)
+            .limit(PAGE_SIZE)
+            .map(row -> {
+              UUID recordId = row.getUuid(0);
+              Row recordRow = conn.execute(conn.prepare("select title from records where recordId = ?").bind(recordId)).one();
+              if (recordRow==null) return null;
+              String title = recordRow.getString(0);
+              return new DefaultKeyValue<String,String>(recordId.toString(), title);
+            })
+            .filter(kv -> kv!=null)
+            .collect(Collectors.toList());
+    
+    QueryResult<KeyValue<String, String>> result = new QueryResult<>();
+    result.page = page!=null? page.longValue(): 0;
+    result.pageSize = PAGE_SIZE;
+    result.total = total;
+    result.data = records;
+    
+    return result;
   }
   
   private void readRow(SetData setData, Row row) {

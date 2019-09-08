@@ -62,7 +62,7 @@ public class RecordsDaoService implements RecordsDao {
     queryResult.total = new Long(total);
     queryResult.page = page!=null? page: 0L;
     queryResult.pageSize = PAGE_SIZE;
-    queryResult.data = StreamSupport.stream(rs.spliterator(), true)
+    queryResult.data = StreamSupport.stream(rs.spliterator(), false)
             .skip(page!=null? page * PAGE_SIZE: 0)
             .limit(PAGE_SIZE)
             .map(row -> {

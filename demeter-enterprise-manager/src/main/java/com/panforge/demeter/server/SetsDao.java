@@ -19,6 +19,7 @@ import com.panforge.demeter.server.elements.QueryResult;
 import com.panforge.demeter.server.elements.SetData;
 import com.panforge.demeter.server.elements.SetInfo;
 import java.util.UUID;
+import org.apache.commons.collections4.KeyValue;
 
 /**
  * Sets DAO.
@@ -59,4 +60,6 @@ public interface SetsDao {
    * @return <code>true</code> if update successful.
    */
   boolean updateSet(SetData setData);
+  
+  QueryResult<KeyValue<String, String>> listRecords(UUID setId, Integer page);
 }

@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.panforge.demeter.server.SetsDao;
 import com.panforge.demeter.server.elements.QueryResult;
 import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.collections4.KeyValue;
 import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -126,15 +126,10 @@ public class SetController {
   }
   
   @RequestMapping(value = "/sets/{id}/records", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<QueryResult<DefaultKeyValue<String,String>>> getRecords(HttpServletRequest request, @PathVariable UUID id, @RequestParam(required = false) Integer page) {
+  public ResponseEntity<QueryResult<KeyValue<String,String>>> getRecords(HttpServletRequest request, @PathVariable UUID id, @RequestParam(required = false) Integer page) {
     try {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
-      // TODO: provide set records list implementation
-      QueryResult<DefaultKeyValue<String,String>> result = new QueryResult<>();
-      result.page = null;
-      result.pageSize = null;
-      result.total = 0L;
-      result.data = new ArrayList<>();
+      QueryResult<KeyValue<String,String>> result = dao.listRecords(id, page);
       return new ResponseEntity<>(result, HttpStatus.OK);
     } catch (Exception ex) {
       LOG.error(String.format("Error processing request '%s'", request.getQueryString()), ex);
@@ -157,7 +152,7 @@ public class SetController {
   }
   
   @RequestMapping(value = "/sets/{id}/records/{recordId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<OperationStatus> deleteSet(HttpServletRequest request, @PathVariable UUID id, @PathVariable UUID recordId) {
+  public ResponseEntity<OperationStatus> deleteRecord(HttpServletRequest request, @PathVariable UUID id, @PathVariable UUID recordId) {
     try {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
       // TODO: provide record set delete implementation
