@@ -210,6 +210,20 @@ public class RecordsDaoService implements RecordsDao {
     
     return result;
   }
+
+  @Override
+  public boolean putCollection(UUID setId, UUID recordId) {
+    ResultSet result = conn.execute(conn.prepare("insert into collections (setId, recordId) values (?, ?)").bind(setId, recordId));
+    boolean success = result!=null && result.getExecutionInfo().getErrors().isEmpty();
+    return success;
+  }
+
+  @Override
+  public boolean delCollection(UUID setId, UUID recordId) {
+    ResultSet result = conn.execute(conn.prepare("delete from collections where setId = ? and recordId = ?").bind(setId, recordId));
+    boolean success = result!=null && result.getExecutionInfo().getErrors().isEmpty();
+    return success;
+  }
   
   private void readRow(RecordData recordData, Row row) {
     recordData.id = row.getUuid("id");

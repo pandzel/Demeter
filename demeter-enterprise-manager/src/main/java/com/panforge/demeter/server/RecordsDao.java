@@ -59,5 +59,9 @@ public interface RecordsDao {
    */
   boolean updateRecord(RecordData recordData);
   
-  public QueryResult<KeyValue<String, String>> listSets(UUID recordId, Integer page);
+  QueryResult<KeyValue<String, String>> listSets(UUID recordId, Integer page);
+  
+  boolean putCollection(UUID setId, UUID recordId);
+  
+  boolean delCollection(UUID setId, UUID recordId);
 }

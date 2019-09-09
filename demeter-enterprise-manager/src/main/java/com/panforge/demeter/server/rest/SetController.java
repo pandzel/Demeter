@@ -35,9 +35,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.panforge.demeter.server.SetsDao;
 import com.panforge.demeter.server.elements.QueryResult;
-import java.util.ArrayList;
 import org.apache.commons.collections4.KeyValue;
-import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -141,8 +139,7 @@ public class SetController {
   public ResponseEntity<OperationStatus> putRecord(HttpServletRequest request, @PathVariable UUID id, @PathVariable UUID recordId) {
     try {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
-      // TODO: provide record set put implementation
-      boolean success = false;
+      boolean success = dao.putCollection(id, recordId);
       OperationStatus opStat = success? new OperationStatus(id): new OperationStatus(id, "Error updating record");
       return new ResponseEntity<>(opStat, HttpStatus.OK);
     } catch (Exception ex) {
@@ -155,8 +152,7 @@ public class SetController {
   public ResponseEntity<OperationStatus> deleteRecord(HttpServletRequest request, @PathVariable UUID id, @PathVariable UUID recordId) {
     try {
       LOG.debug(String.format("Received request '%s'", request.getQueryString()));
-      // TODO: provide record set delete implementation
-      boolean success = false;
+      boolean success = dao.delCollection(id, recordId);
       OperationStatus opStat = success? new OperationStatus(id): new OperationStatus(id, "Error updating record");
       return new ResponseEntity<>(opStat, HttpStatus.OK);
     } catch (Exception ex) {

@@ -62,4 +62,8 @@ public interface SetsDao {
   boolean updateSet(SetData setData);
   
   QueryResult<KeyValue<String, String>> listRecords(UUID setId, Integer page);
+  
+  boolean putCollection(UUID setId, UUID recordId);
+  
+  boolean delCollection(UUID setId, UUID recordId);
 }
