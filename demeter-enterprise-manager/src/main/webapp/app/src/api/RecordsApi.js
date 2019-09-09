@@ -41,4 +41,20 @@ class RecordsApi {
               .catch((error)=>{ console.error(error); reject(error); });
     });
   }
+  
+  putCollection(setId, recordId) {
+    return new Promise((resolve, reject) => {
+      axios.put(`${config.context}rest/records/${recordId}/sets/${setId}`)
+              .then((result)=>{ console.log("RecordsApi putCollection():", result.data); resolve(result.data); })
+              .catch((error)=>{ console.error(error); reject(error); });
+    });
+  }
+  
+  delCollection(setId, recordId) {
+    return new Promise((resolve, reject) => {
+      axios.delete(`${config.context}rest/records/${recordId}/sets/${setId}`)
+              .then((result)=>{ console.log("RecordsApi delCollection():", result.data); resolve(result.data); })
+              .catch((error)=>{ console.error(error); reject(error); });
+    });
+  }
 }
