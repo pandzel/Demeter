@@ -13,7 +13,7 @@ export default
 class SetsTable extends Component{
   
   state  = { 
-    data: this.props.data 
+    data: this.props.data
   };
   
   api = new SetsApi();
@@ -36,7 +36,7 @@ class SetsTable extends Component{
   }
   
   onInfo = (props) => {
-    this.api.listRecords(props.id).then(result => console.log(result));
+    this.api.listRecords(props.id).then(result => this.props.onInfo(result));
   }
   
   onDelete = (props) => {

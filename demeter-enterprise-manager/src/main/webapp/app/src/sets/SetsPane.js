@@ -2,6 +2,7 @@ import React, { Component} from "react";
 import "./SetsPane.scss";
 import SetsApi from '../api/SetsApi';
 import SetsTable from './SetsTable';
+import RecordsList from './RecordsList';
 
 export default
 class SetsPane extends Component{
@@ -23,11 +24,27 @@ class SetsPane extends Component{
     });
   }
   
+  onInfo = (records) => {
+    this.setState({records: records});
+  }
+  
+  onExit = () => {
+    this.setState({records: null});
+  }
+  
   render(){
+    let body = null;
+    
+    if (this.state.records) {
+      body = <RecordsList data={this.state.records} onExit={this.onExit} />
+    } else if (this.state.data) {
+      body = <SetsTable data={this.state.data} onPageChange={this.load} onInfo={this.onInfo}/>;
+    }
+    
     return(
       <div className="SetsPane">
         <div className="Title">Sets</div>
-        {this.state.data && <SetsTable data={this.state.data} onPageChange={this.load}/>}
+        {body}
       </div>
     );
   }

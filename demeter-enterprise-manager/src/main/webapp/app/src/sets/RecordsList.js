@@ -1,18 +1,18 @@
 import React, { Component} from "react";
-import "./DataPane.scss";
+import "./SetsPane.scss";
 import {Button} from 'primereact/button';
 
 export default
-class SetsList extends Component {
+class RecordsList extends Component {
   state = {};
 
   render(){
     return(
       <div className="SetsList">
         <div>
-          Sets List
+          Records List
         </div>
-        <Button label="Cancel" onClick={(e) => this.props.onCancel()}/>
+        <Button label="Cancel" onClick={(e) => this.props.onExit()}/>
       </div>
     );
   }
