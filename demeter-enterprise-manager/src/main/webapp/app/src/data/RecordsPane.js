@@ -7,6 +7,7 @@ import {Paginator} from 'primereact/paginator';
 import RecordsApi from '../api/RecordsApi';
 import EditorPane from '../common/EditorPane';
 import RecordsTable from './RecordsTable';
+import SetsList from './SetsList';
 
 function assureRecord(record) {
   record = record || {};
@@ -34,13 +35,14 @@ class RecordsPane extends Component {
   
   state  = { 
     data: this.props.data,
-    current: null
+    current: null,
+    sets: null
   };
   
   api = new RecordsApi();
   
   onInfo = (props) => {
-    this.api.listSets(props.id).then(result => console.log(result));
+    this.api.listSets(props.id).then(result => this.setState({sets: result}));
   }
   
   onEdit = (props) => {
@@ -62,7 +64,7 @@ class RecordsPane extends Component {
   }
   
   onCancel = (record) => {
-    this.setState({current: null});
+    this.setState({current: null, sets: null});
   }
   
   onPageChange = (page) => {
@@ -70,19 +72,25 @@ class RecordsPane extends Component {
   }
   
   render(){
+    let view = null;
 
-    let recordsTable = <div>
-                          <Paginator first={this.state.data.page * this.state.data.pageSize} rows={this.state.data.pageSize} totalRecords={this.state.data.total} onPageChange={(e) => this.onPageChange(e.page)}></Paginator>
-                          <RecordsTable records={this.state.data.data} onEdit={this.onEdit} onDelete={this.onDelete} onInfo={this.onInfo}/>
-                          <Button type="button" icon="pi pi-plus" className="p-button-info add" 
-                                  title="Add new record"
-                                  onClick={this.onAdd}/>
-                       </div>;
-    let editorPane = <EditorPane onSave={this.onSave} onCancel={this.onCancel} record={this.state.current}/>;
-    
+    if (this.state.current) {
+      view = <EditorPane onSave={this.onSave} onCancel={this.onCancel} record={this.state.current} />;
+    } else if (this.state.sets) {
+      view = <SetsList sets={this.state.sets} onCancel={this.onCancel} />;
+    } else {
+      view = <div>
+                <Paginator first={this.state.data.page * this.state.data.pageSize} rows={this.state.data.pageSize} totalRecords={this.state.data.total} onPageChange={(e) => this.onPageChange(e.page)}></Paginator>
+                <RecordsTable records={this.state.data.data} onEdit={this.onEdit} onDelete={this.onDelete} onInfo={this.onInfo}/>
+                <Button type="button" icon="pi pi-plus" className="p-button-info add" 
+                        title="Add new record"
+                        onClick={this.onAdd}/>
+             </div>;
+    }
+      
     return(
       <div className="RecordsPane">
-        {this.state.current? editorPane: recordsTable}
+        {view}
       </div>
     );
   }
