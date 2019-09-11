@@ -24,19 +24,26 @@ class SetsPane extends Component{
     });
   }
   
-  onInfo = (records) => {
-    this.setState({records: records});
+  onInfo = (setId, records) => {
+    this.setState({setId: setId, records: records});
   }
   
   onExit = () => {
     this.setState({records: null});
   }
   
+  onRemove = (key) => {
+    console.log("Removing", key);
+    this.api.delCollection(this.state.setId, key).then(result => {
+      this.api.listRecords(this.state.setId).then(result => this.setState({records: result}));
+    });
+  }
+  
   render(){
     let body = null;
     
     if (this.state.records) {
-      body = <RecordsList data={this.state.records} onExit={this.onExit} />
+      body = <RecordsList records={this.state.records} onExit={this.onExit} onRemove={this.onRemove} />
     } else if (this.state.data) {
       body = <SetsTable data={this.state.data} onPageChange={this.load} onInfo={this.onInfo}/>;
     }
