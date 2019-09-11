@@ -5,7 +5,7 @@ import {Button} from 'primereact/button';
 import {Paginator} from 'primereact/paginator';
 
 import RecordsApi from '../api/RecordsApi';
-import EditorPane from './EditorPane';
+import EditorPane from '../common/EditorPane';
 import RecordsTable from './RecordsTable';
 
 function assureRecord(record) {
@@ -44,7 +44,7 @@ class RecordsPane extends Component {
   }
   
   onEdit = (props) => {
-    this.setState({data: this.props.data, current: assureRecord(props)});
+    this.setState({current: assureRecord(props)});
   }
   
   onDelete = (props) => {
@@ -52,13 +52,17 @@ class RecordsPane extends Component {
   }
   
   onAdd = () => {
-    this.setState({data: this.props.data, current: assureRecord()});
+    this.setState({current: assureRecord()});
   }
   
   onSave = (record) => {
     this.props.onSave(record).then(()=>{
-      this.setState({data: this.props.data, current: null});
+      this.setState({current: null});
     });
+  }
+  
+  onCancel = (record) => {
+    this.setState({current: null});
   }
   
   onPageChange = (page) => {
@@ -74,7 +78,7 @@ class RecordsPane extends Component {
                                   title="Add new record"
                                   onClick={this.onAdd}/>
                        </div>;
-    let editorPane = <EditorPane onSave={this.onSave} record={this.state.current}/>;
+    let editorPane = <EditorPane onSave={this.onSave} onCancel={this.onCancel} record={this.state.current}/>;
     
     return(
       <div className="RecordsPane">

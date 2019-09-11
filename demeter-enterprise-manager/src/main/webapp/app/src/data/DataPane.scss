@@ -1,7 +1,6 @@
 @import '../main/colors.scss';
 
 .DataPane {
-  
   .RecordsPane {
     padding: 1em;
     
@@ -17,28 +16,6 @@
     
     .action-button {
       margin-right: 1em;
-    }
-  }
-  
-  .EditorPane {
-    .table {
-      
-    }
-    
-    .table-row {
-      
-    }
-    
-    .table-cell {
-      padding: 0.5em;
-    }
-    
-    .table-cell-caption {
-      
-    }
-    
-    .table-cell-value {
-      
     }
   }
 }

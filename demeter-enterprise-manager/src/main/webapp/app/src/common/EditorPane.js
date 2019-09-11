@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import "./DataPane.scss";
+import "./EditorPane.scss";
 import {InputText} from 'primereact/inputtext';
 import {Calendar} from 'primereact/calendar';
 import {Button} from 'primereact/button';
@@ -63,6 +63,7 @@ class EditorPane extends Component {
                  onChange={(e) => this.setState({record: {...this.state.record, rights: e.target.value}})}/>
         </div>
         <Button label="Save" onClick={(e) => this.props.onSave(this.state.record)}/>
+        <Button label="Cancel" onClick={(e) => this.props.onCancel(this.state.record)}/>
       </div>
     );
   }
