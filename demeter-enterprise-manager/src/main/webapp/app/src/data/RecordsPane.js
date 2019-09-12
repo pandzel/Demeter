@@ -72,20 +72,18 @@ class RecordsPane extends Component {
   }
   
   render(){
-    let view = null;
-
-    if (this.state.current) {
-      view = <EditorPane onSave={this.onSave} onCancel={this.onCancel} record={this.state.current} />;
-    } else if (this.state.sets) {
-      view = <SetsList sets={this.state.sets} onCancel={this.onCancel} />;
-    } else {
-      view = <div>
+    let view = <div>
                 <Paginator first={this.state.data.page * this.state.data.pageSize} rows={this.state.data.pageSize} totalRecords={this.state.data.total} onPageChange={(e) => this.onPageChange(e.page)}></Paginator>
                 <RecordsTable records={this.state.data.data} onEdit={this.onEdit} onDelete={this.onDelete} onInfo={this.onInfo}/>
                 <Button type="button" icon="pi pi-plus" className="p-button-info add" 
                         title="Add new record"
                         onClick={this.onAdd}/>
-             </div>;
+               </div>;
+
+    if (this.state.current) {
+      view = <EditorPane onSave={this.onSave} onCancel={this.onCancel} record={this.state.current} />;
+    } else if (this.state.sets) {
+      view = <SetsList sets={this.state.sets} onCancel={this.onCancel} />;
     }
       
     return(
