@@ -42,7 +42,7 @@ class RecordsPane extends Component {
   api = new RecordsApi();
   
   onInfo = (props) => {
-    this.api.listSets(props.id).then(result => this.setState({sets: result}));
+    this.api.listSets(props.id).then(result => this.setState({sets: result, current: props}));
   }
   
   onEdit = (props) => {
@@ -80,10 +80,10 @@ class RecordsPane extends Component {
                         onClick={this.onAdd}/>
                </div>;
 
-    if (this.state.current) {
+    if (this.state.sets) {
+      view = <SetsList record={this.state.current} sets={this.state.sets} onCancel={this.onCancel} />;
+    } else if (this.state.current) {
       view = <EditorPane onSave={this.onSave} onCancel={this.onCancel} record={this.state.current} />;
-    } else if (this.state.sets) {
-      view = <SetsList sets={this.state.sets} onCancel={this.onCancel} />;
     }
       
     return(

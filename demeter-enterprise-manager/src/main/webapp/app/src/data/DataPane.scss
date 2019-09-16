@@ -20,6 +20,16 @@
   }
   
   .SetsList {
-    
+    .Sets {
+      margin-bottom: 1em;
+      
+      .Set {
+        margin-bottom: 0.5em;
+
+        .CheckBox {
+          margin-right: 0.5em;
+        }
+      }
+    }
   }
 }
