@@ -40,7 +40,7 @@ class SetsPane extends Component{
   }
   
   render(){
-    let body = this.state.data? <SetsTable data={this.state.data} onPageChange={this.load} onInfo={this.onInfo}/>: null;
+    let body = this.state.data? <SetsTable ts={this.state.ts} data={this.state.data} onPageChange={this.load} onInfo={this.onInfo}/>: null;
     
     if (this.state.records) {
       body = <RecordsList records={this.state.records} onExit={this.onExit} onRemove={this.onRemove} />
