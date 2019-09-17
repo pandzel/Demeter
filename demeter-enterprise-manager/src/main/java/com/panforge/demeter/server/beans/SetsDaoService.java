@@ -120,7 +120,11 @@ public class SetsDaoService implements SetsDao {
 
   @Override
   public boolean deleteSet(UUID id) {
-    conn.execute(conn.prepare("delete from collections where setId = ?").bind(id));
+    ResultSet colSet = conn.execute(conn.prepare("select * from collections where setId = ?").bind(id));
+    StreamSupport.stream(colSet.spliterator(), false).forEach(row -> {
+      UUID recordId = row.getUuid("recordId");
+      conn.execute(conn.prepare("delete from collections where recordId = ? and setId = ?").bind(recordId, id));
+    });
     
     PreparedStatement stmt = conn.prepare("delete from sets where id = ?");
     BoundStatement bound = stmt.bind(id);
