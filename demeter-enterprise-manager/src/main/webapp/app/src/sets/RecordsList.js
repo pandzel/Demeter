@@ -26,10 +26,19 @@ class RecordsList extends Component {
   }
 
   render(){
+    const COLS = this.props.cols || 2;
+    let reduced = this.props.records.data.reduce((acc,record,idx) => {
+      let pos = Math.floor(idx/COLS);
+      while (acc.length<=pos)
+        acc.push([]);
+      acc[pos].push(record);
+      return acc;
+    }, []);
+    let rows = reduced.map((row, ridx) => <div key={ridx} style={{display: "table-row"}}>{row.map(record => (<div key={record.key} style={{display: "table-cell"}}><Record key={record.key} record={record} onRemove={this.onRemove}/></div>))}</div>);
     return(
       <div className="RecordsList">
         <div className="Records">
-          {this.props.records.data.map(record => <Record key={record.key} record={record} onRemove={this.onRemove}/>)}
+          {rows}
         </div>
         <Button label="Cancel" onClick={this.props.onExit}/>
       </div>
