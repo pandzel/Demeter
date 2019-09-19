@@ -44,6 +44,7 @@ public interface ContentProvider<PC extends PageCursor> {
   /**
    * Lists sets.
    * @param pageCursor page cursor
+   * @param pageSize page size
    * @return page of sets
    * @throws NoSetHierarchyException if error iterating sets
    */
@@ -53,6 +54,7 @@ public interface ContentProvider<PC extends PageCursor> {
    * Lists headers.
    * @param filter filter
    * @param pageCursor page cursor
+   * @param pageSize page size
    * @return page of headers
    * @throws CannotDisseminateFormatException if invalid metadata format
    * @throws NoRecordsMatchException if no records

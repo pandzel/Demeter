@@ -15,6 +15,7 @@
  */
 package com.panforge.demeter.server.rest;
 
+import com.panforge.demeter.core.utils.DefaultPageCursor;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -37,7 +38,7 @@ public class OaiController {
   private final Logger LOG = LoggerFactory.getLogger(OaiController.class);
   
   @Autowired
-  private com.panforge.demeter.service.Service service;
+  private com.panforge.demeter.service.Service<DefaultPageCursor> service;
   
   @PostConstruct
   public void construct() {

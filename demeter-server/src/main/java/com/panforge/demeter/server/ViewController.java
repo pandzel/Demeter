@@ -40,7 +40,7 @@ public class ViewController extends AbstractController {
   private ConfigService configService;
   
   @Autowired
-  private ContentProvider contentProvider;
+  private ContentProvider<DefaultPageCursor> contentProvider;
   
 	@Override
 	protected ModelAndView handleRequestInternal(HttpServletRequest request,
