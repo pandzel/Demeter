@@ -9,7 +9,7 @@ function Set(props) {
             <span className="CheckBox">
               <Checkbox inputId={props.set.id} onChange={e => props.onCheck(e.checked)} checked={props.set.checked}></Checkbox>
             </span>
-            <span><label for={props.set.id}>{props.set.setName}</label></span>
+            <span><label htmlFor={props.set.id}>{props.set.setName}</label></span>
          </div>;
 };
 
