@@ -25,13 +25,11 @@ class SetsPane extends Component{
   }
   
   loadRecords = (setId, page) => {
-    this.api.listRecords(setId, page).then(records => {
-      this.setState({setId, records});
+    return new Promise((resolve, reject) => {
+      this.api.listRecords(setId, page).then(records => {
+        this.setState({setId, records}, () => resolve(records));
+      }).catch(reject);
     });
-  }
-  
-  onInfo = (setId, records) => {
-    this.setState({setId: setId, records: records});
   }
   
   onExit = () => {

@@ -21,11 +21,11 @@ class SetsList extends Component {
   api = new SetsApi();
   
   componentDidMount() {
-    this.api.list().then(result => {
-      result.data.forEach(set => {
+    this.api.list().then(sets => {
+      sets.data.forEach(set => {
         set.checked = !!this.props.sets.data.find(d=>d.key===set.id);
       });
-      this.setState({sets: result});
+      this.setState({sets});
     });
   }
   
