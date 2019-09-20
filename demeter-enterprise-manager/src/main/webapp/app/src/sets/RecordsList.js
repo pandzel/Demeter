@@ -34,7 +34,7 @@ class RecordsList extends Component {
       acc[pos].push(record);
       return acc;
     }, []);
-    let rows = reduced.map((row, ridx) => <div key={ridx} style={{display: "table-row"}}>{row.map(record => (<div key={record.key} style={{display: "table-cell"}}><Record key={record.key} record={record} onRemove={this.onRemove}/></div>))}</div>);
+    let rows = reduced.map((row, ridx) => <div key={ridx} style={{display: "table-row"}}>{row.map(record => (<div key={record.key} className="recordCell" style={{display: "table-cell"}}><Record key={record.key} record={record} onRemove={this.onRemove}/></div>))}</div>);
     return(
       <div className="RecordsList">
         <div className="Records">

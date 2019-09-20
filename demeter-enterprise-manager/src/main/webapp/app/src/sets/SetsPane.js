@@ -33,7 +33,6 @@ class SetsPane extends Component{
   }
   
   onRemove = (key) => {
-    console.log("Removing", key);
     this.api.delCollection(this.state.setId, key).then(result => {
       this.api.listRecords(this.state.setId).then(result => this.setState({records: result}));
     });
