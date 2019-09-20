@@ -24,8 +24,8 @@ class SetsTable extends Component{
                       title="Delete record"
                       onClick={() => this.onDelete(rowData)}/>
               <Button type="button" icon="pi pi-list" className="p-button-info action-button info-button" 
-                      title="Show more information"
-                      onClick={() => this.onInfo(rowData)}/>
+                      title="Show records within the set"
+                      onClick={() => this.loadRecords(rowData)}/>
             </div>);
   }
     
@@ -35,8 +35,8 @@ class SetsTable extends Component{
       this.setState({data: {...this.state.data, data: updatedItems}});
   }
   
-  onInfo = (props) => {
-    this.api.listRecords(props.id).then(result => this.props.onInfo(props.id, result));
+  loadRecords = (props) => {
+    this.props.loadRecords(props.id);
   }
   
   onDelete = (props) => {

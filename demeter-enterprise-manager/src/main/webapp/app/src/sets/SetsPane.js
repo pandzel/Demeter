@@ -24,6 +24,12 @@ class SetsPane extends Component{
     });
   }
   
+  loadRecords = (setId, page) => {
+    this.api.listRecords(setId, page).then(records => {
+      this.setState({setId, records});
+    });
+  }
+  
   onInfo = (setId, records) => {
     this.setState({setId: setId, records: records});
   }
@@ -39,10 +45,10 @@ class SetsPane extends Component{
   }
   
   render(){
-    let body = this.state.data? <SetsTable ts={this.state.ts} data={this.state.data} onPageChange={this.load} onInfo={this.onInfo}/>: null;
+    let body = this.state.data? <SetsTable ts={this.state.ts} data={this.state.data} onPageChange={this.load} loadRecords={this.loadRecords}/>: null;
     
     if (this.state.records) {
-      body = <RecordsList cols={3} records={this.state.records} onExit={this.onExit} onRemove={this.onRemove} />
+      body = <RecordsList cols={3} records={this.state.records} onExit={this.onExit} onRemove={this.onRemove} loadRecords={(page) => this.loadRecords(this.state.setId, page)}/>
     }
     
     return(
