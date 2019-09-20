@@ -48,7 +48,7 @@ class RecordsList extends Component {
         <div className="Records">
           {rows}
         </div>
-        <Button label="Cancel" onClick={this.props.onExit}/>
+        <Button label="Back" onClick={this.props.onExit}/>
       </div>
     );
   }

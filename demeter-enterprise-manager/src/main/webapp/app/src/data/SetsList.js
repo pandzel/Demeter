@@ -48,7 +48,7 @@ class SetsList extends Component {
         <div className="Sets">
           {this.state.sets && this.state.sets.data.map(set => <Set key={set.id} set={set} onCheck={(check) => this.onCheck(set.id, check)}/>)}
         </div>
-        <Button label="Cancel" onClick={(e) => this.props.onCancel()}/>
+        <Button label="Back" onClick={(e) => this.props.onCancel()}/>
       </div>
     );
   }
