@@ -1,15 +1,31 @@
 import React, { Component} from "react";
 import "./Settings.scss";
+import ConfigApi from '../api/ConfigApi';
 import {InputText} from 'primereact/inputtext';
 import {Button} from 'primereact/button';
 
 export default
-class SettingsForm extends Component{
+class SettingsForm extends Component {
   
   state  = { 
-    settings: this.props.settings,
+    settings: {
+      repositoryName: "",
+      baseURL: "",
+      adminEmail: ""
+    },
     updated: false
   };
+  
+  api = new ConfigApi();
+  
+  
+  componentDidMount() {
+    this.api.load().then(settings => {
+      this.props.onError(null);
+      settings.adminEmail = settings.adminEmail? settings.adminEmail.join(', '): '';
+      this.setState({settings});
+    }).catch(this.props.onError);
+  }
   
   onRepositoryNameChange = (e) => {
     this.setState({settings: {...this.state.settings, repositoryName: e.target.value}, updated: true});
@@ -24,11 +40,12 @@ class SettingsForm extends Component{
   }
   
   onSaveClick = (e) => {
-    var data = {...this.state.settings}; //Object.assign(this.state.settings);
-    data.adminEmail = data.adminEmail.split(/[ ]*,[ ]*/);
-    this.props.onSave(data).then(result => {
+    var settings = {...this.state.settings};
+    settings.adminEmail = settings.adminEmail.split(/[ ]*,[ ]*/);
+    this.api.save(settings).then(result => {
+      this.props.onError(null);
       this.setState({updated: false});
-    });
+    }).catch(this.props.onError);
   }
   
   render(){
