@@ -2,6 +2,7 @@ import React, { Component} from "react";
 import "./Content.scss";
 
 import SettingsPane from "../settings/SettingsPane";
+import SetsPane from "../sets/SetsPane";
 
 export default
 class Content extends Component {
@@ -17,11 +18,11 @@ class Content extends Component {
   render(){
     var contentPane;
     switch (this.props.content) {
-      case "sets":
-        contentPane = "Sets";
-        break;
       case "data":
         contentPane = "Data";
+        break;
+      case "sets":
+        contentPane = <SetsPane onError={this.onError} />;
         break;
       case "settings":
         contentPane = <SettingsPane onError={this.onError} />;
