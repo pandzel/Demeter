@@ -25,7 +25,7 @@ class SetsPane extends Component{
       <div className="SetsPane">
         <div className="Title">Sets</div>
         {this.state.currentSet===null && <SetsTable onShowRecords={this.onShowRecords} onError={this.props.onError}/>}
-        {this.state.currentSet!==null && <SetRecords onExit={this.onShowSets} onError={this.props.onError}/>}
+        {this.state.currentSet!==null && <SetRecords currentSet={this.state.currentSet} onExit={this.onShowSets} onError={this.props.onError}/>}
       </div>
     );
   }
