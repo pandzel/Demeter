@@ -13,6 +13,12 @@ export default
 class SetsTable extends Component{
   
   state  = { 
+    data: {
+      page: 0,
+      pageSize: 0,
+      total: 0,
+      data: []
+    }
   };
   
   api = new SetsApi();
@@ -28,36 +34,21 @@ class SetsTable extends Component{
   }
   
   onDelete = (props) => {
-//    this.api.delete(props.id).then(result => {
-//      this.props.onPageChange(this.state.data.page);
-//    });
+    this.api.delete(props.id).then(result => {
+      this.load(this.state.data.page);
+    }).catch(this.onError);
   }
   
   onUpdate = (props) => {
-//    const rowData = props.rowData;
-//    if (rowData.id) {
-//      this.api.update(rowData).then(result => {
-//      });
-//    } else {
-//      this.api.create(rowData).then(result => {
-//        let updatedItems = [...this.state.data.data];
-//        updatedItems.push(result);
-//        var data = {...this.state.data};
-//        data.data = updatedItems;
-//        this.setState({data: data});
-//      });
-//    }
+    this.api.update(props.rowData).catch(this.props.onError);
   }
   
   onAdd = () => {
-//    this.api.create().then(result => {
-//      let updatedItems = [...this.state.data.data];
-//      updatedItems.push(result);
-//      var data = {...this.state.data};
-//      data.data = updatedItems;
-//      data.total++;
-//      this.setState({data: data});
-//    });
+    this.api.create().then(result => {
+      let items = [...this.state.data.data];
+      items.push(result);
+      this.setState({data: {data: items}, total: this.state.data.total+1});
+    }).catch(this.props.onError);
   }
   
   actionTemplate = (rowData, column) => {
@@ -67,7 +58,7 @@ class SetsTable extends Component{
                       onClick={() => this.onDelete(rowData)}/>
               <Button type="button" icon="pi pi-list" className="p-button-info action-button info-button" 
                       title="Show records within the set"
-                      onClick={() => this.loadRecords(rowData)}/>
+                      onClick={() => this.props.onShowRecords(rowData)}/>
             </div>);
   }
 
@@ -82,22 +73,22 @@ class SetsTable extends Component{
   }    
     
   onEditorValueChange = (props, value) => {
-      let updatedItems = [...this.state.data.data];
-      updatedItems[props.rowIndex][props.field] = value;
-      this.setState({data: {...this.state.data, data: updatedItems}});
+      let items = [...this.state.data.data];
+      items[props.rowIndex][props.field] = value;
+      this.setState({data: {...this.state.data, data: items}});
   }
   
   render(){
     return(
       <div className="SetsTable">
-        {this.state.data && <Paginator first={this.state.data.page * this.state.data.pageSize} rows={this.state.data.pageSize} totalRecords={this.state.data.total} onPageChange={(e) => this.load(e.page)}></Paginator>}
-        {this.state.data && <DataTable value={this.state.data.data}>
+        <Paginator first={this.state.data.page * this.state.data.pageSize} rows={this.state.data.pageSize} totalRecords={this.state.data.total} onPageChange={(e) => this.load(e.page)}></Paginator>
+        <DataTable value={this.state.data.data}>
           <Column field="setName" header="Name" editor={this.nameEditor} onEditorSubmit={this.onUpdate} />
           <Column field="setSpec" header="Spec" editor={this.specEditor} onEditorSubmit={this.onUpdate} />
-          <Column body={(rowData, column) => this.actionTemplate(rowData, column)} className="action-buttons"/>
-        </DataTable>}
+          <Column body={this.actionTemplate} className="action-buttons"/>
+        </DataTable>
         <Button type="button" icon="pi pi-plus" className="p-button-info add" 
-                title="Add new record"
+                title="Add new set"
                 onClick={this.onAdd}/>
       </div>
     );

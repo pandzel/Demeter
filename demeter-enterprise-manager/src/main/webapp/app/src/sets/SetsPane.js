@@ -9,11 +9,15 @@ class SetsPane extends Component{
   componentDidMount() {
   }
   
+  onShowRecords = (props) => {
+    console.log("Showing records for", props);
+  }
+  
   render(){
     return(
       <div className="SetsPane">
         <div className="Title">Sets</div>
-        <SetsTable onError={this.props.onError}/>
+        <SetsTable onShowRecords={this.onShowRecords} onError={this.props.onError}/>
       </div>
     );
   }
