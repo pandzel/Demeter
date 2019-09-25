@@ -36,7 +36,7 @@ class SetsTable extends Component{
   onDelete = (props) => {
     this.api.delete(props.id).then(result => {
       this.load(this.state.data.page);
-    }).catch(this.onError);
+    }).catch(this.props.onError);
   }
   
   onUpdate = (props) => {
