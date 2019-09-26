@@ -3,6 +3,7 @@ import "./EditorPane.scss";
 import {InputText} from 'primereact/inputtext';
 import {Calendar} from 'primereact/calendar';
 import {Button} from 'primereact/button';
+import DataApi from '../api/RecordsApi';
 
 
 function TextRow(props) {
@@ -28,6 +29,14 @@ class EditorPane extends Component {
   state  = { 
     record: this.props.record
   };
+  
+  api = new DataApi();
+  
+  onSave = (record) => {
+    this.api.update(record).then(response => {
+      
+    }).catch(this.props.onError);
+  }
   
   render(){
     return(
@@ -62,8 +71,8 @@ class EditorPane extends Component {
             <TextRow caption="Rights" value={this.state.record.rights}
                  onChange={(e) => this.setState({record: {...this.state.record, rights: e.target.value}})}/>
         </div>
-        <Button label="Save" onClick={(e) => this.props.onSave(this.state.record)}/>
-        <Button label="Back" onClick={(e) => this.props.onExit(this.state.record)}/>
+        <Button label="Save" onClick={(e) => this.onSave(this.state.record)}/>
+        <Button label="Back" onClick={(e) => this.props.onExit(this.props.page)}/>
       </div>
     );
   }
