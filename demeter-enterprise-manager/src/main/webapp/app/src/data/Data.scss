@@ -1,0 +1,35 @@
+@import '../main/colors.scss';
+
+.DataPane {
+  .RecordsPane {
+    padding: 1em;
+    
+    .add {
+      float: right;
+      margin: 1em;
+    }
+    
+    .action-buttons {
+       text-align: center;
+       width: 12em;
+    }
+    
+    .action-button {
+      margin-right: 1em;
+    }
+  }
+  
+  .SetsList {
+    .Sets {
+      margin-bottom: 1em;
+      
+      .Set {
+        margin-bottom: 0.5em;
+
+        .CheckBox {
+          margin-right: 0.5em;
+        }
+      }
+    }
+  }
+}

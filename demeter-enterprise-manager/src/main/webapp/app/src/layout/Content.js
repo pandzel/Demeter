@@ -3,6 +3,7 @@ import "./Content.scss";
 
 import SettingsPane from "../settings/SettingsPane";
 import SetsPane from "../sets/SetsPane";
+import DataPane from "../data/DataPane";
 
 export default
 class Content extends Component {
@@ -19,7 +20,7 @@ class Content extends Component {
     var contentPane;
     switch (this.props.content) {
       case "data":
-        contentPane = "Data";
+        contentPane = <DataPane onError={this.onError} />;
         break;
       case "sets":
         contentPane = <SetsPane onError={this.onError} />;
