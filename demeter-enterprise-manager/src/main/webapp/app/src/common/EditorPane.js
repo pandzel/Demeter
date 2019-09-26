@@ -63,7 +63,7 @@ class EditorPane extends Component {
                  onChange={(e) => this.setState({record: {...this.state.record, rights: e.target.value}})}/>
         </div>
         <Button label="Save" onClick={(e) => this.props.onSave(this.state.record)}/>
-        <Button label="Back" onClick={(e) => this.props.onCancel(this.state.record)}/>
+        <Button label="Back" onClick={(e) => this.props.onExit(this.state.record)}/>
       </div>
     );
   }
