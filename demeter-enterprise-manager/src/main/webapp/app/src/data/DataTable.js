@@ -65,6 +65,40 @@ class DataTableComponent extends Component{
     
   }
   
+  actionTemplate = (rowData, column) => {
+    return (<div>
+              <Button type="button" icon="pi pi-trash" className="p-button-warning action-button delete-button" 
+                      title="Delete record"
+                      onClick={() => this.onDelete(rowData)}/>
+              <Button type="button" icon="pi pi-pencil" className="p-button-edit action-button edit-button" 
+                      title="Edit record"
+                      onClick={() => this.onEdit(rowData)}/>
+              <Button type="button" icon="pi pi-list" className="p-button-info action-button info-button" 
+                      title="Show more information"
+                      onClick={() => this.onInfo(rowData)}/>
+            </div>);
+  }
+  
+  onInfo = (props) => {
+    // this.props.onInfo(props);
+  }
+  
+  onEdit = (props) => {
+    // this.props.onEdit(props);
+  }
+  
+  onDelete = (props) => {
+    // this.props.onDelete(props);
+  }
+  
+  onAdd = (props) => {
+    
+  }
+  
+  onPageChange = (page) => {
+    
+  }
+  
   render(){
     return(
       <div className="DataTable">
