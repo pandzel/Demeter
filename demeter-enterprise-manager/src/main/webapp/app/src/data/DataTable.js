@@ -54,7 +54,9 @@ class DataTableComponent extends Component{
   }
   
   onDelete = (props) => {
-    // this.props.onDelete(props);
+    this.api.delete(props.id)
+            .then(result => this.load(this.state.data.page))
+            .catch(this.onError);
   }
   
   onAdd = (props) => {
