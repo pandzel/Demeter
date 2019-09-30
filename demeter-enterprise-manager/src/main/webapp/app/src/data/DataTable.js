@@ -58,7 +58,23 @@ class DataTableComponent extends Component{
   }
   
   onAdd = (props) => {
-    
+    let record = {
+      title: "",
+      creator: "",
+      subject: "",
+      description: "",
+      publisher: "",
+      contributor: "",
+      date: "",
+      identifier: "",
+      format: "",
+      source: "",
+      language: "",
+      relation: "",
+      coverage: "",
+      rights: ""
+    };
+    this.props.onEdit(record, this.state.data.page);
   }
   
   onPageChange = (page) => {
