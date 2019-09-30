@@ -77,14 +77,10 @@ class DataTableComponent extends Component{
     this.props.onEdit(record, this.state.data.page);
   }
   
-  onPageChange = (page) => {
-    
-  }
-  
   render(){
     return(
       <div className="DataTable">
-        <Paginator first={this.state.data.page * this.state.data.pageSize} rows={this.state.data.pageSize} totalRecords={this.state.data.total} onPageChange={(e) => this.onPageChange(e.page)}></Paginator>
+        <Paginator first={this.state.data.page * this.state.data.pageSize} rows={this.state.data.pageSize} totalRecords={this.state.data.total} onPageChange={(e) => this.load(e.page)}></Paginator>
         <DataTable value={this.state.data.data}>
           <Column field="title" header="Title"/>
           <Column field="description" header="Description"/>
