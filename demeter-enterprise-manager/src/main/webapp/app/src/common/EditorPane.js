@@ -34,7 +34,11 @@ class EditorPane extends Component {
   api = new DataApi();
   
   onSave = (record) => {
-    this.api.update(record).then(response => {
+    const mutator = (record.id? this.api.update: this.api.create);
+    mutator(record).then(response => {
+      if (!this.state.record.id) {
+        this.state.record.id = response.id;
+      }
       this.setState({modified: false});
     }).catch(this.props.onError);
   }
