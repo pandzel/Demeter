@@ -28,13 +28,28 @@ class SetsList extends Component {
   
   load = (page) => {
     this.setsApi.list().then(allSets => {
-      this.dataApi.listSets(this.props.record.id).then(dataSets => {
+      this.listSets().then(dataSets => {
         allSets.data.forEach(set => {
-          set.checked = !!dataSets.data.find(ds => ds.key === set.id );
+          set.checked = !!dataSets.find(ds => ds.key === set.id );
         });
         this.setState({sets: allSets});
       }).catch(this.props.onError);
     }).catch(this.props.onError);
+  }
+  
+  listSets = (page) => {
+    return new Promise((resolve, reject) => {
+      this.dataApi.listSets(this.props.record.id, page).then(dataSets => {
+        var data = dataSets.data;
+        if (data && data.length >= dataSets.pageSize) {
+          this.listSets(dataSets.page+1)
+                  .then(result => resolve([...data, ...result.data]))
+                  .catch(reject);
+        } else {
+          resolve(data);
+        }
+      }).catch(reject);
+    });
   }
   
   onCheck = (id, check) => {
