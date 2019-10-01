@@ -3,6 +3,7 @@ import "./EditorPane.scss";
 import {InputText} from 'primereact/inputtext';
 import {Calendar} from 'primereact/calendar';
 import {Button} from 'primereact/button';
+import DataApi from '../api/RecordsApi';
 
 
 function TextRow(props) {
@@ -26,44 +27,57 @@ function DateRow(props) {
 export default
 class EditorPane extends Component {
   state  = { 
-    record: this.props.record
+    record: this.props.record,
+    modified: false
   };
+  
+  api = new DataApi();
+  
+  onSave = (record) => {
+    const mutator = (record.id? this.api.update: this.api.create);
+    mutator(record).then(response => {
+      if (!this.state.record.id) {
+        this.state.record.id = response.id;
+      }
+      this.setState({modified: false});
+    }).catch(this.props.onError);
+  }
   
   render(){
     return(
       <div className="EditorPane">
         <div className="table" style={{display: "table"}}>
             <TextRow caption="Title" value={this.state.record.title} width={"60em"}
-                 onChange={(e) => this.setState({record: {...this.state.record, title: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, title: e.target.value}, modified: true})}/>
             <TextRow caption="Description" value={this.state.record.description} width={"60em"}
-                 onChange={(e) => this.setState({record: {...this.state.record, description: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, description: e.target.value}, modified: true})}/>
             <TextRow caption="Identifier" value={this.state.record.identifier} width={"60em"}
-                 onChange={(e) => this.setState({record: {...this.state.record, identifier: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, identifier: e.target.value}, modified: true})}/>
             <TextRow caption="Subject" value={this.state.record.subject} width={"60em"}
-                 onChange={(e) => this.setState({record: {...this.state.record, subject: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, subject: e.target.value}, modified: true})}/>
             <TextRow caption="Creator" value={this.state.record.creator}
-                 onChange={(e) => this.setState({record: {...this.state.record, creator: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, creator: e.target.value}, modified: true})}/>
             <TextRow caption="Publisher" value={this.state.record.publisher}
-                 onChange={(e) => this.setState({record: {...this.state.record, publisher: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, publisher: e.target.value}, modified: true})}/>
             <TextRow caption="Contributor" value={this.state.record.contributor}
-                 onChange={(e) => this.setState({record: {...this.state.record, contributor: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, contributor: e.target.value}, modified: true})}/>
             <DateRow caption="Date" value={this.state.record.date}
-                 onChange={(e) => this.setState({record: {...this.state.record, date: e.value.toString()}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, date: e.value.toString()}, modified: true})}/>
             <TextRow caption="Format" value={this.state.record.format}
-                 onChange={(e) => this.setState({record: {...this.state.record, format: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, format: e.target.value}, modified: true})}/>
             <TextRow caption="Source" value={this.state.record.source}
-                 onChange={(e) => this.setState({record: {...this.state.record, source: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, source: e.target.value}, modified: true})}/>
             <TextRow caption="Language" value={this.state.record.language}
-                 onChange={(e) => this.setState({record: {...this.state.record, language: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, language: e.target.value}, modified: true})}/>
             <TextRow caption="Relation" value={this.state.record.relation}
-                 onChange={(e) => this.setState({record: {...this.state.record, relation: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, relation: e.target.value}, modified: true})}/>
             <TextRow caption="Coverage" value={this.state.record.coverage}
-                 onChange={(e) => this.setState({record: {...this.state.record, coverage: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, coverage: e.target.value}, modified: true})}/>
             <TextRow caption="Rights" value={this.state.record.rights}
-                 onChange={(e) => this.setState({record: {...this.state.record, rights: e.target.value}})}/>
+                 onChange={(e) => this.setState({record: {...this.state.record, rights: e.target.value}, modified: true})}/>
         </div>
-        <Button label="Save" onClick={(e) => this.props.onSave(this.state.record)}/>
-        <Button label="Back" onClick={(e) => this.props.onCancel(this.state.record)}/>
+        <Button label="Save" onClick={(e) => this.onSave(this.state.record)} disabled={!this.state.modified}/>
+        <Button label="Back" onClick={(e) => this.props.onExit(this.props.page)}/>
       </div>
     );
   }

@@ -1,0 +1,22 @@
+@import '../main/colors.scss';
+
+.SettingsPane {
+  .SettingsForm {
+    display: table;
+    padding: 0.5em;
+    > div {
+      display: table-row;
+      > span {
+        display: table-cell;
+        padding: 1em;
+        input {
+          width: 30em;
+        }
+      }
+    }
+    
+    button {
+      margin: 1em;
+    }
+  }
+}

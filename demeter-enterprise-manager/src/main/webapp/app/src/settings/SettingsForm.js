@@ -1,44 +1,51 @@
 import React, { Component} from "react";
-import "./SettingsPane.scss";
+import "./Settings.scss";
 import ConfigApi from '../api/ConfigApi';
 import {InputText} from 'primereact/inputtext';
 import {Button} from 'primereact/button';
 
 export default
-class SettingsForm extends Component{
+class SettingsForm extends Component {
   
   state  = { 
-    data: this.props.data,
+    settings: {
+      repositoryName: "",
+      baseURL: "",
+      adminEmail: ""
+    },
     updated: false
   };
   
   api = new ConfigApi();
   
+  
+  componentDidMount() {
+    this.api.load().then(settings => {
+      this.props.onError(null);
+      settings.adminEmail = settings.adminEmail? settings.adminEmail.join(', '): '';
+      this.setState({settings});
+    }).catch(this.props.onError);
+  }
+  
   onRepositoryNameChange = (e) => {
-    this.state.data.repositoryName = e.target.value;
-    this.state.updated = true;
-    this.setState(this.state);
+    this.setState({settings: {...this.state.settings, repositoryName: e.target.value}, updated: true});
   }
   
   onBaseURLChange = (e) => {
-    this.state.data.baseURL = e.target.value;
-    this.state.updated = true;
-    this.setState(this.state);
+    this.setState({settings: {...this.state.settings, baseURL: e.target.value}, updated: true});
   }
   
   onAdminEmailChange = (e) => {
-    this.state.data.adminEmail = e.target.value;
-    this.state.updated = true;
-    this.setState(this.state);
+    this.setState({settings: {...this.state.settings, adminEmail: e.target.value}, updated: true});
   }
   
   onSaveClick = (e) => {
-    var data = Object.assign(this.state.data);
-    data.adminEmail = data.adminEmail.split(/[ ]*,[ ]*/);
-    this.api.save(data).then(result => {
-      this.state.updated = false;
-      this.setState(this.state);
-    });
+    var settings = {...this.state.settings};
+    settings.adminEmail = settings.adminEmail.split(/[ ]*,[ ]*/);
+    this.api.save(settings).then(result => {
+      this.props.onError(null);
+      this.setState({updated: false});
+    }).catch(this.props.onError);
   }
   
   render(){
@@ -48,7 +55,7 @@ class SettingsForm extends Component{
           <span>Repository name:</span>
           <span>
             <InputText placeholder='Enter repository name' 
-                       value={this.state.data.repositoryName}
+                       value={this.state.settings.repositoryName}
                        onChange={this.onRepositoryNameChange}
             />
           </span>
@@ -57,7 +64,7 @@ class SettingsForm extends Component{
           <span>Base URL:</span>
           <span>
             <InputText placeholder='Enter repository base URL' 
-                       value={this.state.data.baseURL}
+                       value={this.state.settings.baseURL}
                        onChange={this.onBaseURLChange}
             />
           </span>
@@ -66,7 +73,7 @@ class SettingsForm extends Component{
           <span>Administrators emails:</span>
           <span>
             <InputText placeholder='List administrators email(s)' 
-                       value={this.state.data.adminEmail}
+                       value={this.state.settings.adminEmail}
                        onChange={this.onAdminEmailChange}
             />
           </span>

@@ -1,0 +1,47 @@
+@import '../main/colors.scss';
+
+.SetsPane {
+  
+  .SetsTable {
+    padding: 1em;
+    
+    .add {
+      float: right;
+      margin: 1em;
+    }
+    
+    .action-buttons {
+       text-align: center;
+       width: 8em;
+    }
+    
+    .action-button {
+      
+    }
+    
+    .delete-button {
+      margin-right: 1em;
+    }
+    
+    .info-button {
+      
+    }
+  }
+  
+  .SetRecords {
+    padding: 1em;
+    
+    .SetRecord {
+      padding: 0.5em;
+      margin-bottom: 1em;
+      
+      button {
+        margin-right: 0.5em;
+      }
+      
+      .recordCell {
+        padding: 0.5em;
+      }
+    }
+  }
+}

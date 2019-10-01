@@ -1,49 +1,39 @@
 import React, { Component} from "react";
-import "./DataPane.scss";
-import RecordsApi from '../api/RecordsApi';
-import RecordsPane from './RecordsPane';
+import "./Data.scss";
+import DataTable from "./DataTable";
+import RecordSets from "./RecordSets";
+import EditorPane from "../common/EditorPane";
 
 export default
 class DataPane extends Component{
-  state = {};
-  
-  api = new RecordsApi();
+  state = {
+    currentData: null,
+    currentPage: undefined,
+    showSets: false
+  };
   
   componentDidMount() {
-    this.load();
   }
   
-  onSave = (record) => {
-    return new Promise((resolve, reject) => {
-      (record.id? this.api.update: this.api.create)(record).then(resolve).catch(reject);
-    }).then(() => {
-      return this.load();
-    });
+  onShowData = (page) => {
+    this.setState({currentData: null, currentPage: page, showSets: false});
   }
   
-  onDelete = (id) => {
-    return new Promise((resolve, reject) => {
-      this.api.delete(id).then(resolve).catch(reject);
-    }).then(() => {
-      return this.load();
-    });
+  onEditData = (data, page) => {
+    this.setState({currentData: data, currentPage: page, showSets: false});
   }
   
-  load = (page) => {
-    return new Promise((resolve, reject) => {
-      this.api.list(page).then(result => {
-        this.setState({data: null},()=>{
-          this.setState({ data: result },()=>resolve(result));
-        });
-      }).catch(reject);
-    });
+  onShowSets = (data, page) => {
+    this.setState({currentData: data, currentPage: page, showSets: true});
   }
   
   render(){
     return(
       <div className="DataPane">
         <div className="Title">Data</div>
-        {this.state.data && <RecordsPane data={this.state.data} onDelete={this.onDelete} onSave={this.onSave} onPageChange={this.load}/>}
+        {this.state.currentData===null && <DataTable page={this.state.currentPage} onEdit={this.onEditData} onShowSets={this.onShowSets} onError={this.props.onError}/>}
+        {this.state.currentData!==null && !this.state.showSets && <EditorPane record={this.state.currentData} onExit={this.onShowData} onError={this.props.onError}/>}
+        {this.state.currentData!==null && this.state.showSets && <RecordSets record={this.state.currentData} onExit={this.onShowData} onError={this.props.onError}/>}
       </div>
     );
   }
