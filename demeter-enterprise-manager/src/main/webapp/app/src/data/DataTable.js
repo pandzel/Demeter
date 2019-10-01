@@ -46,7 +46,7 @@ class DataTableComponent extends Component{
   }
   
   onInfo = (props) => {
-    // this.props.onInfo(props);
+    this.props.onShowSets(props);
   }
   
   onEdit = (props) => {
