@@ -1,22 +1,13 @@
 import React, { Component} from "react";
 import "./Data.scss";
 import {Button} from 'primereact/button';
-import {Checkbox} from 'primereact/checkbox';
 import {Paginator} from 'primereact/paginator';
 import SetsApi from '../api/SetsApi';
 import DataApi from '../api/RecordsApi';
-
-function Set(props) {
-  return <div className="Set">
-            <span className="CheckBox">
-              <Checkbox inputId={props.set.id} onChange={e => props.onCheck(e.checked)} checked={props.set.checked}></Checkbox>
-            </span>
-            <span><label htmlFor={props.set.id}>{props.set.setName}</label></span>
-         </div>;
-};
+import RecordSet from './RecordSet';
 
 export default
-class SetsList extends Component {
+class RecordSets extends Component {
   state = {
   };
   
@@ -68,10 +59,10 @@ class SetsList extends Component {
 
   render(){
     return(
-      <div className="SetsList">
-        <div className="Sets">
+      <div className="RecordSetsList">
+        <div className="RecordSets">
         {this.state.sets && <Paginator first={this.state.sets.page * this.state.sets.pageSize} rows={this.state.sets.pageSize} totalRecords={this.state.sets.total} onPageChange={(e) => this.load(e.page)}></Paginator>}
-        {this.state.sets && this.state.sets.data.map(set => <Set key={set.id} set={set} onCheck={(check) => this.onCheck(set.id, check)}/>)}
+        {this.state.sets && this.state.sets.data.map(set => <RecordSet key={set.id} set={set} onCheck={(check) => this.onCheck(set.id, check)}/>)}
         </div>
         <Button label="Back" onClick={(e) => this.props.onExit()}/>
       </div>

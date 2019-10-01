@@ -1,7 +1,7 @@
 import React, { Component} from "react";
 import "./Data.scss";
 import DataTable from "./DataTable";
-import SetsList from "./SetsList";
+import RecordSets from "./RecordSets";
 import EditorPane from "../common/EditorPane";
 
 export default
@@ -33,7 +33,7 @@ class DataPane extends Component{
         <div className="Title">Data</div>
         {this.state.currentData===null && <DataTable page={this.state.currentPage} onEdit={this.onEditData} onShowSets={this.onShowSets} onError={this.props.onError}/>}
         {this.state.currentData!==null && !this.state.showSets && <EditorPane record={this.state.currentData} onExit={this.onShowData} onError={this.props.onError}/>}
-        {this.state.currentData!==null && this.state.showSets && <SetsList record={this.state.currentData} onExit={this.onShowData} onError={this.props.onError}/>}
+        {this.state.currentData!==null && this.state.showSets && <RecordSets record={this.state.currentData} onExit={this.onShowData} onError={this.props.onError}/>}
       </div>
     );
   }
