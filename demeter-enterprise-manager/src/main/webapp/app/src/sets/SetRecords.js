@@ -38,7 +38,8 @@ class SetRecords extends Component{
   }
   
   render(){
-    let rowsOfRecords = formatData(this.state.data.data, this.props.cols, 
+    let rowsOfRecords = formatData(this.state.data.data, this.props.cols,
+                        (record) => record.key,
                         (record) => <SetRecord key={record.key} record={record} onRemove={this.onRemove}/>);
     
     return(

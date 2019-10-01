@@ -1,6 +1,6 @@
 import React from "react";
 
-function formatData(data, cols, callback) {
+function formatData(data, cols, keygen, factory) {
   if (!data) return null;
   
   const COLS = cols || 2;
@@ -14,10 +14,10 @@ function formatData(data, cols, callback) {
   }, []);
   
   let rowsOfRecords = rowsOfData.map((row, ridx) => 
-    <div key={ridx} style={{display: "table-row"}}>
+    <div key={`row-${ridx}`} style={{display: "table-row"}}>
       {row.map(record => (
-        <div key={record.key} className="recordCell" style={{display: "table-cell"}}>
-          {callback(record)}
+        <div key={`cell-${keygen(record)}`} className="recordCell" style={{display: "table-cell"}}>
+          {factory(record)}
         </div>
       ))}
     </div>

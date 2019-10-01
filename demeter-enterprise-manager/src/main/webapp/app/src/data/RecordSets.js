@@ -5,10 +5,17 @@ import {Paginator} from 'primereact/paginator';
 import SetsApi from '../api/SetsApi';
 import DataApi from '../api/RecordsApi';
 import RecordSet from './RecordSet';
+import formatData from '../common/DataFormatter';
 
 export default
 class RecordSets extends Component {
   state = {
+    sets: {
+      page: 0,
+      pageSize: 0,
+      total: 0,
+      data: []
+    }
   };
   
   setsApi = new SetsApi();
@@ -58,11 +65,15 @@ class RecordSets extends Component {
   }
 
   render(){
+    let rowsOfRecords = formatData(this.state.sets.data, this.props.cols, 
+                        (set) => set.id,
+                        (set) => <RecordSet key={set.id} set={set} onCheck={(check) => this.onCheck(set.id, check)}/>);
+    
     return(
       <div className="RecordSetsList">
         <div className="RecordSets">
-        {this.state.sets && <Paginator first={this.state.sets.page * this.state.sets.pageSize} rows={this.state.sets.pageSize} totalRecords={this.state.sets.total} onPageChange={(e) => this.load(e.page)}></Paginator>}
-        {this.state.sets && this.state.sets.data.map(set => <RecordSet key={set.id} set={set} onCheck={(check) => this.onCheck(set.id, check)}/>)}
+        <Paginator first={this.state.sets.page * this.state.sets.pageSize} rows={this.state.sets.pageSize} totalRecords={this.state.sets.total} onPageChange={(e) => this.load(e.page)}></Paginator>
+        {rowsOfRecords}
         </div>
         <Button label="Back" onClick={(e) => this.props.onExit()}/>
       </div>
