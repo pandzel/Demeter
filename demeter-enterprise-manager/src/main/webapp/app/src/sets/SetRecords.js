@@ -4,6 +4,7 @@ import {Button} from 'primereact/button';
 import {Paginator} from 'primereact/paginator';
 import SetsApi from '../api/SetsApi';
 import SetRecord from './SetRecord';
+import formatData from '../common/DataFormatter';
 
 export default
 class SetRecords extends Component{
@@ -37,25 +38,8 @@ class SetRecords extends Component{
   }
   
   render(){
-    const COLS = this.props.cols || 2;
-    
-    let rowsOfData = this.state.data.data.reduce((acc,record,idx) => {
-      let pos = Math.floor(idx/COLS);
-      while (acc.length<=pos)
-        acc.push([]);
-      acc[pos].push(record);
-      return acc;
-    }, []);
-    
-    let rowsOfRecords = rowsOfData.map((row, ridx) => 
-      <div key={ridx} style={{display: "table-row"}}>
-        {row.map(record => (
-          <div key={record.key} className="recordCell" style={{display: "table-cell"}}>
-            <SetRecord key={record.key} record={record} onRemove={this.onRemove}/>
-          </div>
-        ))}
-      </div>
-    );
+    let rowsOfRecords = formatData(this.state.data.data, this.props.cols, 
+                        (record) => <SetRecord key={record.key} record={record} onRemove={this.onRemove}/>);
     
     return(
       <div className="SetRecords">
