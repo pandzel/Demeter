@@ -1,7 +1,7 @@
 @import '../main/colors.scss';
 
 .DataPane {
-  .RecordsPane {
+  .DataTable {
     padding: 1em;
     
     .add {
@@ -19,11 +19,11 @@
     }
   }
   
-  .SetsList {
-    .Sets {
+  .RecordSetsList {
+    .RecordSets {
       margin-bottom: 1em;
       
-      .Set {
+      .RecordSet {
         margin-bottom: 0.5em;
 
         .CheckBox {

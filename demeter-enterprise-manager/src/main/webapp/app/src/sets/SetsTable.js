@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import "./SetsPane.scss";
+import "./Sets.scss";
 
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
@@ -13,10 +13,43 @@ export default
 class SetsTable extends Component{
   
   state  = { 
-    data: this.props.data
+    data: {
+      page: 0,
+      pageSize: 0,
+      total: 0,
+      data: []
+    }
   };
   
   api = new SetsApi();
+  
+  componentDidMount() {
+    this.load();
+  }
+  
+  load = (page) => {
+    this.api.list(page).then(result => {
+      this.setState({ data: result });
+    }).catch(this.props.onError);
+  }
+  
+  onDelete = (props) => {
+    this.api.delete(props.id).then(result => {
+      this.load(this.state.data.page);
+    }).catch(this.props.onError);
+  }
+  
+  onUpdate = (props) => {
+    this.api.update(props.rowData).catch(this.props.onError);
+  }
+  
+  onAdd = () => {
+    this.api.create().then(result => {
+      let items = [...this.state.data.data];
+      items.push(result);
+      this.setState({data: {data: items}, total: this.state.data.total+1});
+    }).catch(this.props.onError);
+  }
   
   actionTemplate = (rowData, column) => {
     return (<div>
@@ -25,40 +58,8 @@ class SetsTable extends Component{
                       onClick={() => this.onDelete(rowData)}/>
               <Button type="button" icon="pi pi-list" className="p-button-info action-button info-button" 
                       title="Show records within the set"
-                      onClick={() => this.loadRecords(rowData)}/>
+                      onClick={() => this.props.onShowRecords(rowData)}/>
             </div>);
-  }
-    
-  onEditorValueChange = (props, value) => {
-      let updatedItems = [...this.state.data.data];
-      updatedItems[props.rowIndex][props.field] = value;
-      this.setState({data: {...this.state.data, data: updatedItems}});
-  }
-  
-  loadRecords = (props) => {
-    this.props.loadRecords(props.id);
-  }
-  
-  onDelete = (props) => {
-    this.api.delete(props.id).then(result => {
-      this.props.onPageChange(this.state.data.page);
-    });
-  }
-  
-  onUpdate = (props) => {
-    const rowData = props.rowData;
-    if (rowData.id) {
-      this.api.update(rowData).then(result => {
-      });
-    } else {
-      this.api.create(rowData).then(result => {
-        let updatedItems = [...this.state.data.data];
-        updatedItems.push(result);
-        var data = {...this.state.data};
-        data.data = updatedItems;
-        this.setState({data: data});
-      });
-    }
   }
 
   nameEditor = (props) => {
@@ -70,33 +71,24 @@ class SetsTable extends Component{
       return <InputText type="text" value={this.state.data.data[props.rowIndex]['setSpec']} 
               onChange={(e) => this.onEditorValueChange(props, e.target.value)} />;
   }    
-  
-  onAdd = () => {
-    this.api.create().then(result => {
-      let updatedItems = [...this.state.data.data];
-      updatedItems.push(result);
-      var data = {...this.state.data};
-      data.data = updatedItems;
-      data.total++;
-      this.setState({data: data});
-    });
-  }
-  
-  onPageChange = (page) => {
-    this.props.onPageChange(page);
+    
+  onEditorValueChange = (props, value) => {
+      let items = [...this.state.data.data];
+      items[props.rowIndex][props.field] = value;
+      this.setState({data: {...this.state.data, data: items}});
   }
   
   render(){
     return(
       <div className="SetsTable">
-        <Paginator first={this.state.data.page * this.state.data.pageSize} rows={this.state.data.pageSize} totalRecords={this.state.data.total} onPageChange={(e) => this.onPageChange(e.page)}></Paginator>
+        <Paginator first={this.state.data.page * this.state.data.pageSize} rows={this.state.data.pageSize} totalRecords={this.state.data.total} onPageChange={(e) => this.load(e.page)}></Paginator>
         <DataTable value={this.state.data.data}>
           <Column field="setName" header="Name" editor={this.nameEditor} onEditorSubmit={this.onUpdate} />
           <Column field="setSpec" header="Spec" editor={this.specEditor} onEditorSubmit={this.onUpdate} />
-          <Column body={(rowData, column) => this.actionTemplate(rowData, column)} className="action-buttons"/>
+          <Column body={this.actionTemplate} className="action-buttons"/>
         </DataTable>
         <Button type="button" icon="pi pi-plus" className="p-button-info add" 
-                title="Add new record"
+                title="Add new set"
                 onClick={this.onAdd}/>
       </div>
     );
