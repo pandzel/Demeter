@@ -2,6 +2,7 @@ import React, { Component} from "react";
 import "./Data.scss";
 import {Button} from 'primereact/button';
 import {Checkbox} from 'primereact/checkbox';
+import {Paginator} from 'primereact/paginator';
 import SetsApi from '../api/SetsApi';
 import DataApi from '../api/RecordsApi';
 
@@ -69,6 +70,7 @@ class SetsList extends Component {
     return(
       <div className="SetsList">
         <div className="Sets">
+        {this.state.sets && <Paginator first={this.state.sets.page * this.state.sets.pageSize} rows={this.state.sets.pageSize} totalRecords={this.state.sets.total} onPageChange={(e) => this.load(e.page)}></Paginator>}
         {this.state.sets && this.state.sets.data.map(set => <Set key={set.id} set={set} onCheck={(check) => this.onCheck(set.id, check)}/>)}
         </div>
         <Button label="Back" onClick={(e) => this.props.onExit()}/>
