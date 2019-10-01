@@ -3,6 +3,7 @@ import "./Data.scss";
 import {Button} from 'primereact/button';
 import {Checkbox} from 'primereact/checkbox';
 import SetsApi from '../api/SetsApi';
+import DataApi from '../api/RecordsApi';
 
 function Set(props) {
   return <div className="Set">
@@ -18,18 +19,42 @@ class SetsList extends Component {
   state = {
   };
   
-  api = new SetsApi();
+  setsApi = new SetsApi();
+  dataApi = new DataApi();
   
   componentDidMount() {
+    this.load();
+  }
+  
+  load = (page) => {
+    this.setsApi.list().then(allSets => {
+      this.dataApi.listSets(this.props.record.id).then(dataSets => {
+        allSets.data.forEach(set => {
+          set.checked = !!dataSets.data.find(ds => ds.key === set.id );
+        });
+        this.setState({sets: allSets});
+      }).catch(this.props.onError);
+    }).catch(this.props.onError);
   }
   
   onCheck = (id, check) => {
+    let mutator = check? this.dataApi.putCollection: this.dataApi.delCollection;
+    mutator(id, this.props.record.id).then(result => {
+      let newSets = {...this.state.sets};
+      newSets.data.forEach(d => {
+        if (d.id===id) {
+          d.checked = check;
+        }
+      });
+      this.setState({sets: newSets});
+    }).catch(this.props.onError);
   }
 
   render(){
     return(
       <div className="SetsList">
         <div className="Sets">
+        {this.state.sets && this.state.sets.data.map(set => <Set key={set.id} set={set} onCheck={(check) => this.onCheck(set.id, check)}/>)}
         </div>
         <Button label="Back" onClick={(e) => this.props.onExit()}/>
       </div>
