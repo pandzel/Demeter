@@ -6,6 +6,7 @@ import {Column} from 'primereact/column';
 import {Button} from 'primereact/button';
 import {InputText} from 'primereact/inputtext';
 import {Paginator} from 'primereact/paginator';
+import {Dialog} from 'primereact/dialog';
 
 import SetsApi from '../api/SetsApi';
 
@@ -18,8 +19,11 @@ class SetsTable extends Component{
       pageSize: 0,
       total: 0,
       data: []
-    }
+    },
+    dialogVisible: false
   };
+  
+  rowDataForDeletion = null;
   
   api = new SetsApi();
   
@@ -33,7 +37,18 @@ class SetsTable extends Component{
     }).catch(this.props.onError);
   }
   
+  onAskDelete = (props) => {
+    this.rowDataForDeletion = props;
+    this.setState({dialogVisible: true});
+  }
+  
+  onCloseDelete = () => {
+    this.rowDataForDeletion = null;
+    this.setState({dialogVisible: false});
+  }
+  
   onDelete = (props) => {
+    this.onCloseDelete();
     this.api.delete(props.id).then(result => {
       this.load(this.state.data.page);
     }).catch(this.props.onError);
@@ -55,7 +70,7 @@ class SetsTable extends Component{
     return (<div>
               <Button type="button" icon="pi pi-trash" className="p-button-warning action-button delete-button" 
                       title="Delete record"
-                      onClick={() => this.onDelete(rowData)}/>
+                      onClick={() => this.onAskDelete(rowData)}/>
               <Button type="button" icon="pi pi-list" className="p-button-info action-button info-button" 
                       title="Show records within the set"
                       onClick={() => this.props.onShowRecords(rowData)}/>
@@ -79,6 +94,13 @@ class SetsTable extends Component{
   }
   
   render(){
+    const footer = (
+        <div>
+            <Button label="Yes" icon="pi pi-check" onClick={() => this.onDelete(this.rowDataForDeletion)} />
+            <Button label="No" icon="pi pi-times" onClick={this.onCloseDelete} />
+        </div>
+    );    
+    
     return(
       <div className="SetsTable">
         <Paginator first={this.state.data.page * this.state.data.pageSize} rows={this.state.data.pageSize} totalRecords={this.state.data.total} onPageChange={(e) => this.load(e.page)}></Paginator>
@@ -90,6 +112,9 @@ class SetsTable extends Component{
         <Button type="button" icon="pi pi-plus" className="p-button-info add" 
                 title="Add new set"
                 onClick={this.onAdd}/>
+        <Dialog header="Action" visible={this.state.dialogVisible} style={{width: '50vw'}} modal={true} footer={footer} onHide={() => this.onCloseDelete()}>
+                Confirm deletion of '{this.rowDataForDeletion? this.rowDataForDeletion.setName: ""}' set.
+        </Dialog>                        
       </div>
     );
   }
