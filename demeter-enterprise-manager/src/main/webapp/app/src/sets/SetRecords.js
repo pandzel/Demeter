@@ -44,7 +44,6 @@ class SetRecords extends Component{
     
     return(
       <div className="SetRecords">
-        <div className="Title">{`Records included in "${this.props.currentSet.setName}"`}</div>
         <Paginator first={this.state.data.page * this.state.data.pageSize} rows={this.state.data.pageSize} totalRecords={this.state.data.total} onPageChange={(e) => this.load(e.page)}></Paginator>
         {rowsOfRecords}
         <Button label="Back" onClick={this.props.onExit}/>
