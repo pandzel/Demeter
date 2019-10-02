@@ -1,6 +1,11 @@
 @import '../main/colors.scss';
 
 .DataPane {
+  .TitleSuffix {
+    font-style: italic;
+    font-weight: lighter;
+  }
+  
   .DataTable {
     padding: 1em;
     

@@ -1,6 +1,10 @@
 @import '../main/colors.scss';
 
 .SetsPane {
+  .TitleSuffix {
+    font-style: italic;
+    font-weight: lighter;
+  }
   
   .SetsTable {
     padding: 1em;
