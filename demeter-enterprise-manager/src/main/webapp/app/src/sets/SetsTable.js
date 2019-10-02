@@ -112,7 +112,7 @@ class SetsTable extends Component{
         <Button type="button" icon="pi pi-plus" className="p-button-info add" 
                 title="Add new set"
                 onClick={this.onAdd}/>
-        <Dialog header="Action" visible={this.state.dialogVisible} style={{width: '50vw'}} modal={true} footer={footer} onHide={() => this.onCloseDelete()}>
+        <Dialog header="Action" visible={this.state.dialogVisible} style={{width: '20vw'}} modal={true} footer={footer} onHide={() => this.onCloseDelete()}>
                 Confirm deletion of '{this.rowDataForDeletion? this.rowDataForDeletion.setName: ""}' set.
         </Dialog>                        
       </div>
