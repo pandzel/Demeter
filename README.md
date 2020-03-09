@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/pandzel/Demeter.png?branch=master)](https://travis-ci.org/pandzel/Demeter)
+[![Maven Central](https://img.shields.io/maven-central/v/com.panforge.demeter/demeter-parent.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.panforge.demeter%22%20AND%20a:%22demeter-parent%22)
 # Demeter
 Demeter OAI-PMH toolkit.
 
