@@ -16,8 +16,8 @@ Demeter's aim is to provide solution for building and consuming OAI-PMH reposito
 ## Requirements
 
 ### for running
-- Java JDK 8 (or later)
-- Apache Tomcat 8.5.x (9.x.x if JDK 11 or more recent)
+- Java JDK 11 (or later)
+- Apache Tomcat 9.x.x
 - Apache Cassandra 3.x.x
 
 ### for build only
